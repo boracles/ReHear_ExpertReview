@@ -142,3 +142,15 @@ test("backs up review drafts to Firestore without exposing collection listing", 
   assert.match(rules, /allow list: if false/);
   assert.match(rules, /allow delete: if false/);
 });
+
+test("prefills review metadata and removes the unused rule-set version", async () => {
+  const form = await readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8");
+
+  assert.match(form, /const DEFAULT_FRAMEWORK_VERSION = "V1"/);
+  assert.match(form, /function todayInKorea\(\)/);
+  assert.match(form, /reviewDate: todayInKorea\(\)/);
+  assert.match(form, /frameworkVersion: DEFAULT_FRAMEWORK_VERSION/);
+  assert.match(form, /aria-readonly="true"/);
+  assert.doesNotMatch(form, /ruleSetVersion/);
+  assert.doesNotMatch(form, /rule_set_version/);
+});

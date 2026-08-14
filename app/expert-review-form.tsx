@@ -50,11 +50,23 @@ type ReviewData = {
     interviewMode: string;
     recording: string;
     frameworkVersion: string;
-    ruleSetVersion: string;
   };
   ruleEvaluations: RuleEvaluation[];
   overall: Record<string, { score: Score; comment: string }>;
 };
+
+const DEFAULT_FRAMEWORK_VERSION = "V1";
+
+function todayInKorea() {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Seoul",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(new Date());
+  const date = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+  return `${date.year}-${date.month}-${date.day}`;
+}
 
 const criteria: Criterion[] = [
   { key: "content", label: "내용 적절성", statement: "수행 정보와 평가 의미가 이론·실무적으로 관련되어 있다." },
@@ -79,7 +91,7 @@ function newRule(index: number): RuleEvaluation {
   return {
     id: `rule-${Date.now()}-${index}`,
     ruleId: "",
-    frameworkVersion: "",
+    frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
     performanceInfo: "",
     intendedMeaning: "",
     backchannelForm: "",
@@ -105,7 +117,12 @@ function initialData(participantId: string): ReviewData {
     submissionStatus: "draft",
     submittedAt: null,
     expert: { expertise: [], careerYears: "", affiliationType: "", conflict: "", conflictDetails: "" },
-    session: { reviewDate: "", interviewMode: "", recording: "", frameworkVersion: "", ruleSetVersion: "" },
+    session: {
+      reviewDate: todayInKorea(),
+      interviewMode: "",
+      recording: "",
+      frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
+    },
     ruleEvaluations: [newRule(0)],
     overall: Object.fromEntries(overallItems.map((_, index) => [`item${index + 1}`, { score: null, comment: "" }])),
   };
@@ -115,11 +132,25 @@ function normalizeReviewData(value: unknown, participantId: string): ReviewData 
   if (!value || typeof value !== "object") return null;
   const parsed = value as Partial<ReviewData>;
   if (parsed.participantId !== participantId) return null;
+  const defaults = initialData(participantId);
   return {
-    ...initialData(participantId),
+    ...defaults,
     ...parsed,
     schemaVersion: "1.1",
     participantId,
+    expert: { ...defaults.expert, ...parsed.expert },
+    session: {
+      reviewDate: parsed.session?.reviewDate || defaults.session.reviewDate,
+      interviewMode: parsed.session?.interviewMode ?? "",
+      recording: parsed.session?.recording ?? "",
+      frameworkVersion: parsed.session?.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
+    },
+    ruleEvaluations: Array.isArray(parsed.ruleEvaluations)
+      ? parsed.ruleEvaluations.map((rule) => ({
+          ...rule,
+          frameworkVersion: rule.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
+        }))
+      : defaults.ruleEvaluations,
     submissionStatus: parsed.submissionStatus === "submitted" ? "submitted" : "draft",
     submittedAt: typeof parsed.submittedAt === "string" ? parsed.submittedAt : null,
   };
@@ -271,7 +302,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       interview_mode: data.session.interviewMode,
       recording: data.session.recording,
       framework_version: data.session.frameworkVersion,
-      rule_set_version: data.session.ruleSetVersion,
       rule_evaluations_json: data.ruleEvaluations,
     };
     overallItems.forEach((_, index) => {
@@ -359,10 +389,9 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
           <span>02</span>
           <div><b id="review-info-title">평가 정보</b><small>평가일과 검토한 자료의 버전을 기록합니다.</small></div>
         </div>
-        <div className="form-grid three">
+        <div className="form-grid two">
           <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(e) => updateSession("reviewDate", e.target.value)} /></label>
-          <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} onChange={(e) => updateSession("frameworkVersion", e.target.value)} placeholder="예: V1" /></label>
-          <label className="field"><span>규칙 세트 버전</span><input value={data.session.ruleSetVersion} onChange={(e) => updateSession("ruleSetVersion", e.target.value)} placeholder="예: R1" /></label>
+          <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} readOnly aria-readonly="true" /></label>
         </div>
       </section>
 
