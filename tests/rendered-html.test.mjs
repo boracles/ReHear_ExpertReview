@@ -377,6 +377,8 @@ test("requires informed consent before the expert review form", async () => {
   assert.match(consent, /전문가 검토 개요/);
   assert.match(consent, /검토 목적, 소요시간 및 참여 관련 사항/);
   assert.doesNotMatch(consent, /참여 전 핵심 정보/);
+  assert.match(consent, /자료·영상 검토에 따른 피로와 비판적 의견 작성에 따른 부담/);
+  assert.doesNotMatch(consent, /소수 전문가 집단|개인이 추정될 가능성|개인 추정 가능성/);
   assert.equal((consent.match(/key: "(?:informationRead|risksBenefitsPayment|voluntaryParticipation|dataProcessing|authorizedReview|withdrawalRight|copyAvailable)"/g) ?? []).length, 7);
   assert.match(consent, /후속 면담 녹음/);
   assert.match(consent, /익명화된 의견·발췌문 인용/);

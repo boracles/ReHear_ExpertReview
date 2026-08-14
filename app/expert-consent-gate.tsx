@@ -80,7 +80,7 @@ export function ExpertConsentGate({ participantId, consentDate, onComplete }: { 
 
       <section className="consent-summary" aria-labelledby="consent-summary-title">
         <div className="consent-section-heading"><span>01</span><div><b id="consent-summary-title">전문가 검토 개요</b><small>연구참여자용 설명문과 함께 검토 목적, 소요시간 및 참여 관련 사항을 확인해주세요.</small></div></div>
-        <div className="consent-summary-grid"><article><small>PURPOSE</small><b>연구 목적</b><p>E·V·C 청중 상태 모델과 AI 청중의 비언어적 백채널 표현 구조를 점검하고 프레임워크 V2를 보완합니다.</p></article><article><small>TIME</small><b>예상 소요시간</b><p>독립 평가 30–45분, 후속 면담 20–30분으로 최초 참여에는 총 50–75분이 소요됩니다.</p></article><article><small>RISK</small><b>예상 가능한 불편</b><p>자료·영상 검토에 따른 피로, 비판적 의견 제시 부담, 소수 전문가 집단으로 인한 개인 추정 가능성이 있습니다.</p></article><article><small>HONORARIUM</small><b>전문가 자문료</b><p>독립 평가 완료 시 150,000원, 후속 면담까지 완료 시 총 300,000원을 지급합니다.</p></article></div>
+        <div className="consent-summary-grid"><article><small>PURPOSE</small><b>연구 목적</b><p>E·V·C 청중 상태 모델과 AI 청중의 비언어적 백채널 표현 구조를 점검하고 프레임워크 V2를 보완합니다.</p></article><article><small>TIME</small><b>예상 소요시간</b><p>독립 평가 30–45분, 후속 면담 20–30분으로 최초 참여에는 총 50–75분이 소요됩니다.</p></article><article><small>RISK</small><b>예상 가능한 불편</b><p>자료·영상 검토에 따른 피로와 비판적 의견 작성에 따른 부담이 있을 수 있습니다.</p></article><article><small>HONORARIUM</small><b>전문가 자문료</b><p>독립 평가 완료 시 150,000원, 후속 면담까지 완료 시 총 300,000원을 지급합니다.</p></article></div>
         <div className="consent-rights"><b>자발적 참여와 중도 철회</b><p>참여 여부는 자율적으로 결정할 수 있으며 언제든 불이익 없이 중단할 수 있습니다. 수집된 식별 가능한 자료의 폐기를 요청할 수 있습니다.</p></div>
         <details className="consent-full-information"><summary>연구참여자용 설명문 전체 내용 확인하기</summary><div>
           <article><span>01</span><div><b>연구 목적</b><p>문헌을 바탕으로 구성한 프레임워크 V1의 E·V·C 청중 상태 모델과 백채널 표현 구조가 발표 맥락에서 이론적·실무적으로 적절한지 점검하고, 수집된 평가와 의견으로 프레임워크 V2와 사용자 실험용 시스템을 보완합니다.</p></div></article>
@@ -88,7 +88,7 @@ export function ExpertConsentGate({ participantId, consentDate, onComplete }: { 
           <article><span>03</span><div><b>참여 절차</b><p>전문가 기본정보 작성, 프레임워크·모델·코드북 검토, 약 3분 분량의 VR 발표 영상 샘플 2개 시청, 4점 척도 평가와 서면 의견 작성, 1:1 후속 면담 순서로 진행합니다. 큰 수정이 있을 경우 10–15분의 선택적 서면 재확인을 요청할 수 있습니다.</p></div></article>
           <article><span>04</span><div><b>참여 기간</b><p>독립 평가와 후속 면담을 포함한 최초 참여는 약 50–75분이며, 선택적 서면 재확인이 필요한 경우 약 10–15분이 추가될 수 있습니다.</p></div></article>
           <article><span>05</span><div><b>중도 철회</b><p>언제든 불이익 없이 참여를 중단할 수 있습니다. 철회 시 식별 가능한 평가자료·서면 의견·면담 기록·녹음파일의 폐기를 요청할 수 있으며, 이미 익명화되어 다른 자료와 통합된 경우 개별 회수가 어려울 수 있습니다.</p></div></article>
-          <article><span>06</span><div><b>예상 가능한 불편과 위험</b><p>자료와 영상 검토에 따른 피로·눈의 피로, 전문적·비판적 의견을 제시하는 부담, 전문영역·학위·경력·소속 유형의 조합으로 개인이 추정될 가능성이 있습니다. 언제든 휴식하거나 원하지 않는 문항에 응답하지 않을 수 있습니다.</p></div></article>
+          <article><span>06</span><div><b>예상 가능한 불편과 위험</b><p>자료와 영상 검토에 따른 피로·눈의 피로와 전문적·비판적 의견을 작성하는 데 따른 부담이 있을 수 있습니다. 언제든 휴식하거나 원하지 않는 문항에 응답하지 않을 수 있습니다.</p></div></article>
           <article><span>07</span><div><b>기대되는 이득</b><p>직접적인 개인적 이득이 보장되지는 않지만, 참여자의 전문적 판단은 VR 발표 훈련 환경의 AI 청중 반응을 더 타당하고 자연스럽게 설계하는 데 기여할 수 있습니다.</p></div></article>
           <article><span>08</span><div><b>참여하지 않을 권리</b><p>참여하지 않거나 중도에 철회하더라도 업무·연구·교육·연구비 지원·평가 또는 연구책임자와의 관계에 어떠한 불이익도 없습니다.</p></div></article>
           <article><span>09</span><div><b>개인정보와 연구자료 보호</b><p>성명·연락처·서명·지급정보와 연구자료를 분리하고 전문가 번호를 부여합니다. 전자자료는 접근권한이 설정된 공간에 보관하며, 녹음파일은 전사·분석과 확인 후 삭제합니다. 서면 동의서는 3년, 식별정보를 제거한 연구자료는 연구 종료 후 5년간 보관한 뒤 폐기합니다.</p></div></article>
