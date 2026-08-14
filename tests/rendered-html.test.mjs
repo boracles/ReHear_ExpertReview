@@ -109,6 +109,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /review-entry-copy/);
   assert.match(invitation, /전문가 평가 시작하기/);
   assert.match(invitation, /작성 중 · 자동 임시 저장/);
+  assert.match(invitation, /<b>평가 소요시간<\/b>/);
+  assert.match(invitation, /<span>약 30–45분<\/span>/);
+  assert.doesNotMatch(invitation, /평가 전 확인|예상 소요시간 ·/);
   assert.doesNotMatch(invitation, /기기 및 보안 서버 자동 저장/);
   assert.doesNotMatch(invitation, /기기와 보안 서버에 자동 저장/);
   assert.match(invitation, /rehear-review-started-/);
