@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { type FormEvent, useEffect, useState } from "react";
 import { EMAIL_HASHES, INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
 import { getExpertProfile } from "./expert-profiles";
 import { ExpertReviewForm } from "./expert-review-form";
@@ -11,7 +11,6 @@ type AccessState =
   | { status: "granted"; participantId: string; mode: "invite" | "review"; token: string };
 
 const phoneDisplay = "010-8867-0903";
-const phoneHref = "01088670903";
 const email = "boracles@snu.ac.kr";
 
 function RehearLogo({ inverse = false }: { inverse?: boolean }) {
@@ -176,14 +175,15 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
 
 export function ExpertInvitation() {
   const [access, setAccess] = useState<AccessState>({ status: "checking" });
-  const [copied, setCopied] = useState(false);
   const [emailVerified, setEmailVerified] = useState(false);
+  const [reviewStarted, setReviewStarted] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function verify() {
       if (active) setEmailVerified(false);
+      if (active) setReviewStarted(false);
       const route = tokenFromHash();
       if (!route) {
         if (active) setAccess({ status: "denied" });
@@ -210,16 +210,6 @@ export function ExpertInvitation() {
     };
   }, []);
 
-  const messageHref = useMemo(() => {
-    if (access.status !== "granted") return "";
-    const body = [
-      "안녕하세요. AI 청중 에이전트 백채널 디자인 프레임워크 전문가 검토와 관련해 연락드립니다.",
-      `참여자 ID: ${access.participantId}`,
-      "참여 의사: 참여 가능 / 추가 문의 (해당 내용을 남겨주세요)",
-    ].join("\n");
-    return `sms:${phoneHref}?&body=${encodeURIComponent(body)}`;
-  }, [access]);
-
   if (access.status === "checking") {
     return (
       <main className="gate-shell" aria-live="polite">
@@ -235,10 +225,18 @@ export function ExpertInvitation() {
   if (access.status === "denied") return <AccessGate />;
 
   if (!emailVerified) {
-    return <EmailVerificationGate participantId={access.participantId} onVerified={() => setEmailVerified(true)} />;
+    return (
+      <EmailVerificationGate
+        participantId={access.participantId}
+        onVerified={() => {
+          setReviewStarted(window.localStorage.getItem(`rehear-review-started-${access.participantId}`) === "true");
+          setEmailVerified(true);
+        }}
+      />
+    );
   }
 
-  if (access.mode === "review") {
+  if (access.mode === "review" || reviewStarted) {
     return <ExpertReviewPage participantId={access.participantId} reviewToken={access.token} />;
   }
 
@@ -249,14 +247,10 @@ export function ExpertInvitation() {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
-  async function copyId() {
-    try {
-      await navigator.clipboard.writeText(participantId);
-      setCopied(true);
-      window.setTimeout(() => setCopied(false), 1800);
-    } catch {
-      setCopied(false);
-    }
+  function startReview() {
+    window.localStorage.setItem(`rehear-review-started-${participantId}`, "true");
+    setReviewStarted(true);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   return (
@@ -317,7 +311,7 @@ export function ExpertInvitation() {
         <button type="button" onClick={() => scrollToSection("overview")}>연구 소개</button>
         <button type="button" onClick={() => scrollToSection("focus")}>의뢰 배경</button>
         <button type="button" onClick={() => scrollToSection("process")}>참여 절차</button>
-        <button type="button" onClick={() => scrollToSection("contact")}>참여 의사 전달</button>
+        <button type="button" onClick={() => scrollToSection("review-start")}>평가 시작</button>
       </nav>
 
       <section className="section intro" id="overview">
@@ -442,25 +436,28 @@ export function ExpertInvitation() {
         </div>
       </section>
 
-      <section className="section contact" id="contact">
+      <section className="section contact review-launch" id="review-start">
         <div className="contact-panel">
           <div className="contact-copy">
-            <p className="eyebrow light">NEXT STEP</p>
-            <h2>검토 가능 여부를<br />편하게 알려주세요.</h2>
-            <p>아래 버튼을 누르면 참여자 ID가 포함된 문자 초안이 열립니다. 참여 의사를 확인한 뒤 연구 설명문과 동의서를 먼저 보내드립니다.</p>
+            <p className="eyebrow light">START YOUR REVIEW</p>
+            <h2>준비가 되셨다면<br />평가를 시작해주세요.</h2>
+            <p>평가표는 약 30–45분이 소요됩니다. 작성 내용은 기기와 보안 서버에 자동 저장되며, 중간에 닫아도 같은 링크에서 이어서 작성할 수 있습니다.</p>
           </div>
           <div className="contact-actions">
             <div className="id-card">
               <span>나의 익명 참여자 ID</span>
               <strong>{participantId}</strong>
-              <button type="button" onClick={copyId} aria-live="polite">
-                {copied ? "복사됨" : "ID 복사"}
-              </button>
             </div>
-            <a className="button message" href={messageHref}>문자로 참여 의사 전달 <span>↗</span></a>
+            <button className="button message review-start-button" type="button" onClick={startReview}>
+              전문가 평가 시작하기 <span>→</span>
+            </button>
+            <ul className="review-start-notes" aria-label="평가 시작 전 안내">
+              <li>4점 척도 평가와 서면 의견 작성</li>
+              <li>작성 중 자동 저장</li>
+              <li>완료 후 제출 버튼으로 최종 전달</li>
+            </ul>
             <p className="phone-link">연구책임자 윤보라 · {phoneDisplay}</p>
             <a className="phone-link" href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
-            <p className="consent-next-step">참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달 순서로 진행됩니다.</p>
           </div>
         </div>
       </section>
@@ -489,7 +486,7 @@ export function ExpertInvitation() {
       <footer>
         <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
         <p>서울대학교 디자인학부 · 연구책임자 윤보라</p>
-        <p>본 페이지는 개별 초대받은 전문가를 위한 참여 의사 확인 안내입니다.</p>
+        <p>본 페이지는 개별 초대받은 전문가를 위한 검토 및 평가 안내입니다.</p>
       </footer>
     </main>
   );

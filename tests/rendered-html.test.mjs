@@ -84,7 +84,11 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /EMAIL_HASHES\[participantId\] === emailHash/);
   assert.match(invitation, /입력한 이메일은 일치 여부 확인에만 사용하며 저장하지 않습니다/);
   assert.match(invitation, /Consent-completed review/);
-  assert.match(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
+  assert.match(invitation, /전문가 평가 시작하기/);
+  assert.match(invitation, /rehear-review-started-/);
+  assert.match(invitation, /access\.mode === "review" \|\| reviewStarted/);
+  assert.doesNotMatch(invitation, /문자로 참여 의사 전달/);
+  assert.doesNotMatch(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
   assert.match(invitation, /이 페이지는 개별 초대 링크를 통해서만 열립니다\.\s*<br \/>/);
   assert.match(invitation, /전달받은 링크를 다시 열거나,\s*<br \/>\s*연구책임자에게 새 링크를 요청해주세요\./);
   assert.match(invitation, /SEOUL NATIONAL UNIVERSITY · HCID LAB/);

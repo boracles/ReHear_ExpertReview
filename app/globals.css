@@ -613,6 +613,12 @@ body {
 .id-card strong { color: var(--lime); }
 .button.review-link { background: #fff; color: var(--deep); }
 .button.message { background: var(--blue); color: #fff; }
+.review-start-button { border-radius: 10px; }
+.review-start-notes { display: grid; gap: 8px; list-style: none; margin: 6px 0 10px; padding: 0; }
+.review-start-notes li { color: rgba(255,255,255,.7); font-size: 12px; line-height: 1.55; padding-left: 18px; position: relative; }
+.review-start-notes li::before { color: var(--lime); content: "✓"; font-weight: 850; left: 0; position: absolute; }
+.review-launch .id-card { grid-template-columns: 1fr auto; }
+.review-launch .id-card span { margin: 0; }
 
 .faq { background: #fff; }
 .faq-list details { border-top-color: #e1e5f0; }
@@ -800,6 +806,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   .contact-panel { border-radius: 18px; padding: 38px 22px; }
   .id-card { grid-template-columns: 1fr auto; }
   .id-card span { grid-column: 1 / -1; margin-bottom: 10px; }
+  .review-launch .id-card span { grid-column: auto; margin-bottom: 0; }
   .phone-link { overflow-wrap: anywhere; }
   .faq-list summary { font-size: 14px; gap: 18px; }
   footer { grid-template-columns: 1fr; padding: 34px 22px; }
