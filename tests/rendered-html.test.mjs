@@ -73,15 +73,14 @@ test("includes the complete expert review workflow without breaking invite hashe
   ]);
 
   assert.match(form, /모델 구성 적절성/);
-  assert.match(form, /의미 범위 이탈 위험/);
+  assert.match(form, /오해 위험/);
   assert.match(form, /프레임워크 전체 평가/);
   assert.match(form, /전문가 기본 정보/);
   assert.match(form, /검토 자료 정보/);
   assert.match(form, /후속 면담 일정/);
   assert.match(form, /기타 전문영역/);
   assert.match(form, /otherExpertise/);
-  assert.match(form, /관련 분야 최종 학위/);
-  assert.match(form, /highestDegree/);
+  assert.doesNotMatch(form, /관련 분야 최종 학위/);
   assert.doesNotMatch(form, /other_expertise/);
   assert.match(form, />면담 방식</);
   assert.match(form, />면담 녹음 여부</);
@@ -90,7 +89,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /preferredLocation/);
   assert.match(form, /interviewAvailability/);
   assert.match(form, /프레임워크 개발에 필요한 내용을 기록한 뒤 녹음 자료를 폐기합니다/);
-  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 평가") < form.indexOf("review-scale-note"));
+  assert.ok(form.indexOf("E·V·C 청중 상태 모델 평가") < form.indexOf("review-scale-note"));
   assert.doesNotMatch(form, /후속 반구조화 면담 메모/);
   assert.doesNotMatch(form, /interviewQuestions/);
   assert.doesNotMatch(form, /function exportJson/);
@@ -170,10 +169,9 @@ test("prefills review metadata and removes the unused rule-set version", async (
 test("reflects the EVC review purpose and official expert information fields", async () => {
   const form = await readFile(activeForm, "utf8");
 
-  assert.match(form, /E·V·C 청중 상태 모델 및/);
-  assert.match(form, /발표 수행정보를 바탕으로 AI 청중의 E·V·C 상태를 산출/);
+  assert.match(form, /E·V·C 청중 상태 모델/);
+  assert.match(form, /발표 수행정보를 바탕으로 AI 청중의 상태를 산출/);
   assert.match(form, /프레임워크 V1을 V2로 개정/);
-  assert.match(form, /otherDegree/);
   assert.match(form, /otherAffiliation/);
   assert.match(form, /비공개 온라인 화상회의/);
   assert.match(form, /녹음함\(별도 동의 확인\)/);
@@ -187,7 +185,7 @@ test("aligns section badges and color-codes the four-point scale", async () => {
 
   assert.match(form, /data-score=\{score\}/);
   assert.doesNotMatch(form, /data-scale=|reverse=/);
-  assert.match(form, /의미 범위 이탈 위험: 1 매우 높음 · 2 높은 편 · 3 낮은 편 · 4 매우 낮음/);
+  assert.match(form, /오해 위험: 1 매우 높음 · 2 높은 편 · 3 낮은 편 · 4 매우 낮음/);
   assert.equal((form.match(/data-score="[1-4]"/g) ?? []).length, 4);
   assert.match(css, /\.legend-like b \{ display: block; line-height: 28px; \}/);
   assert.match(css, /\.legend-like > span \{ margin-top: 0; \}/);
@@ -204,46 +202,53 @@ test("includes the official materials workflow and complete EVC model overview",
   assert.match(form, /제공 자료 및 검토 순서/);
   assert.match(form, /프레임워크 V1 개요/);
   assert.match(form, /발표 수행정보·평가 차원 코드북/);
-  assert.match(form, /VR 발표 영상 샘플 2개/);
+  assert.match(form, /대표 발표 맥락/);
+  assert.match(form, /실제 또는 목업 애니메이션 클립/);
   assert.match(form, /1단계 독립 검토/);
   assert.match(form, /2단계 후속 면담/);
-  assert.match(form, /E·V·C 청중 상태 모델 및 백채널 표현 구조 개요/);
+  assert.match(form, /E·V·C 청중 상태 모델 개요/);
   assert.match(form, /Engagement/);
   assert.match(form, /Evaluative Valence/);
   assert.match(form, /Cognitive Clarity/);
-  assert.match(form, /도입부, 연구 동기, 이론적 틀\(선택\)/);
-  assert.match(form, /현재의 발표 수행정보, 이전 청중 상태/);
+  assert.doesNotMatch(form, /도입부, 연구 동기, 이론적 틀\(선택\)/);
+  assert.match(form, /현재의 발표 수행정보와 이전 청중 상태/);
   assert.match(form, /표정·자세·시선·고개 움직임/);
-  assert.ok(form.indexOf("제공 자료 및 검토 순서") < form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요"));
-  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요") < form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 평가"));
+  assert.ok(form.indexOf("제공 자료 및 검토 순서") < form.indexOf("E·V·C 청중 상태 모델 개요"));
+  assert.ok(form.indexOf("E·V·C 청중 상태 모델 개요") < form.indexOf("E·V·C 청중 상태 모델 평가"));
+  assert.match(form, /https:\/\/doi\.org\/10\.1093\/oso\/9780195130072\.003\.0005/);
+  assert.match(form, /https:\/\/doi\.org\/10\.1080\/02699930902928969/);
+  assert.match(form, /E·V·C는 본 연구에서 구성한 청중 상태 모델입니다/);
   assert.match(css, /\.materials-layout/);
   assert.match(css, /\.evc-grid/);
   assert.match(css, /\.model-facts/);
 });
 
-test("matches the final fixed questionnaire and embeds video-adjacent stage checks", async () => {
+test("matches the revised questionnaire and embeds video-adjacent overall ratings", async () => {
   const [form, css] = await Promise.all([
     readFile(activeForm, "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
-  assert.equal((form.match(/key: "(?:modelStructure|dimensionClarity|modelCoverage|stageStructure|inputConnection|agentCharacteristics|stateUpdate|backchannelExpression|meaningInterpretation|meaningScopeRisk)"/g) ?? []).length, 10);
-  assert.equal((form.match(/key: "(?:overallConsistency|reactionTiming|reactionIntensity|agentDistribution|trainingFit|exceptionHandling|implementationTraceability)"/g) ?? []).length, 7);
-  assert.equal((form.match(/key: "(?:introduction|motivation|theory|purpose|method|results|implications|closing)"/g) ?? []).length, 8);
+  assert.equal((form.match(/key: "(?:modelStructure|dimensionClarity|modelCoverage|inputConnection|stateUpdate|backchannelExpression|misunderstandingRisk)"/g) ?? []).length, 7);
+  assert.equal((form.match(/key: "(?:inputCoverage|stateExpressionConnection|responsePrinciples|trainingRange|exceptionPrinciples|implementationExplainability)"/g) ?? []).length, 6);
+  assert.doesNotMatch(form, /stageStructure|agentCharacteristics|meaningInterpretation|meaningScopeRisk/);
   assert.match(form, /판단 어려움\/전문영역 외/);
-  assert.match(form, /VR 발표 영상 샘플별 AI 청중 반응 검토/);
-  assert.match(form, /<video controls playsInline preload="metadata"/);
-  assert.match(form, /sample-\$\{video\.toLowerCase\(\)\}\.mp4/);
+  assert.match(form, /실제 또는 목업 애니메이션 클립을 확인하면서 평가해주세요/);
+  assert.match(form, /<video key=\{activeVideo\} controls playsInline preload="metadata"/);
+  assert.match(form, /sample-\$\{activeVideo\.toLowerCase\(\)\}\.mp4/);
   assert.match(form, /video-player-sticky/);
-  assert.match(form, /새로움/);
-  assert.match(form, /규범·자기 일치성/);
+  assert.match(form, /video-tabs/);
+  assert.doesNotMatch(form, /새로움|규범·자기 일치성|단계별 평가 관점/);
   assert.match(form, /Scherer \(2001\)/);
   assert.match(form, /Scherer \(2009\)/);
   assert.doesNotMatch(form, /후속 반구조화 면담 질문/);
   assert.doesNotMatch(form, /interviewQuestions/);
   assert.match(form, /ruleEvaluations: Array\.isArray\(parsed\.ruleEvaluations\)/);
   assert.match(form, /legacyResponses/);
-  assert.match(css, /\.video-review-layout/);
+  assert.match(form, /retiredModelAnswers/);
+  assert.match(form, /retiredFrameworkAnswers/);
+  assert.match(css, /\.framework-review-layout/);
   assert.match(css, /\.video-player-sticky \{ position: sticky/);
-  assert.match(css, /\.video-rating-row/);
+  assert.match(css, /\.video-tabs/);
+  assert.match(css, /\.theory-references/);
 });
