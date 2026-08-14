@@ -44,7 +44,7 @@ export const emptyConsentRecord = (consentDate: string): ConsentRecord => ({
 const requiredItems: Array<{ key: keyof ConsentRecord["confirmations"]; text: string }> = [
   { key: "informationRead", text: "연구참여자용 설명문을 읽었으며, 연구자에게 질문하고 설명을 들을 기회가 있었음을 확인합니다." },
   { key: "risksBenefitsPayment", text: "예상 가능한 불편과 이득, 사례 지급 내용을 이해했으며 질문에 대한 답변을 얻었습니다." },
-  { key: "voluntaryParticipation", text: "E·V·C 청중 상태 모델 및 AI 청중 백채널 표현 구조의 전문가 검토에 자발적으로 참여하는 데 동의합니다." },
+  { key: "voluntaryParticipation", text: "E·V·C 청중 상태 모델 및 AI 청중 백채널 표현 구조에 관한 전문가 자문(독립 평가 및 후속 면담)에 자발적으로 참여하는 데 동의합니다." },
   { key: "dataProcessing", text: "전문가 평가·의견 및 VR 발표 영상 반응 검토자료를 관련 법률과 생명윤리위원회 규정이 허용하는 범위에서 연구자가 수집·처리하는 데 동의합니다." },
   { key: "authorizedReview", text: "연구 진행·결과 관리 및 관계 기관의 점검 시 비밀보장 원칙 아래 연구자료를 확인할 수 있음을 이해하고 동의합니다." },
   { key: "withdrawalRight", text: "언제든 참여를 철회할 수 있으며, 철회 결정으로 어떠한 불이익도 받지 않음을 이해합니다." },
@@ -191,12 +191,12 @@ export function ExpertConsentGate({ participantId, consentDate, verifiedEmail, a
       </section>
 
       <form className="consent-form" onSubmit={submitConsent}>
-        <div className="consent-section-heading"><span>02</span><div><b>연구 참여 동의</b><small>필수 확인 항목을 모두 읽고 체크해주세요.</small></div></div>
+        <div className="consent-section-heading"><span>02</span><div><b>연구 참여 및 전문가 자문 동의</b><small>필수 확인 항목을 모두 읽고 체크해주세요.</small></div></div>
         <div className="consent-required-list">{requiredItems.map((item, index) => <label key={item.key} className={consent.confirmations[item.key] ? "checked" : ""}><input type="checkbox" checked={consent.confirmations[item.key]} onChange={(event) => updateConfirmation(item.key, event.target.checked)} /><span className="consent-item-number">{String(index + 1).padStart(2, "0")}</span><span>{item.text}</span></label>)}</div>
 
         <div className="consent-options">
-          <article><div><span>8-1</span><b>후속 면담 녹음</b><p>면담 녹음은 별도 동의한 경우에만 진행하며, 동의하지 않아도 연구에 참여할 수 있습니다.</p></div><ChoicePair name="recording-consent" value={consent.recordingConsent} onChange={(recordingConsent) => setConsent((current) => ({ ...current, recordingConsent }))} /></article>
-          <article><div><span>8-2</span><b>익명화된 의견·발췌문 인용</b><p>성명·소속 등 직접식별정보를 제거한 서면 의견 또는 면담 발췌문의 학술논문·학술대회 인용 여부를 선택해주세요.</p></div><ChoicePair name="quotation-consent" value={consent.quotationConsent} onChange={(quotationConsent) => setConsent((current) => ({ ...current, quotationConsent }))} /></article>
+          <article><div><span>08-1</span><b>후속 면담 녹음</b><p>면담 녹음은 별도 동의한 경우에만 진행하며, 동의하지 않아도 전문가 자문에 참여할 수 있습니다.</p></div><ChoicePair name="recording-consent" value={consent.recordingConsent} onChange={(recordingConsent) => setConsent((current) => ({ ...current, recordingConsent }))} /></article>
+          <article><div><span>08-2</span><b>익명화된 의견·발췌문 인용</b><p>성명·소속 등 직접식별정보를 제거한 서면 의견 또는 면담 발췌문의 학술논문·학술대회 인용 여부를 선택해주세요.</p></div><ChoicePair name="quotation-consent" value={consent.quotationConsent} onChange={(quotationConsent) => setConsent((current) => ({ ...current, quotationConsent }))} /></article>
           <article><div><span>09</span><b>중도 철회 시 기존 자료 활용</b><p>중도 포기 또는 중도 탈락 시 그동안 수집된 자료를 연구에 계속 활용하는 데 동의하는지 선택해주세요.</p></div><ChoicePair name="withdrawal-data-consent" value={consent.withdrawalDataUseConsent} onChange={(withdrawalDataUseConsent) => setConsent((current) => ({ ...current, withdrawalDataUseConsent }))} /></article>
         </div>
 
