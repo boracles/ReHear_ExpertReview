@@ -95,6 +95,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /Why your perspective matters/);
   assert.match(invitation, /특히 다음 내용을 중심으로 살펴봐주세요/);
   assert.doesNotMatch(invitation, /Who we are inviting/);
+  assert.match(invitation, /전문가 검토를/);
+  assert.match(invitation, /검토 절차를 안내드립니다/);
+  assert.doesNotMatch(invitation, /전문가를 모십니다/);
   assert.match(profiles, /발표와 커뮤니케이션 관점의 검토/);
   assert.match(profiles, /Human–AI Interaction 관점의 검토/);
   assert.match(profiles, /XR과 가상 에이전트 관점의 검토/);

@@ -282,13 +282,13 @@ export function ExpertInvitation() {
           <h1>
             AI 청중의 반응 설계,
             <br />
-            <em>전문가의 관점이</em>
+            <em>전문가 검토를</em>
             <br />
-            필요합니다.
+            시작합니다.
           </h1>
           <p className="hero-lead">
-            VR 발표 훈련 환경에서 발표 수행에 따라 반응하는 AI 청중 에이전트의
-            백채널 디자인 프레임워크를 검토해주실 전문가를 모십니다.
+            전문가 검토에 참여해주셔서 감사합니다. VR 발표 훈련 환경에서 발표 수행에 따라
+            반응하는 AI 청중 에이전트의 백채널 디자인 프레임워크와 검토 절차를 안내드립니다.
           </p>
           <div className="hero-actions">
             <button className="button primary" type="button" onClick={() => scrollToSection("overview")}>연구 내용 확인하기 <span>↓</span></button>
