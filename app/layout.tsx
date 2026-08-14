@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -37,6 +37,12 @@ export const metadata: Metadata = {
     description: "AI 청중 에이전트의 반응 설계를 전문가의 관점으로 검토해주세요.",
     images: ["https://boracles.github.io/ReHear_ExpertReview/og.png"],
   },
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: "#02073d",
 };
 
 export default function RootLayout({

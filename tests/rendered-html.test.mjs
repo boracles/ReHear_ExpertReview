@@ -13,6 +13,21 @@ test("exports the Korean expert invitation shell", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SkeletonPreview/);
 });
 
+test("includes mobile and tablet responsive layouts", async () => {
+  const [layout, css] = await Promise.all([
+    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(layout, /export const viewport: Viewport/);
+  assert.match(layout, /width: "device-width"/);
+  assert.match(css, /@media \(max-width: 900px\)/);
+  assert.match(css, /@media \(max-width: 620px\)/);
+  assert.match(css, /@media \(max-width: 380px\)/);
+  assert.match(css, /min-height: 100svh/);
+  assert.match(css, /font-size: 16px/);
+});
+
 test("publishes separate hashed invitation and consent-completed review links", async () => {
   const [inviteSource, gitignore] = await Promise.all([
     readFile(new URL("../app/invitation-data.ts", import.meta.url), "utf8"),
