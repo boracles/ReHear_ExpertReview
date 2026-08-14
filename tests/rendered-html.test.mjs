@@ -187,3 +187,29 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   assert.equal((css.match(/\.score-picker button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
   assert.equal((css.match(/\.score-picker\[data-scale="reverse"\] button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
 });
+
+test("includes the official materials workflow and complete EVC model overview", async () => {
+  const [form, css] = await Promise.all([
+    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(form, /제공 자료 및 검토 순서/);
+  assert.match(form, /프레임워크 V1 개요/);
+  assert.match(form, /발표 수행정보·평가 차원 코드북/);
+  assert.match(form, /VR 발표 영상 샘플 2개/);
+  assert.match(form, /1단계 독립 검토/);
+  assert.match(form, /2단계 후속 면담/);
+  assert.match(form, /E·V·C 청중 상태 모델 및 백채널 표현 구조 개요/);
+  assert.match(form, /Engagement/);
+  assert.match(form, /Evaluative Valence/);
+  assert.match(form, /Cognitive Clarity/);
+  assert.match(form, /도입부, 연구 동기, 이론적 틀\(선택\)/);
+  assert.match(form, /현재의 발표 수행정보, 이전 청중 상태/);
+  assert.match(form, /표정·자세·시선·고개 움직임/);
+  assert.ok(form.indexOf("제공 자료 및 검토 순서") < form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요"));
+  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요") < form.indexOf("규칙별 평가"));
+  assert.match(css, /\.materials-layout/);
+  assert.match(css, /\.evc-grid/);
+  assert.match(css, /\.model-facts/);
+});

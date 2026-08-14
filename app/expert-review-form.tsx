@@ -329,7 +329,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
 
       <section className="form-section compact-section" aria-labelledby="expert-info-title">
         <div className="legend-like">
-          <span>01</span>
+          <span>02</span>
           <div><b id="expert-info-title">전문가 기본 정보</b><small>전문영역, 최종 학위, 소속 및 관련 경력을 확인합니다.</small></div>
         </div>
         <div className="form-grid two">
@@ -375,7 +375,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
 
       <section className="form-section compact-section" aria-labelledby="review-info-title">
         <div className="legend-like">
-          <span>02</span>
+          <span>R</span>
           <div><b id="review-info-title">연구자 기록란</b><small>검토일, 후속 면담 방식과 검토 자료 버전을 기록합니다.</small></div>
         </div>
         <div className="form-grid two">
@@ -397,8 +397,81 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         </div>
       </section>
 
+      <section className="form-section reference-section" aria-labelledby="materials-title">
+        <div className="legend-like">
+          <span>03</span>
+          <div><b id="materials-title">제공 자료 및 검토 순서</b><small>독립 검토 전 제공되는 자료와 이후 진행 순서입니다.</small></div>
+        </div>
+        <div className="materials-layout">
+          <article className="reference-card materials-card">
+            <p className="reference-label">PROVIDED MATERIALS</p>
+            <h3>검토 전 제공되는 자료</h3>
+            <ul className="materials-list">
+              <li>프레임워크 V1 개요</li>
+              <li>E·V·C 청중 상태 모델 설명 및 도식</li>
+              <li>발표 수행정보·평가 차원 코드북</li>
+              <li>발표 단계 구분과 시간 정보</li>
+              <li>VR 발표 영상 샘플 2개</li>
+              <li>구현 제약 설명</li>
+            </ul>
+            <p className="reference-note">영상 샘플은 발표자의 수행에 실시간으로 반응하는 AI 청중과 발표 단계 표시를 포함하며, 연구책임자가 별도로 제공하는 자료에서 확인합니다.</p>
+          </article>
+          <div className="review-steps">
+            <article>
+              <span>01</span>
+              <div>
+                <small>INDEPENDENT REVIEW</small>
+                <h3>1단계 독립 검토</h3>
+                <p>다른 전문가의 점수나 연구자의 선호를 알지 못한 상태에서 E·V·C 청중 상태 모델과 백채널 표현 구조를 평가하고, 두 개의 VR 발표 영상에서 발표 흐름에 따른 AI 청중의 반응을 검토합니다.</p>
+              </div>
+            </article>
+            <article>
+              <span>02</span>
+              <div>
+                <small>FOLLOW-UP INTERVIEW</small>
+                <h3>2단계 후속 면담</h3>
+                <p>점수의 근거와 발표 단계별 내용 평가 기준, 발표 수행정보–청중 상태 산출 관계 및 청중 상태–백채널 표현 관계를 확인합니다. 또한 의미 해석의 자연스러움, 발표 흐름에 따른 반응 변화, 누락·중복 요소와 구현상 위험을 구체적인 사례를 중심으로 검토합니다.</p>
+              </div>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section className="form-section reference-section model-overview" aria-labelledby="model-title">
+        <div className="legend-like">
+          <span>04</span>
+          <div><b id="model-title">E·V·C 청중 상태 모델 및 백채널 표현 구조 개요</b><small>평가 대상 모델의 구성과 정보 흐름을 확인해주세요.</small></div>
+        </div>
+        <div className="model-target">
+          <span>검토 대상</span>
+          <p>발표 수행정보를 바탕으로 AI 청중의 E·V·C 상태를 산출·갱신하고, 이를 비언어적 백채널로 표현하는 청중 상태 모델 및 표현 구조</p>
+        </div>
+        <div className="evc-grid">
+          <article data-state="E">
+            <span>E</span><small>ENGAGEMENT</small><h3>Engagement</h3>
+            <p>발표 상황과 발표자에게 주의를 기울이고 관여하는 정도</p>
+          </article>
+          <article data-state="V">
+            <span>V</span><small>EVALUATIVE VALENCE</small><h3>Evaluative Valence</h3>
+            <p>발표 내용 또는 수행에 대한 긍정적·부정적 평가 방향</p>
+          </article>
+          <article data-state="C">
+            <span>C</span><small>COGNITIVE CLARITY</small><h3>Cognitive Clarity</h3>
+            <p>발표 내용과 구조를 이해하는 정도</p>
+          </article>
+        </div>
+        <dl className="model-facts">
+          <div><dt>발표 단계 구조</dt><dd>도입부, 연구 동기, 이론적 틀(선택), 연구 목적, 연구 방법, 연구 결과(선택), 연구 함의, 마무리</dd></div>
+          <div><dt>입력</dt><dd>발표 단계별 내용 평가 결과와 음성·시선 등 전달 수행 평가 결과</dd></div>
+          <div><dt>개별 에이전트 특성</dt><dd>발표 주제에 대한 관심도와 배경 지식</dd></div>
+          <div><dt>상태 산출 및 갱신</dt><dd>현재의 발표 수행정보, 이전 청중 상태 및 개별 에이전트 특성을 종합하여 E·V·C 상태를 산출하고 갱신</dd></div>
+          <div><dt>백채널 표현</dt><dd>E·V·C 상태를 표정·자세·시선·고개 움직임으로 표현</dd></div>
+          <div><dt>제공 예시</dt><dd>발표자의 수행에 실시간으로 반응하는 AI 청중이 포함된 VR 발표 영상 샘플 2개와 발표 단계 표시</dd></div>
+        </dl>
+      </section>
+
       <div className="form-section rule-section">
-        <div className="legend-like"><span>03</span><div><b>규칙별 평가</b><small>검토할 규칙마다 카드 한 장을 작성합니다.</small></div></div>
+        <div className="legend-like"><span>05</span><div><b>규칙별 평가</b><small>검토할 규칙마다 카드 한 장을 작성합니다.</small></div></div>
         <div className="review-scale-note">
           <b>4점 척도 안내</b>
           <span data-score="1">1 전혀 적절하지 않음</span><span data-score="2">2 보완이 많이 필요함</span><span data-score="3">3 대체로 적절함</span><span data-score="4">4 매우 적절함</span>
@@ -442,7 +515,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       </div>
 
       <fieldset className="form-section">
-        <legend><span>04</span> 프레임워크 전체 평가</legend>
+        <legend><span>06</span> 프레임워크 전체 평가</legend>
         <div className="overall-list">
           {overallItems.map((item, index) => {
             const key = `item${index + 1}`;
