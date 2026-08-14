@@ -160,6 +160,8 @@ button { font: inherit; }
 .id-card button { background: transparent; border: 0; color: var(--white); cursor: pointer; font-size: 11px; margin-left: 18px; text-decoration: underline; text-underline-offset: 4px; }
 .button.message { background: var(--lime); color: var(--ink); width: 100%; }
 .phone-link { border-bottom: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.7); font-size: 12px; padding: 14px 2px; }
+.gate-contact-links { align-items: flex-start; display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+.gate-contact-links .text-link { margin-top: 0; }
 
 .faq { background: var(--white); display: grid; gap: 8vw; grid-template-columns: .65fr 1fr; }
 .faq h2 { font-size: clamp(32px, 3.8vw, 52px); }

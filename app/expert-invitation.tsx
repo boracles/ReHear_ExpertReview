@@ -11,6 +11,7 @@ type AccessState =
 
 const phoneDisplay = "010-8867-0903";
 const phoneHref = "01088670903";
+const email = "boracles@snu.ac.kr";
 
 function RehearLogo({ inverse = false }: { inverse?: boolean }) {
   return (
@@ -52,11 +53,18 @@ function AccessGate() {
         <p>
           이 페이지는 개별 초대 링크를 통해서만 열립니다.
           <br />
-          전달받은 링크를 다시 열거나, 연구책임자에게 새 링크를 요청해주세요.
+          전달받은 링크를 다시 열거나,
+          <br />
+          연구책임자에게 새 링크를 요청해주세요.
         </p>
-        <a className="text-link" href={`tel:${phoneHref}`}>
-          연구책임자에게 문의 · {phoneDisplay}
-        </a>
+        <div className="gate-contact-links" aria-label="연구책임자 문의">
+          <a className="text-link" href={`tel:${phoneHref}`}>
+            전화 · {phoneDisplay}
+          </a>
+          <a className="text-link" href={`mailto:${email}`}>
+            이메일 · {email}
+          </a>
+        </div>
         <small>링크에는 개인 성명 대신 익명 참여자 ID가 연결됩니다.</small>
       </section>
     </main>
@@ -95,6 +103,7 @@ function ExpertReviewPage({ participantId }: { participantId: string }) {
           <span>입력 내용 · 현재 기기에만 임시 저장</span>
           <span>완료 후 · JSON과 CSV 파일 전달</span>
           <a href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
+          <a href={`mailto:${email}`}>{email}</a>
         </aside>
       </section>
 
@@ -206,7 +215,7 @@ export function ExpertInvitation() {
         <div className="orbit orbit-one" aria-hidden="true"><i /></div>
         <div className="orbit orbit-two" aria-hidden="true"><i /></div>
         <div className="hero-copy">
-          <p className="eyebrow light">SEOUL NATIONAL UNIVERSITY · DESIGN RESEARCH</p>
+          <p className="eyebrow light">SEOUL NATIONAL UNIVERSITY · HCID LAB</p>
           <h1>
             AI 청중의 반응 설계,
             <br />
@@ -390,6 +399,7 @@ export function ExpertInvitation() {
             </div>
             <a className="button message" href={messageHref}>문자로 참여 의사 전달 <span>↗</span></a>
             <a className="phone-link" href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
+            <a className="phone-link" href={`mailto:${email}`}>이메일 · {email}</a>
             <p className="consent-next-step">참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달 순서로 진행됩니다.</p>
           </div>
         </div>
