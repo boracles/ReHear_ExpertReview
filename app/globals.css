@@ -535,7 +535,7 @@ body {
   border-radius: 12px;
   box-shadow: 0 12px 35px rgba(19,34,92,.07);
   margin: 18px auto 0;
-  max-width: 760px;
+  max-width: 1440px;
   min-height: 54px;
   position: sticky;
   top: 81px;
@@ -1087,7 +1087,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   .hero-facts article:last-child { border-bottom: 0; }
   .hero-facts div { align-items: center; display: flex; justify-content: space-between; width: 100%; }
   .hero-facts small { margin-left: auto; }
-  .section-nav { gap: 24px; padding: 0 18px; top: 74px; width: calc(100% - 24px); }
+  .section-nav { gap: 24px; padding: 0 18px; top: 74px; width: calc(100% - 16px); }
   .section-nav button { flex: 0 0 auto; }
   .section, .review-workspace { border-radius: 20px; margin: 12px auto; width: calc(100% - 16px); }
   .section { padding-left: 24px; padding-right: 24px; }

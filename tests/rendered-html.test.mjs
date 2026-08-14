@@ -29,6 +29,8 @@ test("includes mobile and tablet responsive layouts", async () => {
   assert.match(css, /min-height: 100svh/);
   assert.match(css, /font-size: 16px/);
   assert.match(css, /\.hero-facts \{[\s\S]*?margin-top: 34px;[\s\S]*?position: relative;/);
+  assert.match(css, /\.section-nav \{[\s\S]*?max-width: 1440px;[\s\S]*?width: calc\(100% - 40px\);/);
+  assert.match(css, /\.section-nav \{ gap: 24px; padding: 0 18px; top: 74px; width: calc\(100% - 16px\); \}/);
 });
 
 test("publishes separate hashed invitation and consent-completed review links", async () => {
