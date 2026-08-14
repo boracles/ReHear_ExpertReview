@@ -73,7 +73,7 @@ function AccessGate() {
   );
 }
 
-function EmailVerificationGate({ participantId, onVerified }: { participantId: string; onVerified: () => void }) {
+function EmailVerificationGate({ participantId, onVerified }: { participantId: string; onVerified: (email: string) => void }) {
   const [emailValue, setEmailValue] = useState("");
   const [error, setError] = useState("");
   const [checking, setChecking] = useState(false);
@@ -86,7 +86,7 @@ function EmailVerificationGate({ participantId, onVerified }: { participantId: s
       const normalizedEmail = emailValue.trim().toLowerCase();
       const emailHash = await sha256(normalizedEmail);
       if (normalizedEmail && EMAIL_HASHES[participantId] === emailHash) {
-        onVerified();
+        onVerified(normalizedEmail);
         return;
       }
       setError("등록된 이메일 주소와 일치하지 않습니다. 초대받은 이메일을 다시 확인해주세요.");
@@ -130,7 +130,7 @@ function EmailVerificationGate({ participantId, onVerified }: { participantId: s
   );
 }
 
-function ExpertReviewPage({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
+function ExpertReviewPage({ participantId, reviewToken, verifiedEmail }: { participantId: string; reviewToken: string; verifiedEmail: string }) {
   return (
     <main className="review-only">
       <header className="site-header">
@@ -164,7 +164,7 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
         </aside>
       </section>
 
-      <ExpertReviewForm participantId={participantId} reviewToken={reviewToken} />
+      <ExpertReviewForm participantId={participantId} reviewToken={reviewToken} verifiedEmail={verifiedEmail} />
 
       <footer>
         <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
@@ -177,14 +177,14 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
 
 export function ExpertInvitation() {
   const [access, setAccess] = useState<AccessState>({ status: "checking" });
-  const [emailVerified, setEmailVerified] = useState(false);
+  const [verifiedEmail, setVerifiedEmail] = useState("");
   const [reviewStarted, setReviewStarted] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function verify() {
-      if (active) setEmailVerified(false);
+      if (active) setVerifiedEmail("");
       if (active) setReviewStarted(false);
       const route = tokenFromHash();
       if (!route) {
@@ -226,20 +226,20 @@ export function ExpertInvitation() {
 
   if (access.status === "denied") return <AccessGate />;
 
-  if (!emailVerified) {
+  if (!verifiedEmail) {
     return (
       <EmailVerificationGate
         participantId={access.participantId}
-        onVerified={() => {
+        onVerified={(normalizedEmail) => {
           setReviewStarted(window.localStorage.getItem(`rehear-review-started-${access.participantId}`) === "true");
-          setEmailVerified(true);
+          setVerifiedEmail(normalizedEmail);
         }}
       />
     );
   }
 
   if (access.mode === "review" || reviewStarted) {
-    return <ExpertReviewPage participantId={access.participantId} reviewToken={access.token} />;
+    return <ExpertReviewPage participantId={access.participantId} reviewToken={access.token} verifiedEmail={verifiedEmail} />;
   }
 
   const { participantId } = access;

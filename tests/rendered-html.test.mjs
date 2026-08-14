@@ -389,3 +389,18 @@ test("requires informed consent before the expert review form", async () => {
   assert.match(css, /\.consent-gate/);
   assert.match(css, /\.consent-required-list/);
 });
+
+test("emails the consent copy before opening the evaluation", async () => {
+  const [invitation, form, consent] = await Promise.all([
+    readFile(new URL("../app/expert-invitation.tsx", import.meta.url), "utf8"),
+    readFile(activeForm, "utf8"),
+    readFile(consentGate, "utf8"),
+  ]);
+  assert.match(invitation, /onVerified\(normalizedEmail\)/);
+  assert.match(invitation, /verifiedEmail=\{verifiedEmail\}/);
+  assert.match(form, /verifiedEmail=\{verifiedEmail\}/);
+  assert.match(consent, /script\.google\.com\/macros\/s\/AKfycbyAx2krR9_7gDvi8SZiER9QWOXZB0p7qXfH0ZusDTkn02dpeLus963hsQ6Rkg2Is3Njog\/exec/);
+  assert.match(consent, /await sendConsentCopy/);
+  assert.match(consent, /사본이 이메일로 전송되었습니다/);
+  assert.doesNotMatch(consent, /사본 요청하기/);
+});

@@ -1047,6 +1047,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .consent-signature input[readonly] { color: #5f6983; }
 .consent-submit { align-items: center; background: #071052; border-radius: 13px; display: grid; gap: 24px; grid-template-columns: minmax(0, 1fr) auto; margin-top: 18px; padding: 22px 24px; }
 .consent-submit p { color: rgba(255,255,255,.67); font-size: 10px; line-height: 1.7; margin: 0; }
+.consent-submit .consent-delivery-error { color: #ffd2cf; font-weight: 750; margin-top: 8px; }
 .consent-submit button:disabled { background: #78809c; cursor: not-allowed; opacity: .7; }
 .consent-footer { color: #69738c; display: flex; font-size: 10px; justify-content: space-between; padding: 20px 8px 0; }
 .gate-card .logo-lockup { margin-bottom: 42px; }

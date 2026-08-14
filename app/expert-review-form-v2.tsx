@@ -186,7 +186,7 @@ function ScorePicker({ value, onChange, label, disabled = false }: { value: Scor
   </div>;
 }
 
-export function ExpertReviewForm({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
+export function ExpertReviewForm({ participantId, reviewToken, verifiedEmail }: { participantId: string; reviewToken: string; verifiedEmail: string }) {
   const storageKey = `rehear-review-${participantId}`;
   const [data, setData] = useState<ReviewData>(() => initialData(participantId));
   const [restored, setRestored] = useState(false);
@@ -266,7 +266,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   }
 
   if (!restored) return <section className="consent-loading" role="status"><span>Re:hear</span><p>저장된 참여 정보를 확인하고 있습니다.</p></section>;
-  if (!data.session.consent.completedAt) return <ExpertConsentGate participantId={participantId} consentDate={todayInKorea()} onComplete={completeConsent} />;
+  if (!data.session.consent.completedAt) return <ExpertConsentGate participantId={participantId} consentDate={todayInKorea()} verifiedEmail={verifiedEmail} accessToken={reviewToken} onComplete={completeConsent} />;
 
   return <section className="review-workspace" id="review-workspace" aria-labelledby="review-title">
     <div className="review-topline"><div><p className="eyebrow">E·V·C MODEL · STRUCTURED EXPERT REVIEW</p><h2 id="review-title">E·V·C 청중 상태 모델<br />전문가 평가</h2><p>사용자 실험에 앞서 발표 수행정보를 바탕으로 AI 청중의 상태를 산출하고 이를 비언어적 백채널로 표현하는 E·V·C 청중 상태 모델을 점검하고 보완합니다. 독립 평가와 후속 면담에서 수집한 의견을 바탕으로 프레임워크 V1을 V2로 개정합니다.</p></div><div className="progress-card"><span>필수 평가 항목 입력률</span><strong>{completion}%</strong><div><i style={{ width: `${completion}%` }} /></div><small>{syncLabel}</small></div></div>

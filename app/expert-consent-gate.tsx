@@ -48,27 +48,119 @@ const requiredItems: Array<{ key: keyof ConsentRecord["confirmations"]; text: st
   { key: "dataProcessing", text: "전문가 평가·의견 및 VR 발표 영상 반응 검토자료를 관련 법률과 생명윤리위원회 규정이 허용하는 범위에서 연구자가 수집·처리하는 데 동의합니다." },
   { key: "authorizedReview", text: "연구 진행·결과 관리 및 관계 기관의 점검 시 비밀보장 원칙 아래 연구자료를 확인할 수 있음을 이해하고 동의합니다." },
   { key: "withdrawalRight", text: "언제든 참여를 철회할 수 있으며, 철회 결정으로 어떠한 불이익도 받지 않음을 이해합니다." },
-  { key: "copyAvailable", text: "이 화면의 연구 설명문과 동의 내용을 다시 열람할 수 있고, 필요한 경우 연구책임자에게 사본을 요청할 수 있음을 확인합니다." },
+  { key: "copyAvailable", text: "동의를 완료하면 입력한 이메일 주소로 연구 설명문과 동의 내용의 사본이 자동 전송됨을 확인합니다." },
 ];
+
+const consentMailerUrl = "https://script.google.com/macros/s/AKfycbyAx2krR9_7gDvi8SZiER9QWOXZB0p7qXfH0ZusDTkn02dpeLus963hsQ6Rkg2Is3Njog/exec";
+
+type ConsentMailPayload = {
+  participantId: string;
+  accessToken: string;
+  email: string;
+  documentVersion: string;
+  consent: ConsentRecord;
+};
+
+function sendConsentCopy(payload: ConsentMailPayload) {
+  return new Promise<void>((resolve, reject) => {
+    const receiptId = crypto.randomUUID();
+    const frameName = `rehear-consent-mailer-${receiptId}`;
+    const iframe = document.createElement("iframe");
+    const form = document.createElement("form");
+    const input = document.createElement("input");
+    let settled = false;
+
+    iframe.name = frameName;
+    iframe.hidden = true;
+    iframe.setAttribute("aria-hidden", "true");
+    form.method = "POST";
+    form.action = consentMailerUrl;
+    form.target = frameName;
+    form.hidden = true;
+    input.type = "hidden";
+    input.name = "payload";
+    input.value = JSON.stringify({
+      receiptId,
+      participantId: payload.participantId,
+      accessToken: payload.accessToken,
+      email: payload.email,
+      documentVersion: payload.documentVersion,
+      consent: {
+        participantName: payload.consent.participantName,
+        completedAt: payload.consent.completedAt,
+        purpose: payload.consent.confirmations.informationRead,
+        duration: payload.consent.confirmations.risksBenefitsPayment,
+        voluntary: payload.consent.confirmations.voluntaryParticipation,
+        privacy: payload.consent.confirmations.dataProcessing,
+        compensation: payload.consent.confirmations.risksBenefitsPayment,
+        contact: payload.consent.confirmations.authorizedReview && payload.consent.confirmations.withdrawalRight,
+        copyAvailable: payload.consent.confirmations.copyAvailable,
+        recordingConsent: payload.consent.recordingConsent === "동의함",
+        quotationConsent: payload.consent.quotationConsent === "동의함",
+        withdrawalDataUseConsent: payload.consent.withdrawalDataUseConsent === "동의함",
+      },
+    });
+
+    const cleanup = () => {
+      window.removeEventListener("message", receiveResult);
+      window.clearTimeout(timeoutId);
+      form.remove();
+      window.setTimeout(() => iframe.remove(), 100);
+    };
+
+    const finish = (callback: () => void) => {
+      if (settled) return;
+      settled = true;
+      cleanup();
+      callback();
+    };
+
+    const receiveResult = (event: MessageEvent) => {
+      if (!["https://script.google.com", "https://script.googleusercontent.com"].includes(event.origin)) return;
+      const message = event.data as { source?: string; status?: string; receiptId?: string; detail?: string } | null;
+      if (!message || message.source !== "rehear-consent-mailer" || message.receiptId !== receiptId) return;
+      if (message.status === "success") finish(resolve);
+      else finish(() => reject(new Error(message.detail || "사본을 발송하지 못했습니다.")));
+    };
+
+    const timeoutId = window.setTimeout(() => finish(() => reject(new Error("이메일 발송 확인 시간이 초과되었습니다. 다시 시도해주세요."))), 30000);
+    window.addEventListener("message", receiveResult);
+    form.appendChild(input);
+    document.body.append(iframe, form);
+    form.submit();
+  });
+}
 
 function ChoicePair({ name, value, onChange }: { name: string; value: string; onChange: (value: "동의함" | "동의하지 않음") => void }) {
   return <div className="consent-choice-pair">{(["동의함", "동의하지 않음"] as const).map((option) => <label key={option} className={value === option ? "selected" : ""}><input type="radio" name={name} value={option} checked={value === option} onChange={() => onChange(option)} /><span>{option}</span></label>)}</div>;
 }
 
-export function ExpertConsentGate({ participantId, consentDate, onComplete }: { participantId: string; consentDate: string; onComplete: (consent: ConsentRecord) => void }) {
+export function ExpertConsentGate({ participantId, consentDate, verifiedEmail, accessToken, onComplete }: { participantId: string; consentDate: string; verifiedEmail: string; accessToken: string; onComplete: (consent: ConsentRecord) => void }) {
   const [consent, setConsent] = useState<ConsentRecord>(() => emptyConsentRecord(consentDate));
+  const [deliveryStatus, setDeliveryStatus] = useState<"idle" | "sending" | "error">("idle");
+  const [deliveryError, setDeliveryError] = useState("");
   const allRequiredChecked = useMemo(() => Object.values(consent.confirmations).every(Boolean), [consent.confirmations]);
   const optionalChoicesCompleted = Boolean(consent.recordingConsent && consent.quotationConsent && consent.withdrawalDataUseConsent);
-  const canContinue = allRequiredChecked && optionalChoicesCompleted && Boolean(consent.participantName.trim());
+  const canContinue = allRequiredChecked && optionalChoicesCompleted && Boolean(consent.participantName.trim()) && deliveryStatus !== "sending";
 
   function updateConfirmation(key: keyof ConsentRecord["confirmations"], checked: boolean) {
     setConsent((current) => ({ ...current, confirmations: { ...current.confirmations, [key]: checked } }));
   }
 
-  function submitConsent(event: FormEvent<HTMLFormElement>) {
+  async function submitConsent(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!canContinue) return;
-    onComplete({ ...consent, participantName: consent.participantName.trim(), completedAt: new Date().toISOString() });
+    const completedConsent = { ...consent, participantName: consent.participantName.trim(), completedAt: new Date().toISOString() };
+    setDeliveryStatus("sending");
+    setDeliveryError("");
+    try {
+      await sendConsentCopy({ participantId, accessToken, email: verifiedEmail, documentVersion: completedConsent.documentVersion, consent: completedConsent });
+      window.alert("연구 설명문과 동의 내용의 사본이 이메일로 전송되었습니다.");
+      onComplete(completedConsent);
+    } catch (error) {
+      setDeliveryStatus("error");
+      setDeliveryError(error instanceof Error ? error.message : "사본을 발송하지 못했습니다. 다시 시도해주세요.");
+    }
   }
 
   return <main className="consent-gate" aria-labelledby="consent-title">
@@ -95,7 +187,7 @@ export function ExpertConsentGate({ participantId, consentDate, onComplete }: { 
           <article><span>10</span><div><b>전문가 자문료</b><p>독립 평가 완료 시 150,000원, 독립 평가와 후속 면담을 모두 완료하면 총 300,000원을 지급합니다. 이미 완료한 절차에 해당하는 자문료는 중도 철회 시에도 지급하며, 녹음 동의와 재확인 참여 여부는 지급에 영향을 주지 않습니다.</p></div></article>
           <article><span>11</span><div><b>문의처</b><p>연구 문의: 윤보라 · 010-8867-0903 · boracles@snu.ac.kr<br />참여자 권리 문의: 서울대학교 생명윤리위원회 · 02-880-5153 · irb@snu.ac.kr</p></div></article>
         </div></details>
-        <div className="consent-document-actions"><a className="text-link" href="mailto:boracles@snu.ac.kr?subject=연구참여자용%20설명문%20및%20동의서%20사본%20요청">설명문·동의서 사본 요청하기</a><p>연구 내용이나 동의 항목에 궁금한 점이 있으면 동의 전에 연구책임자에게 질문해주세요.</p></div>
+        <div className="consent-document-actions"><p>동의를 완료하면 연구 설명문과 동의 내용의 사본이 확인된 이메일 주소로 자동 전송됩니다. 연구 내용이나 동의 항목에 궁금한 점이 있으면 동의 전에 연구책임자에게 질문해주세요.</p></div>
       </section>
 
       <form className="consent-form" onSubmit={submitConsent}>
@@ -112,7 +204,7 @@ export function ExpertConsentGate({ participantId, consentDate, onComplete }: { 
           <label><span>전문가 검토 참여자 성명</span><input type="text" autoComplete="name" value={consent.participantName} onChange={(event) => setConsent((current) => ({ ...current, participantName: event.target.value }))} placeholder="성명을 입력해주세요" /></label>
           <label><span>동의일</span><input type="date" value={consent.consentDate} readOnly aria-readonly="true" tabIndex={-1} /></label>
         </div>
-        <div className="consent-submit"><p>이름을 입력하고 아래 버튼을 누르면 위 내용에 대한 참여 동의 의사를 전자적으로 표시하게 됩니다. 동의하지 않는 경우 이 페이지를 닫아주세요.</p><button className="button primary" type="submit" disabled={!canContinue}>동의하고 평가 시작하기 <span>→</span></button></div>
+        <div className="consent-submit"><div><p>이름을 입력하고 아래 버튼을 누르면 위 내용에 대한 참여 동의 의사를 전자적으로 표시하게 됩니다. 동의하지 않는 경우 이 페이지를 닫아주세요.</p>{deliveryError && <p className="consent-delivery-error" role="alert">{deliveryError}</p>}</div><button className="button primary" type="submit" disabled={!canContinue}>{deliveryStatus === "sending" ? "사본 전송 중…" : "동의하고 평가 시작하기"} <span>→</span></button></div>
       </form>
       <footer className="consent-footer"><span>참여자 권리 문의 · 서울대학교 생명윤리위원회</span><b>02-880-5153 · irb@snu.ac.kr</b></footer>
     </div>
