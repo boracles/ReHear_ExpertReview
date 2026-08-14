@@ -24,7 +24,8 @@ test("publishes separate hashed invitation and consent-completed review links", 
 
   assert.equal(new Set(participantIds).size, 6);
   assert.equal(participantIds.length, 12);
-  assert.equal(new Set(hashes).size, 12);
+  assert.equal(new Set(hashes).size, 14);
+  assert.equal((inviteSource.match(/TEST-01/g) ?? []).length, 2);
   assert.match(inviteSource, /INVITE_HASHES/);
   assert.match(inviteSource, /REVIEW_HASHES/);
   assert.doesNotMatch(inviteSource, /github\.io\/.+#\/invite\//);

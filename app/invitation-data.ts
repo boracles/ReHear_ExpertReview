@@ -9,6 +9,7 @@ export const INVITE_HASHES: Readonly<Record<string, string>> = {
   "cW4rFGtd4UIsYRWVzelfyqGq1P7FzxF65P8Nwenoklg": "EXP-04",
   "gUC4tcmBy1ESk3vMLYN-aRkc8aPpRPj-VRWvv2UAW_c": "EXP-05",
   "GikFMbYTD4JrdRJdG1ppCTnegdm2N2wWL4ySkmlv-ig": "EXP-06",
+  "2G3bjXgEXoDk5RfKyryQkNy1ESDxzrYuls4sxS8FKwU": "TEST-01",
 };
 
 /**
@@ -22,4 +23,5 @@ export const REVIEW_HASHES: Readonly<Record<string, string>> = {
   "pKXw6vo826bDjrcmfEy-yN2IrxYDcDtyAKd2Cyh13fI": "EXP-04",
   "rIAosnhX9xbi6sAJX8eYNRqblVakL0W9v5PR828ZkD0": "EXP-05",
   "am3m5yJYjshs6f7_4pXY5_riCT747GsGbalsBiDAsw0": "EXP-06",
+  "ijjJyCwX5tPOBYOFDhOtSZpyrXSax9DLlLTJNJ4TGH0": "TEST-01",
 };
