@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { INVITE_HASHES } from "./invitation-data";
+import { ExpertReviewForm } from "./expert-review-form";
 
 type AccessState =
   | { status: "checking" }
@@ -115,6 +116,10 @@ export function ExpertInvitation() {
 
   const { participantId } = access;
 
+  function scrollToSection(id: string) {
+    document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   async function copyId() {
     try {
       await navigator.clipboard.writeText(participantId);
@@ -128,11 +133,11 @@ export function ExpertInvitation() {
   return (
     <main>
       <header className="site-header">
-        <a className="brand" href="#top" aria-label="ReHear 전문가 검토 처음으로">
+        <button className="brand" type="button" onClick={() => scrollToSection("top")} aria-label="ReHear 전문가 검토 처음으로">
           <span className="brand-word">ReHear</span>
           <span className="brand-divider" />
           <span className="brand-sub">Expert Review</span>
-        </a>
+        </button>
         <div className="participant-pill" aria-label={`참여자 ID ${participantId}`}>
           <span>INVITED EXPERT</span>
           <strong>{participantId}</strong>
@@ -155,7 +160,7 @@ export function ExpertInvitation() {
             백채널 디자인 프레임워크를 검토해주실 전문가를 모십니다.
           </p>
           <div className="hero-actions">
-            <a className="button primary" href="#overview">연구 내용 확인하기 <span>↓</span></a>
+            <button className="button primary" type="button" onClick={() => scrollToSection("overview")}>연구 내용 확인하기 <span>↓</span></button>
             <button className="button ghost" type="button" onClick={() => window.print()}>
               안내문 인쇄하기
             </button>
@@ -178,10 +183,11 @@ export function ExpertInvitation() {
       </section>
 
       <nav className="section-nav" aria-label="페이지 바로가기">
-        <a href="#overview">연구 소개</a>
-        <a href="#who">검토 대상</a>
-        <a href="#process">참여 절차</a>
-        <a href="#contact">참여 의사 전달</a>
+        <button type="button" onClick={() => scrollToSection("overview")}>연구 소개</button>
+        <button type="button" onClick={() => scrollToSection("who")}>검토 대상</button>
+        <button type="button" onClick={() => scrollToSection("process")}>참여 절차</button>
+        <button type="button" onClick={() => scrollToSection("review-workspace")}>평가표 작성</button>
+        <button type="button" onClick={() => scrollToSection("contact")}>참여 의사 전달</button>
       </nav>
 
       <section className="section intro" id="overview">
@@ -320,6 +326,7 @@ export function ExpertInvitation() {
                 {copied ? "복사됨" : "ID 복사"}
               </button>
             </div>
+            <button className="button review-link" type="button" onClick={() => scrollToSection("review-workspace")}>전문가 평가표 작성하기 <span>↓</span></button>
             <a className="button message" href={messageHref}>문자로 참여 의사 전달 <span>↗</span></a>
             <a className="phone-link" href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
           </div>
@@ -346,6 +353,8 @@ export function ExpertInvitation() {
           </details>
         </div>
       </section>
+
+      <ExpertReviewForm participantId={participantId} />
 
       <footer>
         <div className="footer-brand">ReHear <span>Expert Review</span></div>
