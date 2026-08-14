@@ -21,7 +21,7 @@ export const metadata: Metadata = {
     type: "website",
     locale: "ko_KR",
     title: "ReHear · AI 청중 에이전트 전문가 검토",
-    description: "발표를 듣는 AI의 반응을 함께 검토해주세요.",
+    description: "AI 청중 에이전트의 반응 설계를 전문가의 관점으로 검토해주세요.",
     images: [
       {
         url: "https://boracles.github.io/ReHear_ExpertReview/og.png",
@@ -34,7 +34,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "ReHear · AI 청중 에이전트 전문가 검토",
-    description: "발표를 듣는 AI의 반응을 함께 검토해주세요.",
+    description: "AI 청중 에이전트의 반응 설계를 전문가의 관점으로 검토해주세요.",
     images: ["https://boracles.github.io/ReHear_ExpertReview/og.png"],
   },
 };

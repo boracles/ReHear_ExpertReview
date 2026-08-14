@@ -155,11 +155,11 @@ export function ExpertInvitation() {
         <div className="hero-copy">
           <p className="eyebrow light">SEOUL NATIONAL UNIVERSITY · DESIGN RESEARCH</p>
           <h1>
-            발표를 듣는 AI의 반응,
+            AI 청중의 반응 설계,
             <br />
-            <em>전문가의 시선</em>으로
+            <em>전문가의 관점이</em>
             <br />
-            살펴주세요.
+            필요합니다.
           </h1>
           <p className="hero-lead">
             VR 발표 훈련 환경에서 발표 수행에 따라 반응하는 AI 청중 에이전트의

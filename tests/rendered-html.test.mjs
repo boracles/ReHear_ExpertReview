@@ -48,7 +48,8 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /내용 적절성/);
   assert.match(form, /오해 위험/);
   assert.match(form, /프레임워크 전체 평가/);
-  assert.match(form, /후속 반구조화 면담 메모/);
+  assert.doesNotMatch(form, /후속 반구조화 면담 메모/);
+  assert.doesNotMatch(form, /interviewQuestions/);
   assert.match(form, /ReHear_\$\{participantId\}_review\.json/);
   assert.match(form, /ReHear_\$\{participantId\}_review\.csv/);
   assert.match(form, /rehear-review-\$\{participantId\}/);

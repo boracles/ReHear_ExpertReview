@@ -199,8 +199,8 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .field { display: grid; gap: 8px; min-width: 0; }
 .field.full { grid-column: 1 / -1; }
 .field > span, .field-label { color: var(--muted); font-size: 11px; font-weight: 750; letter-spacing: .02em; }
-.field input, .field select, .field textarea, .interview-item textarea { background: #f7f4ed; border: 1px solid rgba(16,43,44,.15); border-radius: 0; color: var(--ink); font: inherit; font-size: 14px; line-height: 1.6; min-width: 0; padding: 13px 14px; resize: vertical; width: 100%; }
-.field input:focus, .field select:focus, .field textarea:focus, .interview-item textarea:focus { border-color: var(--forest); outline: 2px solid rgba(169,214,199,.55); }
+.field input, .field select, .field textarea { background: #f7f4ed; border: 1px solid rgba(16,43,44,.15); border-radius: 0; color: var(--ink); font: inherit; font-size: 14px; line-height: 1.6; min-width: 0; padding: 13px 14px; resize: vertical; width: 100%; }
+.field input:focus, .field select:focus, .field textarea:focus { border-color: var(--forest); outline: 2px solid rgba(169,214,199,.55); }
 .choice-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 5px; }
 .choice-chip input { position: absolute; opacity: 0; pointer-events: none; }
 .choice-chip span { border: 1px solid var(--line); cursor: pointer; display: block; font-size: 12px; font-weight: 700; padding: 12px 14px; }
@@ -233,11 +233,6 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .overall-number { color: var(--forest); font-size: 10px; font-weight: 850; }
 .overall-item > p { font-size: 14px; line-height: 1.65; margin: 0; word-break: keep-all; }
 .overall-item .field { grid-column: 2 / -1; }
-.interview-list { display: grid; gap: 14px; margin-top: 34px; }
-.interview-item { background: #f7f4ed; display: grid; gap: 12px; grid-template-columns: 36px 1fr; padding: 22px; }
-.interview-item > span { color: var(--forest); font-size: 10px; font-weight: 850; }
-.interview-item > b { font-size: 14px; line-height: 1.65; word-break: keep-all; }
-.interview-item textarea { background: var(--white); grid-column: 2; }
 .export-panel { background: var(--deep); color: var(--white); display: grid; gap: 6vw; grid-template-columns: 1fr auto; margin: 18px auto 0; max-width: 1240px; padding: clamp(30px, 4vw, 54px); }
 .export-panel h3 { font-size: clamp(24px, 3vw, 38px); letter-spacing: -.04em; margin: 0; }
 .export-panel p:last-child { color: rgba(255,255,255,.62); line-height: 1.7; max-width: 680px; }
@@ -332,8 +327,6 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
   .score-picker button { height: 40px; width: 40px; }
   .overall-item { grid-template-columns: 28px 1fr; }
   .overall-item .score-picker, .overall-item .field { grid-column: 1 / -1; }
-  .interview-item { grid-template-columns: 1fr; }
-  .interview-item textarea { grid-column: 1; }
   .export-actions { min-width: 0; }
 }
 
@@ -616,14 +609,14 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 }
 .form-section legend span, .legend-like > span { background: var(--blue); border: 0; border-radius: 8px; color: #fff; }
 .field > span, .field-label { color: #59647f; }
-.field input, .field select, .field textarea, .interview-item textarea {
+.field input, .field select, .field textarea {
   background: #f7f8fc;
   border-color: #dfe3ee;
   border-radius: 9px;
   min-height: 44px;
 }
-.field input:hover, .field select:hover, .field textarea:hover, .interview-item textarea:hover { border-color: #aebcf0; }
-.field input:focus, .field select:focus, .field textarea:focus, .interview-item textarea:focus { background: #fff; border-color: var(--blue); outline: 3px solid rgba(22,70,255,.12); }
+.field input:hover, .field select:hover, .field textarea:hover { border-color: #aebcf0; }
+.field input:focus, .field select:focus, .field textarea:focus { background: #fff; border-color: var(--blue); outline: 3px solid rgba(22,70,255,.12); }
 .choice-chip span { background: #fff; border-color: #dfe3ef; border-radius: 8px; color: #59647e; }
 .choice-chip input:checked + span { background: var(--blue); border-color: var(--blue); color: #fff; }
 .choice-chip input:focus-visible + span { outline-color: #9fb2ff; }
@@ -642,8 +635,6 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .overall-list { border-top-color: #e1e5ef; }
 .overall-item { border-bottom-color: #e1e5ef; }
 .overall-number { color: var(--blue); }
-.interview-item { background: #f4f6fb; border: 1px solid #e2e6f0; border-radius: 12px; }
-.interview-item > span { color: var(--blue); }
 .export-panel { background: linear-gradient(135deg, #030637, #0a1e83); border-radius: 20px; }
 .export-panel p strong { color: var(--lime); }
 .export-actions .button:first-child { background: #fff; color: var(--deep); }

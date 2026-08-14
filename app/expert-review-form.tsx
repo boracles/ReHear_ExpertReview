@@ -51,7 +51,6 @@ type ReviewData = {
   };
   ruleEvaluations: RuleEvaluation[];
   overall: Record<string, { score: Score; comment: string }>;
-  interview: string[];
 };
 
 const criteria: Criterion[] = [
@@ -71,19 +70,6 @@ const overallItems = [
   "긍정·중립·비판적 반응의 범위가 발표 훈련 목적에 적절하다.",
   "오탐·불확실성·상충 신호가 발생했을 때의 예외 규칙이 충분하다.",
   "프레임워크를 실제 VR 발표 훈련 시스템에 구현하고 설명할 수 있다.",
-];
-
-const interviewQuestions = [
-  "가장 설득력 있었던 수행정보–백채널 규칙과 그 이유는 무엇입니까?",
-  "의도한 평가 의미가 다른 의미로 오해될 가능성이 큰 규칙은 무엇이며, 어떤 방식으로 바꾸어야 합니까?",
-  "반응 시점·지연·쿨다운 중 실제 사회적 반응성을 가장 크게 좌우하는 요소는 무엇입니까?",
-  "반응 강도·빈도·반응 에이전트 수가 과도하거나 부족하다고 판단한 사례는 무엇입니까?",
-  "내용 수행 정보와 음성·머리 방향 등의 전달 수행 정보가 상충할 때 어떤 우선순위 또는 결합 규칙이 적절합니까?",
-  "오탐 또는 불확실성이 높을 때 반응을 생략하거나 중립 반응으로 전환해야 하는 기준은 무엇입니까?",
-  "현재 프레임워크에서 누락되거나 중복된 수행 정보·평가 차원·백채널 유형은 무엇입니까?",
-  "초보자와 숙련자, 발표 주제 또는 발표 단계에 따라 달라져야 할 규칙은 무엇입니까?",
-  "사용자 실험 전에 반드시 수정해야 할 중대 문제와, 수정 우선순위는 무엇입니까?",
-  "그 밖에 프레임워크 V2와 사용자 실험 설계에 반영해야 할 의견이 있습니까?",
 ];
 
 function newRule(index: number): RuleEvaluation {
@@ -117,7 +103,6 @@ function initialData(participantId: string): ReviewData {
     session: { reviewDate: "", interviewMode: "", recording: "", frameworkVersion: "", ruleSetVersion: "" },
     ruleEvaluations: [newRule(0)],
     overall: Object.fromEntries(overallItems.map((_, index) => [`item${index + 1}`, { score: null, comment: "" }])),
-    interview: interviewQuestions.map(() => ""),
   };
 }
 
@@ -234,7 +219,6 @@ export function ExpertReviewForm({ participantId }: { participantId: string }) {
       flattened[`overall_${index + 1}_score`] = item.score;
       flattened[`overall_${index + 1}_comment`] = item.comment;
     });
-    data.interview.forEach((answer, index) => { flattened[`interview_${index + 1}`] = answer; });
     const headers = Object.keys(flattened);
     const csv = `\uFEFF${headers.map(csvEscape).join(",")}\r\n${headers.map((key) => csvEscape(flattened[key])).join(",")}\r\n`;
     downloadText(`ReHear_${participantId}_review.csv`, csv, "text/csv;charset=utf-8");
@@ -351,19 +335,6 @@ export function ExpertReviewForm({ participantId }: { participantId: string }) {
               <label className="field full"><span>의견</span><textarea rows={2} value={value.comment} onChange={(e) => setData((current) => ({ ...current, overall: { ...current.overall, [key]: { ...value, comment: e.target.value } } }))} /></label>
             </div>;
           })}
-        </div>
-      </fieldset>
-
-      <fieldset className="form-section">
-        <legend><span>05</span> 후속 반구조화 면담 메모</legend>
-        <div className="interview-list">
-          {interviewQuestions.map((question, index) => (
-            <label className="interview-item" key={question}>
-              <span>{String(index + 1).padStart(2, "0")}</span>
-              <b>{question}</b>
-              <textarea rows={4} value={data.interview[index]} onChange={(e) => setData((current) => ({ ...current, interview: current.interview.map((answer, answerIndex) => answerIndex === index ? e.target.value : answer) }))} />
-            </label>
-          ))}
         </div>
       </fieldset>
 
