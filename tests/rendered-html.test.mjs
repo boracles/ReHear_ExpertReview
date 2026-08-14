@@ -29,6 +29,9 @@ test("includes mobile and tablet responsive layouts", async () => {
   assert.match(css, /min-height: 100svh/);
   assert.match(css, /font-size: 16px/);
   assert.match(css, /\.hero-facts \{[\s\S]*?margin-top: 34px;[\s\S]*?position: relative;/);
+  assert.match(css, /\.hero-copy \{ max-width: 1440px; \}/);
+  assert.match(css, /\.hero-lead-detail \{ white-space: nowrap; \}/);
+  assert.match(css, /@media \(max-width: 1100px\)[\s\S]*?\.hero-lead-detail \{ white-space: normal; \}/);
   assert.match(css, /\.section-nav \{[\s\S]*?max-width: 1440px;[\s\S]*?width: calc\(100% - 40px\);/);
   assert.match(css, /\.section-nav \{ gap: 24px; padding: 0 18px; top: 74px; width: calc\(100% - 16px\); \}/);
 });
@@ -126,7 +129,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
   assert.match(invitation, /이 페이지는 개별 초대 링크를 통해서만 열립니다\.\s*<br \/>/);
   assert.match(invitation, /전달받은 링크를 다시 열거나,\s*<br \/>\s*연구책임자에게 새 링크를 요청해주세요\./);
-  assert.match(invitation, /SEOUL NATIONAL UNIVERSITY · HCID LAB/);
+  assert.match(invitation, /SEOUL NATIONAL UNIVERSITY HCID LAB \+ TEAM AUDI/);
   assert.match(invitation, /mailto:\$\{email\}/);
   assert.match(invitation, /boracles@snu\.ac\.kr/);
   assert.match(invitation, /<strong>\{phoneDisplay\}<\/strong>/);
@@ -135,7 +138,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /Why your perspective matters/);
   assert.match(invitation, /특히 다음 내용을 중심으로 살펴봐주세요/);
   assert.doesNotMatch(invitation, /Who we are inviting/);
-  assert.match(invitation, /전문가 검토를/);
+  assert.match(invitation, /<em>전문가 검토<\/em>를/);
+  assert.match(invitation, /<span>전문가 검토에 참여해주셔서 감사합니다\.<\/span>/);
+  assert.match(invitation, /className="hero-lead-detail"/);
   assert.match(invitation, /검토 절차를 안내드립니다/);
   assert.doesNotMatch(invitation, /전문가를 모십니다/);
   assert.match(profiles, /발표와 커뮤니케이션 관점의 검토/);

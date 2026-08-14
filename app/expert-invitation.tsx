@@ -274,17 +274,17 @@ export function ExpertInvitation() {
         <div className="orbit orbit-one" aria-hidden="true"><i /></div>
         <div className="orbit orbit-two" aria-hidden="true"><i /></div>
         <div className="hero-copy">
-          <p className="eyebrow light">SEOUL NATIONAL UNIVERSITY · HCID LAB</p>
+          <p className="eyebrow light">SEOUL NATIONAL UNIVERSITY HCID LAB + TEAM AUDI</p>
           <h1>
             AI 청중의 반응 설계,
             <br />
-            <em>전문가 검토를</em>
+            <em>전문가 검토</em>를
             <br />
             시작합니다.
           </h1>
           <p className="hero-lead">
-            전문가 검토에 참여해주셔서 감사합니다. VR 발표 훈련 환경에서 발표 수행에 따라
-            반응하는 AI 청중 에이전트의 백채널 디자인 프레임워크와 검토 절차를 안내드립니다.
+            <span>전문가 검토에 참여해주셔서 감사합니다.</span>
+            <span className="hero-lead-detail">VR 발표 훈련 환경에서 발표 수행에 따라 반응하는 AI 청중 에이전트의 백채널 디자인 프레임워크와 검토 절차를 안내드립니다.</span>
           </p>
           <div className="hero-actions">
             <button className="button primary" type="button" onClick={() => scrollToSection("overview")}>연구 내용 확인하기 <span>↓</span></button>
