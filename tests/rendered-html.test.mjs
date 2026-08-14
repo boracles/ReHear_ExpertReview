@@ -158,18 +158,30 @@ test("backs up review drafts to Firestore without exposing collection listing", 
   assert.match(rules, /allow delete: if false/);
 });
 
-test("prefills review metadata and removes the unused rule-set version", async () => {
-  const form = await readFile(activeForm, "utf8");
+test("records review versions automatically without exposing version inputs", async () => {
+  const [form, workflow, css, invitation] = await Promise.all([
+    readFile(activeForm, "utf8"),
+    readFile(new URL("../.github/workflows/deploy-pages.yml", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+    readFile(new URL("../app/expert-invitation.tsx", import.meta.url), "utf8"),
+  ]);
 
   assert.match(form, /const DEFAULT_FRAMEWORK_VERSION = "V1"/);
+  assert.match(form, /const DEFAULT_VIDEO_SAMPLE_VERSION = "V1"/);
+  assert.match(form, /VITE_SYSTEM_BUILD_VERSION/);
   assert.match(form, /function todayInKorea\(\)/);
   assert.match(form, /reviewDate: todayInKorea\(\)/);
   assert.match(form, /frameworkVersion: DEFAULT_FRAMEWORK_VERSION/);
-  assert.match(form, /animationSetVersion/);
-  assert.match(form, /애니메이션 세트 버전/);
-  assert.match(form, /aria-readonly="true"/);
-  assert.match(form, /className="locked-input"/);
-  assert.match(form, /tabIndex=\{-1\}/);
+  assert.match(form, /systemBuildVersion: SYSTEM_BUILD_VERSION/);
+  assert.match(form, /videoSampleVersion: DEFAULT_VIDEO_SAMPLE_VERSION/);
+  assert.doesNotMatch(form, /animationSetVersion/);
+  assert.doesNotMatch(form, /애니메이션 세트 버전/);
+  assert.doesNotMatch(form, /<span>프레임워크 버전<\/span>/);
+  assert.match(workflow, /VITE_SYSTEM_BUILD_VERSION: \$\{\{ github\.sha \}\}/);
+  assert.match(css, /\.logo-lockup:not\(\.inverse\)/);
+  assert.match(css, /-webkit-mask-size: contain/);
+  assert.match(css, /\.logo-lockup:not\(\.inverse\) \.logo-image \{ opacity: 0; \}/);
+  assert.match(invitation, /WebkitMaskImage: 'url\("\.\/rehear-logo-white\.svg"\)'/);
   assert.doesNotMatch(form, /ruleSetVersion/);
   assert.doesNotMatch(form, /rule_set_version/);
 });

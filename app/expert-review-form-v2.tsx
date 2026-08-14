@@ -33,7 +33,8 @@ type ReviewData = {
   session: {
     reviewDate: string;
     frameworkVersion: string;
-    animationSetVersion: string;
+    systemBuildVersion: string;
+    videoSampleVersion: string;
     interviewMode: string;
     preferredLocation: string;
     interviewAvailability: string;
@@ -45,6 +46,8 @@ type ReviewData = {
 };
 
 const DEFAULT_FRAMEWORK_VERSION = "V1";
+const DEFAULT_VIDEO_SAMPLE_VERSION = "V1";
+const SYSTEM_BUILD_VERSION = import.meta.env.VITE_SYSTEM_BUILD_VERSION || "local-dev";
 
 const modelCriteria = [
   { key: "modelStructure", label: "모델 구성 적절성", statement: "E·V·C 세 차원의 결합이 AI 청중의 주의·평가·이해 상태를 설명하는 데 적절하다." },
@@ -137,7 +140,8 @@ function initialData(participantId: string): ReviewData {
     schemaVersion: "1.1", participantId, updatedAt: new Date().toISOString(), submissionStatus: "draft", submittedAt: null,
     expert: { expertise: [], otherExpertise: "", highestDegree: "", otherDegree: "", careerYears: "", affiliationType: "", otherAffiliation: "", conflict: "없음", conflictDetails: "" },
     session: {
-      reviewDate: todayInKorea(), frameworkVersion: DEFAULT_FRAMEWORK_VERSION, animationSetVersion: "",
+      reviewDate: todayInKorea(), frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
+      systemBuildVersion: SYSTEM_BUILD_VERSION, videoSampleVersion: DEFAULT_VIDEO_SAMPLE_VERSION,
       interviewMode: "", preferredLocation: "", interviewAvailability: "", recording: "",
       consent: emptyConsentRecord(todayInKorea()),
     },
@@ -156,8 +160,9 @@ function normalizeReviewData(value: unknown, participantId: string): ReviewData 
     expert: { ...defaults.expert, ...parsed.expert },
     session: {
       reviewDate: parsed.session?.reviewDate || defaults.session.reviewDate,
-      frameworkVersion: parsed.session?.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
-      animationSetVersion: parsed.session?.animationSetVersion ?? "",
+      frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
+      systemBuildVersion: SYSTEM_BUILD_VERSION,
+      videoSampleVersion: DEFAULT_VIDEO_SAMPLE_VERSION,
       interviewMode,
       preferredLocation: parsed.session?.preferredLocation ?? "",
       interviewAvailability: parsed.session?.interviewAvailability ?? "",
@@ -280,11 +285,9 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
     </div></section>
 
     <section className="form-section compact-section" aria-labelledby="review-material-info-title">
-      <div className="legend-like"><span>02</span><div><b id="review-material-info-title">검토 자료 정보</b><small>검토일과 제공된 자료의 버전을 확인합니다.</small></div></div>
-      <div className="form-grid three review-metadata-grid">
+      <div className="legend-like"><span>02</span><div><b id="review-material-info-title">검토 자료 정보</b><small>작성 날짜는 자동으로 입력되며 필요한 경우 변경할 수 있습니다.</small></div></div>
+      <div className="form-grid review-date-grid">
         <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(event) => updateSession("reviewDate", event.target.value)} /></label>
-        <label className="field"><span>프레임워크 버전</span><input className="locked-input" value={data.session.frameworkVersion} readOnly aria-readonly="true" tabIndex={-1} /></label>
-        <label className="field"><span>애니메이션 세트 버전</span><input value={data.session.animationSetVersion} onChange={(event) => updateSession("animationSetVersion", event.target.value)} placeholder="예: V1" /></label>
       </div>
     </section>
 

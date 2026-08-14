@@ -30,6 +30,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
       - name: Build static site
+        env:
+          VITE_SYSTEM_BUILD_VERSION: ${{ github.sha }}
         run: pnpm run build
       - name: Verify Pages asset layout
         run: test -d dist/client/_next/static

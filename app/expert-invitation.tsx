@@ -15,7 +15,11 @@ const email = "boracles@snu.ac.kr";
 
 function RehearLogo({ inverse = false }: { inverse?: boolean }) {
   return (
-    <span className={`logo-lockup${inverse ? " inverse" : ""}`} aria-label="Re:hear">
+    <span
+      className={`logo-lockup${inverse ? " inverse" : ""}`}
+      aria-label="Re:hear"
+      style={inverse ? undefined : { WebkitMaskImage: 'url("./rehear-logo-white.svg")', maskImage: 'url("./rehear-logo-white.svg")' }}
+    >
       <img className="logo-image" src="./rehear-logo-white.svg" alt="" aria-hidden="true" />
     </span>
   );
