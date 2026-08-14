@@ -203,7 +203,7 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   assert.match(form, /<span>04<\/span><div><b id="materials-title"/);
   assert.match(form, /<span>05<\/span><div><b id="model-title"/);
   assert.match(form, /<span>06<\/span><div><b id="model-evaluation-title"/);
-  assert.match(form, /<span>07<\/span><div><b id="framework-evaluation-title">프레임워크 전체 평가<\/b>/);
+  assert.match(form, /<span>07<\/span><div><b id="framework-evaluation-title">영상 샘플 및 프레임워크 전체 평가<\/b>/);
   assert.doesNotMatch(form, /<legend><span>07<\/span>/);
   assert.doesNotMatch(form, /<span>R1<\/span>|<span>R2<\/span>/);
   assert.match(form, /className=\{`unable-check \$\{answer\.unable \? "is-selected" : ""\}`\}/);
@@ -253,13 +253,22 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
 
   assert.equal((form.match(/key: "(?:modelStructure|dimensionClarity|modelCoverage|inputConnection|stateUpdate|backchannelExpression|misunderstandingRisk)"/g) ?? []).length, 7);
   assert.equal((form.match(/key: "(?:inputCoverage|stateExpressionConnection|responsePrinciples|trainingRange|exceptionPrinciples|implementationExplainability)"/g) ?? []).length, 6);
+  assert.equal((form.match(/key: "(?:contextFit|flowChange)"/g) ?? []).length, 2);
   assert.doesNotMatch(form, /stageStructure|agentCharacteristics|meaningInterpretation|meaningScopeRisk/);
   assert.match(form, /판단 어려움\/전문영역 외/);
-  assert.match(form, /실제 또는 목업 애니메이션 클립을 확인하면서 평가해주세요/);
+  assert.match(form, /영상 1과 영상 2를 순서대로 시청·평가한 뒤/);
   assert.match(form, /<video key=\{video\} controls playsInline preload="metadata"/);
   assert.match(form, /sample-\$\{video\.toLowerCase\(\)\}\.mp4/);
   assert.match(form, /framework-video-list/);
   assert.match(form, /framework-video-card/);
+  assert.match(form, /video-review-stepper/);
+  assert.match(form, /영상 1 시청·평가/);
+  assert.match(form, /영상 2 시청·평가/);
+  assert.match(form, /프레임워크 전체 평가/);
+  assert.match(form, /videoEvaluations: \{ A: newVideoReview\(\), B: newVideoReview\(\) \}/);
+  assert.match(form, /video-inline-evaluation/);
+  assert.match(form, /video-criterion/);
+  assert.match(form, /영상 2로 이동/);
   assert.match(form, /framework-question-section/);
   assert.doesNotMatch(form, /activeVideo|video-tabs/);
   assert.doesNotMatch(form, /새로움|규범·자기 일치성|단계별 평가 관점/);
@@ -275,6 +284,9 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.match(css, /\.framework-review-layout \{ display: grid; gap: 38px; grid-template-columns: 1fr/);
   assert.match(css, /\.framework-video-list \{ display: grid; gap: 24px; grid-template-columns: 1fr/);
   assert.match(css, /\.framework-player video, \.framework-player \.video-empty \{ aspect-ratio: 16 \/ 9/);
+  assert.match(css, /\.video-review-stepper \{ display: grid/);
+  assert.match(css, /\.video-inline-evaluation \{ background: #fff/);
+  assert.match(css, /\.video-criterion \{ align-items: center/);
   assert.match(css, /\.theory-references/);
 });
 
