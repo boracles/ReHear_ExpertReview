@@ -102,7 +102,6 @@ function EmailVerificationGate({ participantId, onVerified }: { participantId: s
         <p className="eyebrow">REHEAR · INVITED EXPERT</p>
         <span className="email-gate-id">PARTICIPANT · {participantId}</span>
         <h1 id="email-gate-title">초대받은 이메일을<br />확인해주세요.</h1>
-        <p>초대받으신 이메일 주소를 입력해주세요.</p>
         <form className="email-gate-form" onSubmit={verifyEmail} noValidate>
           <label htmlFor="participant-email">이메일 주소</label>
           <input

@@ -275,6 +275,7 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .gate-card .text-link { border-bottom: 1px solid var(--ink); display: inline-block; font-size: 13px; font-weight: 800; margin-top: 22px; padding-bottom: 4px; }
 .gate-card small { border-top: 1px solid var(--line); color: var(--muted); display: block; font-size: 10px; line-height: 1.6; margin-top: 38px; padding-top: 18px; }
 .email-gate-card { width: min(100%, 590px); }
+.email-gate-card h1 { margin-bottom: 0; }
 .email-gate-id { background: rgba(12, 24, 81, .07); color: var(--forest); display: inline-flex; font-size: 10px; font-weight: 850; letter-spacing: .09em; margin: 0 0 24px; padding: 9px 12px; }
 .email-gate-form { display: grid; gap: 10px; margin-top: 30px; }
 .email-gate-form label { color: var(--ink); font-size: 12px; font-weight: 800; }
