@@ -306,11 +306,7 @@ export function ExpertInvitation() {
           </article>
           <article>
             <span>02</span>
-            <div><strong>20–30분</strong><small>1:1 면담</small></div>
-          </article>
-          <article>
-            <span>03</span>
-            <div><strong>대면 또는 온라인</strong><small>개별 일정 협의</small></div>
+            <div><strong>20–30분</strong><small>1:1 면담 · 대면 또는 온라인 · 개별 일정 협의</small></div>
           </article>
         </div>
       </section>

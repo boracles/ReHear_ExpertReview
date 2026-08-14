@@ -76,7 +76,7 @@ button { font: inherit; }
 .button:focus-visible, button:focus-visible, a:focus-visible, summary:focus-visible { outline: 3px solid var(--lime); outline-offset: 4px; }
 .button.primary { background: var(--lime); color: var(--ink); }
 .button.ghost { background: transparent; border: 1px solid rgba(255,255,255,.25); color: var(--white); }
-.hero-facts { border-top: 1px solid rgba(255,255,255,.17); bottom: 0; display: grid; grid-template-columns: repeat(3, 1fr); left: 6vw; max-width: 850px; position: absolute; right: 6vw; z-index: 3; }
+.hero-facts { border-top: 1px solid rgba(255,255,255,.17); bottom: 0; display: grid; grid-template-columns: repeat(2, 1fr); left: 6vw; max-width: 850px; position: absolute; right: 6vw; z-index: 3; }
 .hero-facts article { align-items: center; border-right: 1px solid rgba(255,255,255,.17); display: flex; gap: 18px; min-height: 104px; padding: 20px 28px 20px 0; }
 .hero-facts article + article { padding-left: 28px; }
 .hero-facts article:last-child { border-right: 0; }
