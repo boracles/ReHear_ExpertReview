@@ -58,11 +58,9 @@ function AccessGate() {
           연구책임자에게 새 링크를 요청해주세요.
         </p>
         <div className="gate-contact-links" aria-label="연구책임자 문의">
-          <a className="text-link" href={`tel:${phoneHref}`}>
-            전화 · {phoneDisplay}
-          </a>
+          <span className="contact-detail">전화 · {phoneDisplay}</span>
           <a className="text-link" href={`mailto:${email}`}>
-            이메일 · {email}
+            이메일로 문의하기 · {email}
           </a>
         </div>
         <small>링크에는 개인 성명 대신 익명 참여자 ID가 연결됩니다.</small>
@@ -102,8 +100,8 @@ function ExpertReviewPage({ participantId }: { participantId: string }) {
           <span>예상 소요시간 · 약 30–45분</span>
           <span>입력 내용 · 현재 기기에만 임시 저장</span>
           <span>완료 후 · JSON과 CSV 파일 전달</span>
-          <a href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
-          <a href={`mailto:${email}`}>{email}</a>
+          <p className="contact-detail">연구책임자 윤보라 · {phoneDisplay}</p>
+          <a href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
         </aside>
       </section>
 
@@ -398,8 +396,8 @@ export function ExpertInvitation() {
               </button>
             </div>
             <a className="button message" href={messageHref}>문자로 참여 의사 전달 <span>↗</span></a>
-            <a className="phone-link" href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
-            <a className="phone-link" href={`mailto:${email}`}>이메일 · {email}</a>
+            <p className="phone-link">연구책임자 윤보라 · {phoneDisplay}</p>
+            <a className="phone-link" href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
             <p className="consent-next-step">참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달 순서로 진행됩니다.</p>
           </div>
         </div>
