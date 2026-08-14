@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { ExpertInvitation } from "./expert-invitation";
+import { AppRouter } from "./app-router";
 
 export const metadata: Metadata = {
   title: "AI 청중 에이전트 백채널 디자인 프레임워크 | 전문가 검토",
@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Home() {
-  return <ExpertInvitation />;
+  return <AppRouter />;
 }

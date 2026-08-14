@@ -2,6 +2,11 @@ rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isResearcher() {
+      return request.auth != null
+        && request.auth.token.email == 'boracles@snu.ac.kr';
+    }
+
     function validReviewToken(reviewToken) {
       return reviewToken.matches('^[A-Za-z0-9_-]{32,128}$');
     }
@@ -38,13 +43,52 @@ service cloud.firestore {
     match /expertReviewResponses/{reviewToken} {
       // Possession of the unguessable review link grants access to exactly one
       // response. Collection listing and deletion are always blocked.
-      allow get: if validReviewToken(reviewToken);
-      allow list: if false;
+      allow get: if validReviewToken(reviewToken) || isResearcher();
+      allow list: if isResearcher();
       allow create: if validReviewToken(reviewToken)
         && validPayload(request.resource.data);
       allow update: if validReviewToken(reviewToken)
         && validPayload(request.resource.data)
         && request.resource.data.participantId == resource.data.participantId;
+      allow delete: if false;
+    }
+
+    function validStudyToken(studyToken) {
+      return studyToken.matches('^[A-Za-z0-9_-]{32,128}$');
+    }
+
+    function validStudyPayload(data) {
+      return data.keys().hasOnly([
+        'schemaVersion', 'surveyVersion', 'participantId', 'conditionOrder',
+        'frameworkVersion', 'systemBuildVersion', 'videoSampleVersion',
+        'updatedAt', 'submissionStatus', 'conditions', 'serverUpdatedAt'
+      ])
+      && data.schemaVersion == '1.0'
+      && data.participantId.matches('^USR-(TEST-)?[0-9]{2,3}$')
+      && data.conditionOrder in ['AB', 'BA']
+      && data.updatedAt is string
+      && data.conditions is list
+      && data.conditions.size() == 2
+      && data.submissionStatus in ['draft', 'condition1_submitted', 'submitted'];
+    }
+
+    match /userStudyResponses/{studyToken} {
+      allow get: if validStudyToken(studyToken) || isResearcher();
+      allow list: if isResearcher();
+      allow create: if validStudyToken(studyToken) && validStudyPayload(request.resource.data);
+      allow update: if validStudyToken(studyToken)
+        && validStudyPayload(request.resource.data)
+        && request.resource.data.participantId == resource.data.participantId;
+      allow delete: if false;
+    }
+
+    match /qualitativeCoding/{excerptId} {
+      allow read, create, update: if isResearcher();
+      allow delete: if false;
+    }
+
+    match /researchSynthesis/{documentId} {
+      allow read, create, update: if isResearcher();
       allow delete: if false;
     }
   }

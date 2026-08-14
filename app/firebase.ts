@@ -1,5 +1,6 @@
 import { getApp, getApps, initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
+import { getAuth, GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyAEFLs8q8jqmjo4P-hTHDNDD5UCNz8Hmdw",
@@ -14,3 +15,6 @@ const firebaseConfig = {
 const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
 
 export const firestore = getFirestore(firebaseApp);
+export const firebaseAuth = getAuth(firebaseApp);
+export const googleAuthProvider = new GoogleAuthProvider();
+googleAuthProvider.setCustomParameters({ hd: "snu.ac.kr", prompt: "select_account" });
