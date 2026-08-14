@@ -416,19 +416,6 @@ export function ExpertInvitation() {
         </div>
       </section>
 
-      <section className="section autonomy">
-        <div className="autonomy-mark" aria-hidden="true">✓</div>
-        <div>
-          <p className="eyebrow">YOUR CHOICE MATTERS</p>
-          <h2>참여 여부는 전적으로 자율적입니다.</h2>
-          <p>
-            검토 의뢰를 거절하거나 진행 중 참여를 중단해도 어떠한 불이익도 없습니다.
-            검토 의사가 있는 경우 연구 설명문과 동의서를 먼저 제공하며, 동의 절차 후
-            개별평가와 면담 일정을 협의합니다.
-          </p>
-        </div>
-      </section>
-
       <section className="section contact review-launch" id="review-start">
         <div className="contact-panel">
           <div className="contact-copy">
