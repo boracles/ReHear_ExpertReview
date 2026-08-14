@@ -156,7 +156,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   const [savedAt, setSavedAt] = useState("");
   const [syncStatus, setSyncStatus] = useState<"loading" | "ready" | "saving" | "saved" | "error">("loading");
   const [videoAvailable, setVideoAvailable] = useState<Record<VideoKey, boolean | null>>({ A: null, B: null });
-  const [activeVideo, setActiveVideo] = useState<VideoKey>("A");
 
   useEffect(() => {
     let active = true;
@@ -260,14 +259,14 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
     <section className="form-section framework-evaluation" aria-labelledby="framework-evaluation-title">
       <div className="legend-like"><span>07</span><div><b id="framework-evaluation-title">프레임워크 전체 평가</b><small>실제 또는 목업 애니메이션 클립을 확인하면서 평가해주세요. 응답 기준은 6절의 4점 척도와 동일합니다.</small></div></div>
       <div className="framework-review-layout">
-        <aside className="framework-video-column">
-          <div className="video-player-sticky">
-            <div className="video-tabs" role="group" aria-label="영상 샘플 선택">{(["A", "B"] as VideoKey[]).map((video) => <button key={video} type="button" className={activeVideo === video ? "active" : ""} aria-pressed={activeVideo === video} onClick={() => setActiveVideo(video)}>영상 {video}</button>)}</div>
-            {videoAvailable[activeVideo] !== false ? <video key={activeVideo} controls playsInline preload="metadata" aria-label={`영상 샘플 ${activeVideo}`} onCanPlay={() => setVideoAvailable((current) => ({ ...current, [activeVideo]: true }))} onError={() => setVideoAvailable((current) => ({ ...current, [activeVideo]: false }))}><source src={`./videos/sample-${activeVideo.toLowerCase()}.mp4`} type="video/mp4" />이 브라우저에서는 영상을 재생할 수 없습니다.</video> : <div className="video-empty"><strong>영상 샘플 {activeVideo} 연결 대기</strong><p>영상 파일이 연결되면 이 자리에서 바로 재생할 수 있습니다.</p></div>}
-            <div className="video-player-note"><span>대표 발표 맥락</span><span>AI 청중 반응</span><span>시점·강도·빈도·배분 확인</span></div>
-          </div>
-        </aside>
-        <div className="overall-list">{frameworkItems.map((item, index) => { const answer = data.overall.framework[item.key]; return <article className="overall-item" key={item.key}><span className="overall-number">{String(index + 1).padStart(2, "0")}</span><div className="overall-copy"><b>{item.label}</b><p>{item.statement}</p></div><ScorePicker label={`${item.label} 점수`} value={answer.score} disabled={answer.unable} onChange={(score) => updateFramework(item.key, { score, unable: false })} /><label className={`unable-check ${answer.unable ? "is-selected" : ""}`}><input type="checkbox" checked={answer.unable} onChange={(event) => updateFramework(item.key, { unable: event.target.checked, score: event.target.checked ? null : answer.score })} /> 판단 어려움/전문영역 외</label><label className="field full"><span>의견</span><textarea rows={2} value={answer.comment} onChange={(event) => updateFramework(item.key, { comment: event.target.value })} /></label></article>; })}</div>
+        <section className="framework-video-section" aria-labelledby="video-samples-title">
+          <div className="framework-video-heading"><p className="reference-label">VIDEO SAMPLES</p><h3 id="video-samples-title">영상 샘플 확인</h3><p>각 영상을 재생하여 발표 흐름에 따른 AI 청중의 반응을 확인해주세요.</p></div>
+          <div className="framework-video-list">{(["A", "B"] as VideoKey[]).map((video) => <article className="framework-video-card" key={video}><header><span>{video}</span><div><small>VIDEO SAMPLE</small><h4>영상 {video}</h4></div></header><div className="framework-player">{videoAvailable[video] !== false ? <video key={video} controls playsInline preload="metadata" aria-label={`영상 샘플 ${video}`} onCanPlay={() => setVideoAvailable((current) => ({ ...current, [video]: true }))} onError={() => setVideoAvailable((current) => ({ ...current, [video]: false }))}><source src={`./videos/sample-${video.toLowerCase()}.mp4`} type="video/mp4" />이 브라우저에서는 영상을 재생할 수 없습니다.</video> : <div className="video-empty"><span className="video-play-symbol" aria-hidden="true">▶</span><strong>영상 샘플 {video} 연결 대기</strong><p>영상 파일이 연결되면 재생·일시정지·구간 탐색·전체화면 기능을 사용할 수 있습니다.</p></div>}</div><div className="video-player-note"><span>대표 발표 맥락</span><span>AI 청중 반응</span><span>시점·강도·빈도·배분 확인</span></div></article>)}</div>
+        </section>
+        <section className="framework-question-section" aria-labelledby="framework-questions-title">
+          <div className="framework-question-heading"><p className="reference-label">OVERALL EVALUATION</p><h3 id="framework-questions-title">영상 확인 후 전체 평가</h3><p>위의 영상 A와 영상 B를 모두 확인한 뒤 문항에 응답해주세요.</p></div>
+          <div className="overall-list">{frameworkItems.map((item, index) => { const answer = data.overall.framework[item.key]; return <article className="overall-item" key={item.key}><span className="overall-number">{String(index + 1).padStart(2, "0")}</span><div className="overall-copy"><b>{item.label}</b><p>{item.statement}</p></div><ScorePicker label={`${item.label} 점수`} value={answer.score} disabled={answer.unable} onChange={(score) => updateFramework(item.key, { score, unable: false })} /><label className={`unable-check ${answer.unable ? "is-selected" : ""}`}><input type="checkbox" checked={answer.unable} onChange={(event) => updateFramework(item.key, { unable: event.target.checked, score: event.target.checked ? null : answer.score })} /> 판단 어려움/전문영역 외</label><label className="field full"><span>의견</span><textarea rows={2} value={answer.comment} onChange={(event) => updateFramework(item.key, { comment: event.target.value })} /></label></article>; })}</div>
+        </section>
       </div>
     </section>
     <div className="export-panel"><div><p className="eyebrow light">FINAL SUBMISSION</p><h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3><p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 제출 후에도 같은 링크에서 내용을 수정해 다시 제출할 수 있습니다.</p></div><div className="export-actions"><button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button></div></div>

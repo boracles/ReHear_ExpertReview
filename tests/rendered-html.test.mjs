@@ -255,10 +255,12 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.doesNotMatch(form, /stageStructure|agentCharacteristics|meaningInterpretation|meaningScopeRisk/);
   assert.match(form, /판단 어려움\/전문영역 외/);
   assert.match(form, /실제 또는 목업 애니메이션 클립을 확인하면서 평가해주세요/);
-  assert.match(form, /<video key=\{activeVideo\} controls playsInline preload="metadata"/);
-  assert.match(form, /sample-\$\{activeVideo\.toLowerCase\(\)\}\.mp4/);
-  assert.match(form, /video-player-sticky/);
-  assert.match(form, /video-tabs/);
+  assert.match(form, /<video key=\{video\} controls playsInline preload="metadata"/);
+  assert.match(form, /sample-\$\{video\.toLowerCase\(\)\}\.mp4/);
+  assert.match(form, /framework-video-list/);
+  assert.match(form, /framework-video-card/);
+  assert.match(form, /framework-question-section/);
+  assert.doesNotMatch(form, /activeVideo|video-tabs/);
   assert.doesNotMatch(form, /새로움|규범·자기 일치성|단계별 평가 관점/);
   assert.match(form, /Scherer \(2001\)/);
   assert.match(form, /Scherer \(2009\)/);
@@ -269,7 +271,8 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.match(form, /retiredModelAnswers/);
   assert.match(form, /retiredFrameworkAnswers/);
   assert.match(css, /\.framework-review-layout/);
-  assert.match(css, /\.video-player-sticky \{ position: sticky/);
-  assert.match(css, /\.video-tabs/);
+  assert.match(css, /\.framework-review-layout \{ display: grid; gap: 38px; grid-template-columns: 1fr/);
+  assert.match(css, /\.framework-video-list \{ display: grid; gap: 24px; grid-template-columns: 1fr/);
+  assert.match(css, /\.framework-player video, \.framework-player \.video-empty \{ aspect-ratio: 16 \/ 9/);
   assert.match(css, /\.theory-references/);
 });
