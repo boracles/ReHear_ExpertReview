@@ -167,6 +167,8 @@ test("prefills review metadata and removes the unused rule-set version", async (
   assert.match(form, /animationSetVersion/);
   assert.match(form, /애니메이션 세트 버전/);
   assert.match(form, /aria-readonly="true"/);
+  assert.match(form, /className="locked-input"/);
+  assert.match(form, /tabIndex=\{-1\}/);
   assert.doesNotMatch(form, /ruleSetVersion/);
   assert.doesNotMatch(form, /rule_set_version/);
 });
@@ -194,7 +196,16 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   assert.equal((form.match(/data-score="[1-4]"/g) ?? []).length, 4);
   assert.match(css, /\.legend-like b \{ display: block; line-height: 28px; \}/);
   assert.match(css, /\.legend-like > span \{ margin-top: 0; \}/);
+  assert.match(form, /<span>01<\/span><div><b id="expert-info-title"/);
+  assert.match(form, /<span>02<\/span><div><b id="review-material-info-title"/);
+  assert.match(form, /<span>03<\/span><div><b id="interview-schedule-title"/);
+  assert.match(form, /<span>04<\/span><div><b id="materials-title"/);
+  assert.match(form, /<span>05<\/span><div><b id="model-title"/);
+  assert.match(form, /<span>06<\/span><div><b id="model-evaluation-title"/);
+  assert.match(form, /<legend><span>07<\/span> 프레임워크 전체 평가<\/legend>/);
+  assert.doesNotMatch(form, /<span>R1<\/span>|<span>R2<\/span>/);
   assert.equal((css.match(/\.review-scale-note span\[data-score="[1-4]"\]/g) ?? []).length, 4);
+  assert.match(css, /\.review-scale-note em \{ border-top: 1px solid #e0e5f1; flex: 0 0 100%/);
   assert.equal((css.match(/\.score-picker button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
 });
 

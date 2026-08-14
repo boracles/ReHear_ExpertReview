@@ -674,10 +674,11 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .review-scale-note b { background: var(--blue); border-radius: 7px; color: #fff; padding: 7px 10px; }
 .review-scale-note span { background: #f3f5fb; border-radius: 6px; color: #5e6883; padding: 7px 9px; }
 .review-scale-note em { color: #7b6500; }
-.review-scale-note span[data-score="1"] { background: #fff0ef; color: #b42318; }
-.review-scale-note span[data-score="2"] { background: #fff6e5; color: #a15c00; }
-.review-scale-note span[data-score="3"] { background: #eef2ff; color: #1646ff; }
-.review-scale-note span[data-score="4"] { background: #edf9ef; color: #18753a; }
+.review-scale-note span[data-score="1"] { background: #ffe3de; border-left: 4px solid #d92d20; color: #991b12; }
+.review-scale-note span[data-score="2"] { background: #ffedcf; border-left: 4px solid #e07a00; color: #8b4800; }
+.review-scale-note span[data-score="3"] { background: #fff7c7; border-left: 4px solid #c28a00; color: #665500; }
+.review-scale-note span[data-score="4"] { background: #dff3e4; border-left: 4px solid #218739; color: #12652b; }
+.review-scale-note em { border-top: 1px solid #e0e5f1; flex: 0 0 100%; margin-left: 0; padding-top: 10px; }
 
 .form-section {
   border: 1px solid #e0e5f1;
@@ -701,6 +702,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   border-radius: 9px;
   min-height: 44px;
 }
+.field input.locked-input { background: #edf0f6; color: #30394f; cursor: not-allowed; font-weight: 750; caret-color: transparent; }
 .field input:hover, .field select:hover, .field textarea:hover { border-color: #aebcf0; }
 .field input:focus, .field select:focus, .field textarea:focus { background: #fff; border-color: var(--blue); outline: 3px solid rgba(22,70,255,.12); }
 .choice-chip span { background: #fff; border-color: #dfe3ef; border-radius: 8px; color: #59647e; }
@@ -717,11 +719,11 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .score-picker button.selected { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
 .score-picker button[data-score="1"] { background: #fff7f6; border-color: #f3c6c2; color: #b42318; }
 .score-picker button[data-score="2"] { background: #fff9ec; border-color: #f0d49b; color: #a15c00; }
-.score-picker button[data-score="3"] { background: #f4f6ff; border-color: #c7d2ff; color: #1646ff; }
+.score-picker button[data-score="3"] { background: #fff9d9; border-color: #dfc55d; color: #6d5b00; }
 .score-picker button[data-score="4"] { background: #f1faf2; border-color: #b9dfc2; color: #18753a; }
 .score-picker button[data-score="1"].selected { background: #d92d20; border-color: #d92d20; color: #fff; box-shadow: 0 5px 12px rgba(217,45,32,.2); }
 .score-picker button[data-score="2"].selected { background: #d47a00; border-color: #d47a00; color: #fff; box-shadow: 0 5px 12px rgba(212,122,0,.2); }
-.score-picker button[data-score="3"].selected { background: #1646ff; border-color: #1646ff; color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
+.score-picker button[data-score="3"].selected { background: #bd8500; border-color: #bd8500; color: #fff; box-shadow: 0 5px 12px rgba(189,133,0,.22); }
 .score-picker button[data-score="4"].selected { background: #218739; border-color: #218739; color: #fff; box-shadow: 0 5px 12px rgba(33,135,57,.2); }
 .score-picker[data-scale="reverse"] button[data-score="1"] { background: #f1faf2; border-color: #b9dfc2; color: #18753a; }
 .score-picker[data-scale="reverse"] button[data-score="2"] { background: #f4f6ff; border-color: #c7d2ff; color: #1646ff; }
