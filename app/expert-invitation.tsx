@@ -133,7 +133,7 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
         <div className="brand" aria-label="ReHear 전문가 검토">
           <RehearLogo />
           <span className="brand-divider" />
-          <span className="brand-sub">Consent-completed review</span>
+          <span className="brand-sub">Structured expert review</span>
         </div>
         <div className="participant-pill" aria-label={`참여자 ID ${participantId}`}>
           <span>PARTICIPANT</span>
@@ -144,12 +144,10 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
       <section className="review-entry" aria-labelledby="review-entry-title">
         <div>
           <p className="eyebrow">REHEAR · STRUCTURED EXPERT REVIEW</p>
-          <span className="consent-status">설명 및 동의 절차 완료 후 제공되는 페이지</span>
           <h1 id="review-entry-title">AI 청중 에이전트<br />전문가 평가</h1>
           <p>
-            이 평가 링크는 연구 설명을 듣고 참여에 동의한 전문가에게만 개별적으로
-            제공됩니다. 참여를 중단하고 싶거나 동의를 철회하려면 언제든 연구책임자에게
-            알려주세요.
+            각 규칙을 4점 척도로 평가하고 서면 의견을 작성합니다. 참여를 중단하거나
+            동의를 철회하려면 언제든 연구책임자에게 알려주세요.
           </p>
         </div>
         <aside>
@@ -167,7 +165,7 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
       <footer>
         <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
         <p>서울대학교 디자인학부 · 연구책임자 윤보라</p>
-        <p>동의 완료 후 제공되는 개별 전문가 평가 페이지입니다.</p>
+        <p>개별 초대받은 전문가를 위한 평가 페이지입니다.</p>
       </footer>
     </main>
   );
