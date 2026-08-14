@@ -224,9 +224,9 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   }, [data, restored, reviewToken, storageKey]);
 
   const syncLabel = syncStatus === "loading" ? "저장된 초안 확인 중"
-    : syncStatus === "saving" ? "보안 서버에 저장 중"
-    : syncStatus === "saved" ? `${savedAt || "현재"} 서버 저장 완료`
-    : syncStatus === "error" ? "기기 저장됨 · 서버 연결 재시도 예정"
+    : syncStatus === "saving" ? "자동 저장 중"
+    : syncStatus === "saved" ? `${savedAt || "현재"} 자동 저장됨`
+    : syncStatus === "error" ? "임시 저장됨 · 연결 시 다시 저장"
     : "자동 저장 준비 완료";
 
   const completion = useMemo(() => {
@@ -319,7 +319,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         <div>
           <p className="eyebrow">STRUCTURED EXPERT REVIEW</p>
           <h2 id="review-title">전문가 검토 평가표</h2>
-          <p>입력 내용은 현재 기기에 임시 저장되고 보안 서버에도 자동으로 백업됩니다. 작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
+          <p>작성 내용은 자동으로 임시 저장됩니다. 작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
         </div>
         <div className="progress-card">
           <span>평가 점수 입력률</span>
@@ -431,7 +431,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         <div>
           <p className="eyebrow light">SAVE & HAND OFF</p>
           <h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3>
-          <p>참여자 ID <strong>{participantId}</strong>로 서버에 저장됩니다. 필요할 경우 같은 내용을 JSON과 CSV 파일로도 내려받을 수 있습니다.</p>
+          <p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 필요할 경우 같은 내용을 JSON과 CSV 파일로도 내려받을 수 있습니다.</p>
         </div>
         <div className="export-actions">
           <button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button>
