@@ -137,6 +137,11 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /이메일로 문의하기/);
   assert.match(invitation, /Why your perspective matters/);
   assert.match(invitation, /특히 다음 내용을 중심으로 살펴봐주세요/);
+  assert.doesNotMatch(invitation, /이메일 확인 완료|INVITED FOR/);
+  assert.match(invitation, /<small>전문 분야<\/small>/);
+  assert.match(invitation, /검토는 두 단계로/);
+  assert.doesNotMatch(invitation, /검토는 세 단계로|선택적 재확인|차분하게/);
+  assert.match(invitation, /모든 일정과 방식은<br \/>연구책임자와 개별 협의합니다/);
   assert.doesNotMatch(invitation, /Who we are inviting/);
   assert.match(invitation, /<em>전문가 검토<\/em>를/);
   assert.match(invitation, /<span>전문가 검토에 참여해주셔서 감사합니다\.<\/span>/);
@@ -144,6 +149,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /검토 절차를 안내드립니다/);
   assert.doesNotMatch(invitation, /전문가를 모십니다/);
   assert.match(profiles, /발표와 커뮤니케이션 관점의 검토/);
+  assert.match(profiles, /발표·커뮤니케이션 전문가님/);
+  assert.match(profiles, /같은 백채널 반응이 발표 맥락과 수행 수준에 따라 서로 다른 의미로 해석될 가능성/);
+  assert.doesNotMatch(profiles, /격려·평가·압박|테스트 전문가님/);
   assert.match(profiles, /Human–AI Interaction 관점의 검토/);
   assert.match(profiles, /XR과 가상 에이전트 관점의 검토/);
   assert.doesNotMatch(invitation, /전문가 평가표 작성하기/);
@@ -264,6 +272,15 @@ test("includes the official materials workflow and complete EVC model overview",
   assert.match(form, /Engagement/);
   assert.match(form, /Evaluative Valence/);
   assert.match(form, /Cognitive Clarity/);
+  assert.match(form, /E·V·C 3축 상태 공간/);
+  assert.match(form, /className="state-axis axis-engagement"/);
+  assert.match(form, /className="state-axis axis-valence"/);
+  assert.match(form, /className="state-axis axis-clarity"/);
+  assert.equal((form.match(/className="agent-path agent-/g) ?? []).length, 3);
+  assert.match(form, /t−1에서 t로 이동하는 개념도/);
+  assert.match(form, /세 차원의 통계적 독립성을 전제하지 않습니다/);
+  assert.ok(form.indexOf("evc-grid") < form.indexOf("evc-state-space"));
+  assert.ok(form.indexOf("evc-state-space") < form.indexOf("model-facts"));
   assert.match(form, /presentation-stage-strip/);
   assert.equal((form.match(/status: "(?:필수|선택)"/g) ?? []).length, 8);
   assert.match(form, /현재의 발표 수행정보, 이전 청중 상태 및 개별 에이전트 특성/);
@@ -278,6 +295,9 @@ test("includes the official materials workflow and complete EVC model overview",
   assert.match(css, /\.review-step-icon/);
   assert.match(css, /\.speech-glyph/);
   assert.match(css, /\.evc-grid/);
+  assert.match(css, /\.evc-state-space/);
+  assert.match(css, /\.state-space-canvas/);
+  assert.match(css, /\.agent-path/);
   assert.match(css, /\.model-facts/);
 });
 

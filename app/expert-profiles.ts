@@ -18,7 +18,7 @@ const TRACK_PROFILES: Readonly<Record<ExpertiseTrack, Omit<ExpertProfile, "displ
       "발표 수행과 비언어적 청중 반응이 발표자에게 어떻게 해석되는지 판단해주실 수 있는 전문성을 바탕으로 이번 검토를 의뢰드립니다.",
     focusItems: [
       "백채널이 발표 흐름과 발표자의 수행 수준에 비추어 자연스럽고 적절한지",
-      "같은 반응이 격려·평가·압박으로 다르게 해석될 가능성은 없는지",
+      "같은 백채널 반응이 발표 맥락과 수행 수준에 따라 서로 다른 의미로 해석될 가능성은 없는지",
       "발표 교육과 수행 피드백 맥락에서 실제로 활용할 수 있는지",
     ],
   },
@@ -65,7 +65,7 @@ const TRACK_PROFILES: Readonly<Record<ExpertiseTrack, Omit<ExpertProfile, "displ
  * confirmed. TEST-01 demonstrates the personalized A-track invitation.
  */
 const PARTICIPANT_PROFILES: Readonly<Record<string, { displayName: string; track: ExpertiseTrack }>> = {
-  "TEST-01": { displayName: "테스트 전문가님", track: "A" },
+  "TEST-01": { displayName: "발표·커뮤니케이션 전문가님", track: "A" },
 };
 
 export function getExpertProfile(participantId: string): ExpertProfile {

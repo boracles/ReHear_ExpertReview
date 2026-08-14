@@ -343,12 +343,11 @@ export function ExpertInvitation() {
         <div className="section-kicker"><span>02</span> Why your perspective matters</div>
         <div className="personalization-head">
           <div>
-            <p className="verified-expert">이메일 확인 완료 · {expertProfile.displayName}</p>
+            <p className="verified-expert">{expertProfile.displayName}</p>
             <h2>{expertProfile.headline}</h2>
           </div>
           <div className="invited-track" aria-label={`초대 전문 분야 ${expertProfile.label}`}>
-            <span>{expertProfile.track === "GENERAL" ? "–" : expertProfile.track}</span>
-            <div><small>INVITED FOR</small><strong>{expertProfile.label}</strong></div>
+            <div><small>전문 분야</small><strong>{expertProfile.label}</strong></div>
           </div>
         </div>
         <div className="invitation-reason">
@@ -369,8 +368,8 @@ export function ExpertInvitation() {
         <div className="section-kicker"><span>03</span> Review process</div>
         <div className="process-layout">
           <div className="process-title">
-            <h2>검토는 세 단계로<br />차분하게 진행됩니다.</h2>
-            <p>모든 일정과 진행 방식은 연구책임자와 개별 협의합니다.</p>
+            <h2>검토는 두 단계로<br />진행됩니다.</h2>
+            <p>모든 일정과 방식은<br />연구책임자와 개별 협의합니다.</p>
           </div>
           <ol className="timeline">
             <li>
@@ -387,14 +386,6 @@ export function ExpertInvitation() {
                 <div className="timeline-meta"><b>반구조화 면담</b><em>약 20–30분</em></div>
                 <h3>판단 근거와 개선 의견 나누기</h3>
                 <p>연구자와 1:1로 평가 이유와 수정 방향을 이야기합니다. 면담 녹음은 별도 동의한 경우에만 진행하며, 동의하지 않아도 참여할 수 있습니다.</p>
-              </div>
-            </li>
-            <li>
-              <span className="step">03</span>
-              <div>
-                <div className="timeline-meta"><b>선택적 재확인</b><em>약 10–15분</em></div>
-                <h3>크게 변경된 규칙만 다시 확인</h3>
-                <p>의미나 구현 방식이 크게 바뀐 규칙에 한해서만 짧은 서면 재확인을 요청드릴 수 있습니다.</p>
               </div>
             </li>
           </ol>
