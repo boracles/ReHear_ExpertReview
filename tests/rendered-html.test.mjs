@@ -13,7 +13,7 @@ test("exports the Korean expert invitation shell", async () => {
   assert.doesNotMatch(html, /codex-preview|Your site is taking shape|SkeletonPreview/);
 });
 
-test("publishes six hashed invitations without raw tokens", async () => {
+test("publishes separate hashed invitation and consent-completed review links", async () => {
   const [inviteSource, gitignore] = await Promise.all([
     readFile(new URL("../app/invitation-data.ts", import.meta.url), "utf8"),
     readFile(new URL("../.gitignore", import.meta.url), "utf8"),
@@ -23,7 +23,10 @@ test("publishes six hashed invitations without raw tokens", async () => {
   const hashes = inviteSource.match(/[A-Za-z0-9_-]{43}(?=\")/g) ?? [];
 
   assert.equal(new Set(participantIds).size, 6);
-  assert.equal(new Set(hashes).size, 6);
+  assert.equal(participantIds.length, 12);
+  assert.equal(new Set(hashes).size, 12);
+  assert.match(inviteSource, /INVITE_HASHES/);
+  assert.match(inviteSource, /REVIEW_HASHES/);
   assert.doesNotMatch(inviteSource, /github\.io\/.+#\/invite\//);
   assert.match(gitignore, /^\/private\/$/m);
 });
@@ -53,5 +56,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /ReHear_\$\{participantId\}_review\.json/);
   assert.match(form, /ReHear_\$\{participantId\}_review\.csv/);
   assert.match(form, /rehear-review-\$\{participantId\}/);
+  assert.match(invitation, /access\.mode === "review"/);
+  assert.match(invitation, /Consent-completed review/);
+  assert.match(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
+  assert.doesNotMatch(invitation, /전문가 평가표 작성하기/);
   assert.doesNotMatch(invitation, /href="#/);
 });

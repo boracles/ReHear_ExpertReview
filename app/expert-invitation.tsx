@@ -1,13 +1,13 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { INVITE_HASHES } from "./invitation-data";
+import { INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
 import { ExpertReviewForm } from "./expert-review-form";
 
 type AccessState =
   | { status: "checking" }
   | { status: "denied" }
-  | { status: "granted"; participantId: string };
+  | { status: "granted"; participantId: string; mode: "invite" | "review" };
 
 const phoneDisplay = "010-8867-0903";
 const phoneHref = "01088670903";
@@ -35,8 +35,9 @@ async function sha256(value: string) {
 }
 
 function tokenFromHash() {
-  const match = window.location.hash.match(/^#\/invite\/([A-Za-z0-9_-]{32,})$/);
-  return match?.[1] ?? null;
+  const match = window.location.hash.match(/^#\/(invite|review)\/([A-Za-z0-9_-]{32,})$/);
+  if (!match) return null;
+  return { mode: match[1] as "invite" | "review", token: match[2] };
 }
 
 function AccessGate() {
@@ -61,6 +62,52 @@ function AccessGate() {
   );
 }
 
+function ExpertReviewPage({ participantId }: { participantId: string }) {
+  return (
+    <main className="review-only">
+      <header className="site-header">
+        <div className="brand" aria-label="ReHear 전문가 검토">
+          <RehearLogo />
+          <span className="brand-divider" />
+          <span className="brand-sub">Consent-completed review</span>
+        </div>
+        <div className="participant-pill" aria-label={`참여자 ID ${participantId}`}>
+          <span>PARTICIPANT</span>
+          <strong>{participantId}</strong>
+        </div>
+      </header>
+
+      <section className="review-entry" aria-labelledby="review-entry-title">
+        <div>
+          <p className="eyebrow">REHEAR · STRUCTURED EXPERT REVIEW</p>
+          <span className="consent-status">설명 및 동의 절차 완료 후 제공되는 페이지</span>
+          <h1 id="review-entry-title">AI 청중 에이전트<br />전문가 평가</h1>
+          <p>
+            이 평가 링크는 연구 설명을 듣고 참여에 동의한 전문가에게만 개별적으로
+            제공됩니다. 참여를 중단하고 싶거나 동의를 철회하려면 언제든 연구책임자에게
+            알려주세요.
+          </p>
+        </div>
+        <aside>
+          <b>평가 전 확인</b>
+          <span>예상 소요시간 · 약 30–45분</span>
+          <span>입력 내용 · 현재 기기에만 임시 저장</span>
+          <span>완료 후 · JSON과 CSV 파일 전달</span>
+          <a href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
+        </aside>
+      </section>
+
+      <ExpertReviewForm participantId={participantId} />
+
+      <footer>
+        <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
+        <p>서울대학교 디자인학부 · 연구책임자 윤보라</p>
+        <p>동의 완료 후 제공되는 개별 전문가 평가 페이지입니다.</p>
+      </footer>
+    </main>
+  );
+}
+
 export function ExpertInvitation() {
   const [access, setAccess] = useState<AccessState>({ status: "checking" });
   const [copied, setCopied] = useState(false);
@@ -69,17 +116,18 @@ export function ExpertInvitation() {
     let active = true;
 
     async function verify() {
-      const token = tokenFromHash();
-      if (!token) {
+      const route = tokenFromHash();
+      if (!route) {
         if (active) setAccess({ status: "denied" });
         return;
       }
 
       try {
-        const hash = await sha256(token);
-        const participantId = INVITE_HASHES[hash];
+        const hash = await sha256(route.token);
+        const hashes = route.mode === "invite" ? INVITE_HASHES : REVIEW_HASHES;
+        const participantId = hashes[hash];
         if (active) {
-          setAccess(participantId ? { status: "granted", participantId } : { status: "denied" });
+          setAccess(participantId ? { status: "granted", participantId, mode: route.mode } : { status: "denied" });
         }
       } catch {
         if (active) setAccess({ status: "denied" });
@@ -117,6 +165,10 @@ export function ExpertInvitation() {
   }
 
   if (access.status === "denied") return <AccessGate />;
+
+  if (access.mode === "review") {
+    return <ExpertReviewPage participantId={access.participantId} />;
+  }
 
   const { participantId } = access;
 
@@ -196,7 +248,6 @@ export function ExpertInvitation() {
         <button type="button" onClick={() => scrollToSection("overview")}>연구 소개</button>
         <button type="button" onClick={() => scrollToSection("who")}>검토 대상</button>
         <button type="button" onClick={() => scrollToSection("process")}>참여 절차</button>
-        <button type="button" onClick={() => scrollToSection("review-workspace")}>평가표 작성</button>
         <button type="button" onClick={() => scrollToSection("contact")}>참여 의사 전달</button>
       </nav>
 
@@ -326,7 +377,7 @@ export function ExpertInvitation() {
           <div className="contact-copy">
             <p className="eyebrow light">NEXT STEP</p>
             <h2>검토 가능 여부를<br />편하게 알려주세요.</h2>
-            <p>아래 버튼을 누르면 참여자 ID가 포함된 문자 초안이 열립니다. 참여 가능 여부나 궁금한 점을 남겨주세요.</p>
+            <p>아래 버튼을 누르면 참여자 ID가 포함된 문자 초안이 열립니다. 참여 의사를 확인한 뒤 연구 설명문과 동의서를 먼저 보내드립니다.</p>
           </div>
           <div className="contact-actions">
             <div className="id-card">
@@ -336,9 +387,9 @@ export function ExpertInvitation() {
                 {copied ? "복사됨" : "ID 복사"}
               </button>
             </div>
-            <button className="button review-link" type="button" onClick={() => scrollToSection("review-workspace")}>전문가 평가표 작성하기 <span>↓</span></button>
             <a className="button message" href={messageHref}>문자로 참여 의사 전달 <span>↗</span></a>
             <a className="phone-link" href={`tel:${phoneHref}`}>연구책임자 윤보라 · {phoneDisplay}</a>
+            <p className="consent-next-step">참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달 순서로 진행됩니다.</p>
           </div>
         </div>
       </section>
@@ -364,12 +415,10 @@ export function ExpertInvitation() {
         </div>
       </section>
 
-      <ExpertReviewForm participantId={participantId} />
-
       <footer>
         <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
         <p>서울대학교 디자인학부 · 연구책임자 윤보라</p>
-        <p>본 페이지는 개별 초대받은 전문가를 위한 연구 참여 안내입니다.</p>
+        <p>본 페이지는 개별 초대받은 전문가를 위한 참여 의사 확인 안내입니다.</p>
       </footer>
     </main>
   );

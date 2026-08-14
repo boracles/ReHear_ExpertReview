@@ -10,3 +10,16 @@ export const INVITE_HASHES: Readonly<Record<string, string>> = {
   "gUC4tcmBy1ESk3vMLYN-aRkc8aPpRPj-VRWvv2UAW_c": "EXP-05",
   "GikFMbYTD4JrdRJdG1ppCTnegdm2N2wWL4ySkmlv-ig": "EXP-06",
 };
+
+/**
+ * Review links are issued only after the approved study explanation and
+ * consent process has been completed. Raw review tokens are kept locally.
+ */
+export const REVIEW_HASHES: Readonly<Record<string, string>> = {
+  "sMZ4az942dq8bTv9SXgp1eLpqEZIbMNZ38sA89ecWSg": "EXP-01",
+  "lPa6iXOWxUJ5Lf8_1jNix098qc66bQIc7pEF7rRotm4": "EXP-02",
+  "UrApT_H2SUKNIJazdIqCFipx9GnAh1TzOob9r3mRoIQ": "EXP-03",
+  "pKXw6vo826bDjrcmfEy-yN2IrxYDcDtyAKd2Cyh13fI": "EXP-04",
+  "rIAosnhX9xbi6sAJX8eYNRqblVakL0W9v5PR828ZkD0": "EXP-05",
+  "am3m5yJYjshs6f7_4pXY5_riCT747GsGbalsBiDAsw0": "EXP-06",
+};
