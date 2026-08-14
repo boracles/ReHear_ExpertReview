@@ -329,14 +329,11 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         </div>
       </div>
 
-      <div className="review-scale-note">
-        <b>4점 척도</b>
-        <span>1 전혀 적절하지 않음</span><span>2 보완이 많이 필요함</span><span>3 대체로 적절함</span><span>4 매우 적절함</span>
-        <em>‘오해 위험’만 1 매우 낮음–4 매우 높음</em>
-      </div>
-
-      <fieldset className="form-section">
-        <legend><span>01</span> 전문가 기본 정보</legend>
+      <section className="form-section compact-section" aria-labelledby="expert-info-title">
+        <div className="legend-like">
+          <span>01</span>
+          <div><b id="expert-info-title">검토자 정보</b><small>전문 분야와 관련 경력을 확인합니다.</small></div>
+        </div>
         <div className="form-grid two">
           <div className="field full">
             <span className="field-label">관련 전문영역 · 복수 선택 가능</span>
@@ -353,26 +350,32 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
             </div>
           </div>
           <label className="field"><span>기타 전문영역</span><input value={data.expert.otherExpertise} onChange={(e) => updateExpert("otherExpertise", e.target.value)} /></label>
-          <label className="field"><span>관련 경력 · 년</span><input inputMode="decimal" value={data.expert.careerYears} onChange={(e) => updateExpert("careerYears", e.target.value)} /></label>
+          <label className="field"><span>관련 경력</span><input inputMode="decimal" value={data.expert.careerYears} onChange={(e) => updateExpert("careerYears", e.target.value)} placeholder="예: 10년" /></label>
           <label className="field"><span>소속 유형</span><select value={data.expert.affiliationType} onChange={(e) => updateExpert("affiliationType", e.target.value)}><option value="">선택</option><option>대학</option><option>연구기관</option><option>산업체</option><option>기타</option></select></label>
           <label className="field"><span>이해상충 여부</span><select value={data.expert.conflict} onChange={(e) => updateExpert("conflict", e.target.value)}><option value="">선택</option><option>없음</option><option>있음</option></select></label>
           {data.expert.conflict === "있음" && <label className="field full"><span>이해관계 내용</span><textarea rows={3} value={data.expert.conflictDetails} onChange={(e) => updateExpert("conflictDetails", e.target.value)} /></label>}
         </div>
-      </fieldset>
+      </section>
 
-      <fieldset className="form-section">
-        <legend><span>02</span> 검토 기록</legend>
-        <div className="form-grid two">
-          <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(e) => updateSession("reviewDate", e.target.value)} /></label>
-          <label className="field"><span>면담 방식</span><select value={data.session.interviewMode} onChange={(e) => updateSession("interviewMode", e.target.value)}><option value="">선택</option><option>대면</option><option>비공개 온라인 화상회의</option></select></label>
-          <label className="field"><span>면담 녹음</span><select value={data.session.recording} onChange={(e) => updateSession("recording", e.target.value)}><option value="">선택</option><option>녹음함 · 별도 동의 확인</option><option>녹음하지 않음</option></select></label>
-          <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} onChange={(e) => updateSession("frameworkVersion", e.target.value)} placeholder="예: V1" /></label>
-          <label className="field"><span>규칙 세트 버전</span><input value={data.session.ruleSetVersion} onChange={(e) => updateSession("ruleSetVersion", e.target.value)} /></label>
+      <section className="form-section compact-section" aria-labelledby="review-info-title">
+        <div className="legend-like">
+          <span>02</span>
+          <div><b id="review-info-title">평가 정보</b><small>평가일과 검토한 자료의 버전을 기록합니다.</small></div>
         </div>
-      </fieldset>
+        <div className="form-grid three">
+          <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(e) => updateSession("reviewDate", e.target.value)} /></label>
+          <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} onChange={(e) => updateSession("frameworkVersion", e.target.value)} placeholder="예: V1" /></label>
+          <label className="field"><span>규칙 세트 버전</span><input value={data.session.ruleSetVersion} onChange={(e) => updateSession("ruleSetVersion", e.target.value)} placeholder="예: R1" /></label>
+        </div>
+      </section>
 
       <div className="form-section rule-section">
         <div className="legend-like"><span>03</span><div><b>규칙별 평가</b><small>검토할 규칙마다 카드 한 장을 작성합니다.</small></div></div>
+        <div className="review-scale-note">
+          <b>4점 척도 안내</b>
+          <span>1 전혀 적절하지 않음</span><span>2 보완이 많이 필요함</span><span>3 대체로 적절함</span><span>4 매우 적절함</span>
+          <em>‘오해 위험’만 1 매우 낮음–4 매우 높음</em>
+        </div>
         {data.ruleEvaluations.map((rule, ruleIndex) => (
           <article className="rule-form" key={rule.id}>
             <div className="rule-form-head">
