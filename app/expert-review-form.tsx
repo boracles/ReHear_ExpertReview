@@ -15,7 +15,6 @@ type Criterion = {
 type RuleEvaluation = {
   id: string;
   ruleId: string;
-  frameworkVersion: string;
   performanceInfo: string;
   intendedMeaning: string;
   backchannelForm: string;
@@ -40,8 +39,12 @@ type ReviewData = {
   submittedAt: string | null;
   expert: {
     expertise: string[];
+    otherExpertise: string;
+    highestDegree: string;
+    otherDegree: string;
     careerYears: string;
     affiliationType: string;
+    otherAffiliation: string;
     conflict: string;
     conflictDetails: string;
   };
@@ -50,6 +53,7 @@ type ReviewData = {
     interviewMode: string;
     recording: string;
     frameworkVersion: string;
+    animationSetVersion: string;
   };
   ruleEvaluations: RuleEvaluation[];
   overall: Record<string, { score: Score; comment: string }>;
@@ -91,7 +95,6 @@ function newRule(index: number): RuleEvaluation {
   return {
     id: `rule-${Date.now()}-${index}`,
     ruleId: "",
-    frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
     performanceInfo: "",
     intendedMeaning: "",
     backchannelForm: "",
@@ -116,12 +119,23 @@ function initialData(participantId: string): ReviewData {
     updatedAt: new Date().toISOString(),
     submissionStatus: "draft",
     submittedAt: null,
-    expert: { expertise: [], careerYears: "", affiliationType: "", conflict: "", conflictDetails: "" },
+    expert: {
+      expertise: [],
+      otherExpertise: "",
+      highestDegree: "",
+      otherDegree: "",
+      careerYears: "",
+      affiliationType: "",
+      otherAffiliation: "",
+      conflict: "없음",
+      conflictDetails: "",
+    },
     session: {
       reviewDate: todayInKorea(),
       interviewMode: "",
       recording: "",
       frameworkVersion: DEFAULT_FRAMEWORK_VERSION,
+      animationSetVersion: "",
     },
     ruleEvaluations: [newRule(0)],
     overall: Object.fromEntries(overallItems.map((_, index) => [`item${index + 1}`, { score: null, comment: "" }])),
@@ -144,12 +158,14 @@ function normalizeReviewData(value: unknown, participantId: string): ReviewData 
       interviewMode: parsed.session?.interviewMode ?? "",
       recording: parsed.session?.recording ?? "",
       frameworkVersion: parsed.session?.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
+      animationSetVersion: parsed.session?.animationSetVersion ?? "",
     },
     ruleEvaluations: Array.isArray(parsed.ruleEvaluations)
-      ? parsed.ruleEvaluations.map((rule) => ({
-          ...rule,
-          frameworkVersion: rule.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
-        }))
+      ? parsed.ruleEvaluations.map((rule) => {
+          const normalizedRule = { ...rule } as RuleEvaluation & { frameworkVersion?: string };
+          delete normalizedRule.frameworkVersion;
+          return normalizedRule;
+        })
       : defaults.ruleEvaluations,
     submissionStatus: parsed.submissionStatus === "submitted" ? "submitted" : "draft",
     submittedAt: typeof parsed.submittedAt === "string" ? parsed.submittedAt : null,
@@ -299,9 +315,9 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
     <section className="review-workspace" id="review-workspace" aria-labelledby="review-title">
       <div className="review-topline">
         <div>
-          <p className="eyebrow">STRUCTURED EXPERT REVIEW</p>
-          <h2 id="review-title">전문가 검토 평가표</h2>
-          <p>작성 내용은 자동으로 임시 저장됩니다.<br />작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
+          <p className="eyebrow">E·V·C MODEL · STRUCTURED EXPERT REVIEW</p>
+          <h2 id="review-title">E·V·C 청중 상태 모델 및<br />백채널 표현 구조 전문가 평가</h2>
+          <p>본 검토는 사용자 실험에 앞서 발표 수행정보를 바탕으로 AI 청중의 E·V·C 상태를 산출하는 청중 상태 모델과, 산출된 상태를 비언어적 백채널로 표현하는 구조를 점검하고 보완하기 위해 실시합니다.<br />독립 평가와 후속 면담에서 수집한 의견을 바탕으로 프레임워크 V1을 V2로 개정합니다.</p>
         </div>
         <div className="progress-card">
           <span>평가 점수 입력률</span>
@@ -314,13 +330,13 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       <section className="form-section compact-section" aria-labelledby="expert-info-title">
         <div className="legend-like">
           <span>01</span>
-          <div><b id="expert-info-title">검토자 정보</b><small>전문 분야와 관련 경력을 확인합니다.</small></div>
+          <div><b id="expert-info-title">전문가 기본 정보</b><small>전문영역, 최종 학위, 소속 및 관련 경력을 확인합니다.</small></div>
         </div>
         <div className="form-grid two">
           <div className="field full">
             <span className="field-label">관련 전문영역 · 복수 선택 가능</span>
             <div className="choice-row">
-              {["발표·커뮤니케이션", "HCI·Human–AI Interaction", "XR 인터랙션·가상 에이전트"].map((value) => (
+              {["발표·커뮤니케이션", "HCI·Human–AI Interaction", "XR 인터랙션·가상 에이전트", "기타"].map((value) => (
                 <label key={value} className="choice-chip">
                   <input type="checkbox" checked={data.expert.expertise.includes(value)} onChange={(event) => {
                     const expertise = event.target.checked ? [...data.expert.expertise, value] : data.expert.expertise.filter((item) => item !== value);
@@ -331,9 +347,28 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
               ))}
             </div>
           </div>
-          <label className="field"><span>관련 경력</span><input inputMode="decimal" value={data.expert.careerYears} onChange={(e) => updateExpert("careerYears", e.target.value)} placeholder="예: 10년" /></label>
-          <label className="field"><span>소속 유형</span><select value={data.expert.affiliationType} onChange={(e) => updateExpert("affiliationType", e.target.value)}><option value="">선택</option><option>대학</option><option>연구기관</option><option>산업체</option><option>기타</option></select></label>
-          <label className="field"><span>이해상충 여부</span><select value={data.expert.conflict} onChange={(e) => updateExpert("conflict", e.target.value)}><option value="">선택</option><option>없음</option><option>있음</option></select></label>
+          {data.expert.expertise.includes("기타") && <label className="field full"><span>기타 전문영역</span><input value={data.expert.otherExpertise} onChange={(e) => updateExpert("otherExpertise", e.target.value)} placeholder="전문영역을 입력해주세요." /></label>}
+          <div className="field full">
+            <span className="field-label">관련 분야 최종 학위</span>
+            <div className="choice-row">
+              {["학사", "석사", "박사", "기타"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="highest-degree" checked={data.expert.highestDegree === value} onChange={() => updateExpert("highestDegree", value)} /><span>{value}</span></label>)}
+            </div>
+          </div>
+          {data.expert.highestDegree === "기타" && <label className="field full"><span>기타 최종 학위</span><input value={data.expert.otherDegree} onChange={(e) => updateExpert("otherDegree", e.target.value)} placeholder="최종 학위를 입력해주세요." /></label>}
+          <div className="field full">
+            <span className="field-label">소속 유형</span>
+            <div className="choice-row">
+              {["대학", "연구기관", "산업체", "기타"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="affiliation-type" checked={data.expert.affiliationType === value} onChange={() => updateExpert("affiliationType", value)} /><span>{value}</span></label>)}
+            </div>
+          </div>
+          {data.expert.affiliationType === "기타" && <label className="field full"><span>기타 소속 유형</span><input value={data.expert.otherAffiliation} onChange={(e) => updateExpert("otherAffiliation", e.target.value)} placeholder="소속 유형을 입력해주세요." /></label>}
+          <label className="field"><span>관련 경력</span><input inputMode="numeric" value={data.expert.careerYears} onChange={(e) => updateExpert("careerYears", e.target.value)} placeholder="연구·교육·실무 경력 총 연수" /></label>
+          <div className="field">
+            <span className="field-label">이해상충 여부</span>
+            <div className="choice-row">
+              {["없음", "있음"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="conflict" checked={data.expert.conflict === value} onChange={() => updateExpert("conflict", value)} /><span>{value}</span></label>)}
+            </div>
+          </div>
           {data.expert.conflict === "있음" && <label className="field full"><span>이해관계 내용</span><textarea rows={3} value={data.expert.conflictDetails} onChange={(e) => updateExpert("conflictDetails", e.target.value)} /></label>}
         </div>
       </section>
@@ -341,11 +376,24 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       <section className="form-section compact-section" aria-labelledby="review-info-title">
         <div className="legend-like">
           <span>02</span>
-          <div><b id="review-info-title">평가 정보</b><small>평가일과 검토한 자료의 버전을 기록합니다.</small></div>
+          <div><b id="review-info-title">연구자 기록란</b><small>검토일, 후속 면담 방식과 검토 자료 버전을 기록합니다.</small></div>
         </div>
         <div className="form-grid two">
           <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(e) => updateSession("reviewDate", e.target.value)} /></label>
           <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} readOnly aria-readonly="true" /></label>
+          <label className="field"><span>애니메이션 세트 버전</span><input value={data.session.animationSetVersion} onChange={(e) => updateSession("animationSetVersion", e.target.value)} placeholder="예: V1" /></label>
+          <div className="field">
+            <span className="field-label">면담 방식</span>
+            <div className="choice-row">
+              {["대면", "비공개 온라인 화상회의"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="interview-mode" checked={data.session.interviewMode === value} onChange={() => updateSession("interviewMode", value)} /><span>{value}</span></label>)}
+            </div>
+          </div>
+          <div className="field full">
+            <span className="field-label">면담 녹음 여부</span>
+            <div className="choice-row">
+              {["녹음함(별도 동의 확인)", "녹음하지 않음"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="recording" checked={data.session.recording === value} onChange={() => updateSession("recording", value)} /><span>{value}</span></label>)}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -364,7 +412,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
             </div>
             <div className="form-grid two compact">
               <label className="field"><span>규칙 ID</span><input value={rule.ruleId} onChange={(e) => updateRule(ruleIndex, { ruleId: e.target.value })} /></label>
-              <label className="field"><span>프레임워크 버전</span><input value={rule.frameworkVersion} onChange={(e) => updateRule(ruleIndex, { frameworkVersion: e.target.value })} /></label>
               <label className="field full"><span>발표 수행 정보</span><textarea rows={2} value={rule.performanceInfo} onChange={(e) => updateRule(ruleIndex, { performanceInfo: e.target.value })} placeholder="예: 근거 부족, 설명 구조, 말하기 속도, 휴지, 음량, 머리 방향" /></label>
               <label className="field full"><span>평가 차원·의도</span><textarea rows={2} value={rule.intendedMeaning} onChange={(e) => updateRule(ruleIndex, { intendedMeaning: e.target.value })} /></label>
               <label className="field"><span>백채널 형태</span><textarea rows={2} value={rule.backchannelForm} onChange={(e) => updateRule(ruleIndex, { backchannelForm: e.target.value })} /></label>

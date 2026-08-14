@@ -74,14 +74,15 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /내용 적절성/);
   assert.match(form, /오해 위험/);
   assert.match(form, /프레임워크 전체 평가/);
-  assert.match(form, /검토자 정보/);
-  assert.match(form, /평가 정보/);
-  assert.doesNotMatch(form, /기타 전문영역/);
+  assert.match(form, /전문가 기본 정보/);
+  assert.match(form, /연구자 기록란/);
+  assert.match(form, /기타 전문영역/);
+  assert.match(form, /otherExpertise/);
+  assert.match(form, /관련 분야 최종 학위/);
+  assert.match(form, /highestDegree/);
   assert.doesNotMatch(form, /other_expertise/);
-  assert.doesNotMatch(form, /전문가 기본 정보/);
-  assert.doesNotMatch(form, />검토 기록</);
-  assert.doesNotMatch(form, />면담 방식</);
-  assert.doesNotMatch(form, />면담 녹음</);
+  assert.match(form, />면담 방식</);
+  assert.match(form, />면담 녹음 여부</);
   assert.ok(form.indexOf("규칙별 평가") < form.indexOf("review-scale-note"));
   assert.doesNotMatch(form, /후속 반구조화 면담 메모/);
   assert.doesNotMatch(form, /interviewQuestions/);
@@ -99,7 +100,6 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(invitation, /Consent-completed review/);
   assert.match(invitation, /동의를 철회하려면 언제든 연구책임자에게/);
   assert.match(invitation, /review-entry-copy/);
-  assert.match(form, /임시 저장됩니다\.<br \/>/);
   assert.match(invitation, /전문가 평가 시작하기/);
   assert.match(invitation, /작성 중 · 자동 임시 저장/);
   assert.doesNotMatch(invitation, /기기 및 보안 서버 자동 저장/);
@@ -152,9 +152,23 @@ test("prefills review metadata and removes the unused rule-set version", async (
   assert.match(form, /function todayInKorea\(\)/);
   assert.match(form, /reviewDate: todayInKorea\(\)/);
   assert.match(form, /frameworkVersion: DEFAULT_FRAMEWORK_VERSION/);
+  assert.match(form, /animationSetVersion/);
+  assert.match(form, /애니메이션 세트 버전/);
   assert.match(form, /aria-readonly="true"/);
   assert.doesNotMatch(form, /ruleSetVersion/);
   assert.doesNotMatch(form, /rule_set_version/);
+});
+
+test("reflects the EVC review purpose and official expert information fields", async () => {
+  const form = await readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8");
+
+  assert.match(form, /E·V·C 청중 상태 모델 및/);
+  assert.match(form, /발표 수행정보를 바탕으로 AI 청중의 E·V·C 상태를 산출/);
+  assert.match(form, /프레임워크 V1을 V2로 개정/);
+  assert.match(form, /otherDegree/);
+  assert.match(form, /otherAffiliation/);
+  assert.match(form, /비공개 온라인 화상회의/);
+  assert.match(form, /녹음함\(별도 동의 확인\)/);
 });
 
 test("aligns section badges and color-codes the four-point scale", async () => {
