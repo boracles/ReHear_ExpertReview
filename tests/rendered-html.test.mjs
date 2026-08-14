@@ -202,7 +202,8 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   assert.match(form, /<span>04<\/span><div><b id="materials-title"/);
   assert.match(form, /<span>05<\/span><div><b id="model-title"/);
   assert.match(form, /<span>06<\/span><div><b id="model-evaluation-title"/);
-  assert.match(form, /<legend><span>07<\/span> 프레임워크 전체 평가<\/legend>/);
+  assert.match(form, /<span>07<\/span><div><b id="framework-evaluation-title">프레임워크 전체 평가<\/b>/);
+  assert.doesNotMatch(form, /<legend><span>07<\/span>/);
   assert.doesNotMatch(form, /<span>R1<\/span>|<span>R2<\/span>/);
   assert.equal((css.match(/\.review-scale-note span\[data-score="[1-4]"\]/g) ?? []).length, 4);
   assert.match(css, /\.review-scale-note em \{ border-top: 1px solid #e0e5f1; flex: 0 0 100%/);
