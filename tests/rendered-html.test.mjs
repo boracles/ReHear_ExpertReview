@@ -387,6 +387,10 @@ test("requires informed consent before the expert review form", async () => {
   assert.doesNotMatch(consent, /<span>8-[12]<\/span>/);
   assert.match(consent, /전문가 자문\(독립 평가 및 후속 면담\)에 자발적으로 참여/);
   assert.match(consent, /동의하지 않아도 전문가 자문에 참여할 수 있습니다/);
+  assert.match(consent, /className="consent-footer-title"/);
+  assert.match(consent, /className="consent-footer-contact"/);
+  assert.match(consent, /href="mailto:irb@snu\.ac\.kr"/);
+  assert.match(css, /\.consent-footer \{[^}]*background: #fff;[^}]*border-radius: 16px;/);
   assert.match(consent, /중도 철회 시 기존 자료 활용/);
   assert.match(consent, /연구참여자용 설명문 전체 내용 확인하기/);
   assert.equal((consent.match(/<article><span>(?:0[1-9]|10|11)<\/span>/g) ?? []).length, 11);

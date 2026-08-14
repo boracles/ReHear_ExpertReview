@@ -206,7 +206,10 @@ export function ExpertConsentGate({ participantId, consentDate, verifiedEmail, a
         </div>
         <div className="consent-submit"><div><p>이름을 입력하고 아래 버튼을 누르면 위 내용에 대한 참여 동의 의사를 전자적으로 표시하게 됩니다. 동의하지 않는 경우 이 페이지를 닫아주세요.</p>{deliveryError && <p className="consent-delivery-error" role="alert">{deliveryError}</p>}</div><button className="button primary" type="submit" disabled={!canContinue}>{deliveryStatus === "sending" ? "사본 전송 중…" : "동의하고 평가 시작하기"} <span>→</span></button></div>
       </form>
-      <footer className="consent-footer"><span>참여자 권리 문의 · 서울대학교 생명윤리위원회</span><b>02-880-5153 · irb@snu.ac.kr</b></footer>
+      <footer className="consent-footer">
+        <div className="consent-footer-title"><small>PARTICIPANT RIGHTS</small><b>참여자 권리 문의</b><span>서울대학교 생명윤리위원회</span></div>
+        <div className="consent-footer-contact"><strong>02-880-5153</strong><a href="mailto:irb@snu.ac.kr">irb@snu.ac.kr</a></div>
+      </footer>
     </div>
   </main>;
 }
