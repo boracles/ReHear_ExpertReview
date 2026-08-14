@@ -25,9 +25,9 @@ export const metadata: Metadata = {
     images: [
       {
         url: "https://boracles.github.io/ReHear_ExpertReview/og.png",
-        width: 1732,
-        height: 909,
-        alt: "ReHear Expert Review — AI Audience Backchannel Design",
+        width: 1440,
+        height: 756,
+        alt: "Re:hear Expert Review — AI Audience Backchannel Design",
       },
     ],
   },

@@ -12,6 +12,15 @@ type AccessState =
 const phoneDisplay = "010-8867-0903";
 const phoneHref = "01088670903";
 
+function RehearLogo({ inverse = false }: { inverse?: boolean }) {
+  return (
+    <span className={`logo-lockup${inverse ? " inverse" : ""}`} aria-label="Re:hear">
+      <span className="logo-symbol" aria-hidden="true" />
+      <span className="logo-type">Re:hear</span>
+    </span>
+  );
+}
+
 function bytesToBase64Url(bytes: Uint8Array) {
   let binary = "";
   bytes.forEach((byte) => {
@@ -37,11 +46,7 @@ function AccessGate() {
       <div className="ambient ambient-a" />
       <div className="ambient ambient-b" />
       <section className="gate-card" aria-labelledby="gate-title">
-        <div className="brand-mark" aria-hidden="true">
-          <span />
-          <span />
-          <span />
-        </div>
+        <RehearLogo />
         <p className="eyebrow">REHEAR · EXPERT REVIEW</p>
         <h1 id="gate-title">전문가 검토 초대 링크를 확인해주세요.</h1>
         <p>
@@ -134,7 +139,7 @@ export function ExpertInvitation() {
     <main>
       <header className="site-header">
         <button className="brand" type="button" onClick={() => scrollToSection("top")} aria-label="ReHear 전문가 검토 처음으로">
-          <span className="brand-word">ReHear</span>
+          <RehearLogo />
           <span className="brand-divider" />
           <span className="brand-sub">Expert Review</span>
         </button>
@@ -153,7 +158,9 @@ export function ExpertInvitation() {
           <h1>
             발표를 듣는 AI의 반응,
             <br />
-            <em>전문가의 시선</em>으로 살펴주세요.
+            <em>전문가의 시선</em>으로
+            <br />
+            살펴주세요.
           </h1>
           <p className="hero-lead">
             VR 발표 훈련 환경에서 발표 수행에 따라 반응하는 AI 청중 에이전트의
@@ -165,6 +172,10 @@ export function ExpertInvitation() {
               안내문 인쇄하기
             </button>
           </div>
+        </div>
+        <div className="hero-brand-stamp" aria-hidden="true">
+          <RehearLogo inverse />
+          <span>AI AUDIENCE<br />BACKCHANNEL DESIGN</span>
         </div>
         <div className="hero-facts" aria-label="참여 요약">
           <article>
@@ -357,7 +368,7 @@ export function ExpertInvitation() {
       <ExpertReviewForm participantId={participantId} />
 
       <footer>
-        <div className="footer-brand">ReHear <span>Expert Review</span></div>
+        <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
         <p>서울대학교 디자인학부 · 연구책임자 윤보라</p>
         <p>본 페이지는 개별 초대받은 전문가를 위한 연구 참여 안내입니다.</p>
       </footer>
