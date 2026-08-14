@@ -32,14 +32,17 @@ test("publishes separate hashed invitation and consent-completed review links", 
 });
 
 test("includes the Pages deployment assets", async () => {
-  const [robots, workflow] = await Promise.all([
+  const [robots, workflow, nextConfig] = await Promise.all([
     readFile(new URL("public/robots.txt", root), "utf8"),
     readFile(new URL(".github/workflows/deploy-pages.yml", root), "utf8"),
+    readFile(new URL("next.config.ts", root), "utf8"),
   ]);
 
   assert.match(robots, /Disallow: \//);
   assert.match(workflow, /actions\/deploy-pages@v4/);
   assert.match(workflow, /path: dist\/client/);
+  assert.match(workflow, /test -d dist\/client\/_next\/static/);
+  assert.match(nextConfig, /https:\/\/boracles\.art/);
 });
 
 test("includes the complete expert review workflow without breaking invite hashes", async () => {

@@ -31,6 +31,8 @@ jobs:
         run: pnpm install --frozen-lockfile
       - name: Build static site
         run: pnpm run build
+      - name: Verify Pages asset layout
+        run: test -d dist/client/_next/static
       - name: Configure Pages
         uses: actions/configure-pages@v5
         with:
