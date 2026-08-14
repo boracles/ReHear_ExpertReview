@@ -203,6 +203,7 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .review-entry aside span { border-top: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.6; padding-top: 13px; }
 .review-entry aside a { color: #fff; font-size: 12px; font-weight: 750; margin-top: 5px; text-decoration: underline; text-underline-offset: 4px; }
 .review-entry aside .contact-detail { color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.6; margin: 5px 0 0; }
+.review-entry aside .contact-detail strong { color: #fff; font-weight: 800; }
 .review-workspace { background: #ece8de; padding: clamp(74px, 9vw, 132px) 6vw; }
 .review-topline { align-items: end; display: grid; gap: 7vw; grid-template-columns: 1fr 310px; margin: 0 auto 46px; max-width: 1240px; }
 .review-topline h2 { font-size: clamp(38px, 5vw, 68px); letter-spacing: -.06em; margin: 0; }

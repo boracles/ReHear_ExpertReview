@@ -155,7 +155,7 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
           <span>예상 소요시간 · 약 30–45분</span>
           <span>작성 중 · 자동 임시 저장</span>
           <span>완료 후 · 제출 버튼으로 최종 전달</span>
-          <p className="contact-detail">연구책임자 윤보라 · {phoneDisplay}</p>
+          <p className="contact-detail"><strong>연구책임자 윤보라</strong> · {phoneDisplay}</p>
           <a href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
         </aside>
       </section>
