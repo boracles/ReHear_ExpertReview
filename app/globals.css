@@ -720,6 +720,14 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .score-picker button[data-score="2"].selected { background: #d47a00; border-color: #d47a00; color: #fff; box-shadow: 0 5px 12px rgba(212,122,0,.2); }
 .score-picker button[data-score="3"].selected { background: #1646ff; border-color: #1646ff; color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
 .score-picker button[data-score="4"].selected { background: #218739; border-color: #218739; color: #fff; box-shadow: 0 5px 12px rgba(33,135,57,.2); }
+.score-picker[data-scale="reverse"] button[data-score="1"] { background: #f1faf2; border-color: #b9dfc2; color: #18753a; }
+.score-picker[data-scale="reverse"] button[data-score="2"] { background: #f4f6ff; border-color: #c7d2ff; color: #1646ff; }
+.score-picker[data-scale="reverse"] button[data-score="3"] { background: #fff9ec; border-color: #f0d49b; color: #a15c00; }
+.score-picker[data-scale="reverse"] button[data-score="4"] { background: #fff7f6; border-color: #f3c6c2; color: #b42318; }
+.score-picker[data-scale="reverse"] button[data-score="1"].selected { background: #218739; border-color: #218739; color: #fff; box-shadow: 0 5px 12px rgba(33,135,57,.2); }
+.score-picker[data-scale="reverse"] button[data-score="2"].selected { background: #1646ff; border-color: #1646ff; color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
+.score-picker[data-scale="reverse"] button[data-score="3"].selected { background: #d47a00; border-color: #d47a00; color: #fff; box-shadow: 0 5px 12px rgba(212,122,0,.2); }
+.score-picker[data-scale="reverse"] button[data-score="4"].selected { background: #d92d20; border-color: #d92d20; color: #fff; box-shadow: 0 5px 12px rgba(217,45,32,.2); }
 .rule-decision { background: #eef2ff; border: 1px solid #dfe5fb; border-radius: 12px; }
 .add-rule { background: #fff; border-color: #9bb0ff; border-radius: 10px; color: var(--blue); }
 .add-rule:hover { background: var(--blue-soft); }

@@ -156,9 +156,9 @@ function normalizeReviewData(value: unknown, participantId: string): ReviewData 
   };
 }
 
-function ScorePicker({ value, onChange, label }: { value: Score; onChange: (score: Score) => void; label: string }) {
+function ScorePicker({ value, onChange, label, reverse = false }: { value: Score; onChange: (score: Score) => void; label: string; reverse?: boolean }) {
   return (
-    <div className="score-picker" role="radiogroup" aria-label={label}>
+    <div className="score-picker" data-scale={reverse ? "reverse" : "standard"} role="radiogroup" aria-label={label}>
       {[1, 2, 3, 4].map((score) => (
         <button
           key={score}
@@ -424,7 +424,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
               {criteria.map((criterion) => (
                 <div className="criterion" key={criterion.key}>
                   <div className="criterion-copy"><b>{criterion.label}</b><p>{criterion.statement}</p></div>
-                  <ScorePicker label={`${criterion.label} 점수`} value={rule.scores[criterion.key]} onChange={(score) => updateRule(ruleIndex, { scores: { ...rule.scores, [criterion.key]: score } })} />
+                  <ScorePicker label={`${criterion.label} 점수`} reverse={criterion.key === "misreadRisk"} value={rule.scores[criterion.key]} onChange={(score) => updateRule(ruleIndex, { scores: { ...rule.scores, [criterion.key]: score } })} />
                   <label className="critical-check"><input type="checkbox" checked={rule.critical[criterion.key]} onChange={(e) => updateRule(ruleIndex, { critical: { ...rule.critical, [criterion.key]: e.target.checked } })} /> 중대 문제</label>
                   <label className="field criterion-note"><span>판단 근거·수정안</span><textarea rows={2} value={rule.notes[criterion.key]} onChange={(e) => updateRule(ruleIndex, { notes: { ...rule.notes, [criterion.key]: e.target.value } })} /></label>
                 </div>

@@ -162,9 +162,12 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   ]);
 
   assert.match(form, /data-score=\{score\}/);
+  assert.match(form, /data-scale=\{reverse \? "reverse" : "standard"\}/);
+  assert.match(form, /reverse=\{criterion\.key === "misreadRisk"\}/);
   assert.equal((form.match(/data-score="[1-4]"/g) ?? []).length, 4);
   assert.match(css, /\.legend-like b \{ display: block; line-height: 28px; \}/);
   assert.match(css, /\.legend-like > span \{ margin-top: 0; \}/);
   assert.equal((css.match(/\.review-scale-note span\[data-score="[1-4]"\]/g) ?? []).length, 4);
   assert.equal((css.match(/\.score-picker button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
+  assert.equal((css.match(/\.score-picker\[data-scale="reverse"\] button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
 });
