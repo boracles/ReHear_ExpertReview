@@ -25,3 +25,18 @@ export const REVIEW_HASHES: Readonly<Record<string, string>> = {
   "am3m5yJYjshs6f7_4pXY5_riCT747GsGbalsBiDAsw0": "EXP-06",
   "ijjJyCwX5tPOBYOFDhOtSZpyrXSax9DLlLTJNJ4TGH0": "TEST-01",
 };
+
+/**
+ * SHA-256 hashes of normalized participant emails. The raw email list stays
+ * in the ignored private directory and is never published to GitHub.
+ * Replace these example hashes before issuing production links.
+ */
+export const EMAIL_HASHES: Readonly<Record<string, string>> = {
+  "EXP-01": "tpHouGMP_W3H9T1uhw81XrQehKFHLgRvMqvFUQTII2M",
+  "EXP-02": "fRw8PGgotEaBMYlZqceBtIsSi7AYMhzL6qbp2l9j0AY",
+  "EXP-03": "bUE9g3xksqzAcmb5jyVj3_nBbPoYPKRAOOCH2aSx-p4",
+  "EXP-04": "MB3nw5hnH_fF4SM-8yT-pjayFiiMOVmJxsagC9B0rt8",
+  "EXP-05": "dy0PHvOubGIeXI7PD-krtff1dzaIDvr9szEMbPPB4cw",
+  "EXP-06": "XHJ5ItLBoD58ec3BdX21wOWG3PrMi__ov87axiwt_q8",
+  "TEST-01": "lz3-Rj7IV4X1-Vr1ujkG7tstkxwk5pgkqJ6mXbpOgTs",
+};

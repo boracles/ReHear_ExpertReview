@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
+import { type FormEvent, useEffect, useMemo, useState } from "react";
+import { EMAIL_HASHES, INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
 import { ExpertReviewForm } from "./expert-review-form";
 
 type AccessState =
@@ -69,6 +69,64 @@ function AccessGate() {
   );
 }
 
+function EmailVerificationGate({ participantId, onVerified }: { participantId: string; onVerified: () => void }) {
+  const [emailValue, setEmailValue] = useState("");
+  const [error, setError] = useState("");
+  const [checking, setChecking] = useState(false);
+
+  async function verifyEmail(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+    setChecking(true);
+    try {
+      const normalizedEmail = emailValue.trim().toLowerCase();
+      const emailHash = await sha256(normalizedEmail);
+      if (normalizedEmail && EMAIL_HASHES[participantId] === emailHash) {
+        onVerified();
+        return;
+      }
+      setError("등록된 이메일 주소와 일치하지 않습니다. 초대받은 이메일을 다시 확인해주세요.");
+    } catch {
+      setError("이메일을 확인하지 못했습니다. 잠시 후 다시 시도해주세요.");
+    } finally {
+      setChecking(false);
+    }
+  }
+
+  return (
+    <main className="gate-shell email-gate-shell">
+      <div className="ambient ambient-a" />
+      <div className="ambient ambient-b" />
+      <section className="gate-card email-gate-card" aria-labelledby="email-gate-title">
+        <RehearLogo />
+        <p className="eyebrow">REHEAR · INVITED EXPERT</p>
+        <span className="email-gate-id">PARTICIPANT · {participantId}</span>
+        <h1 id="email-gate-title">초대받은 이메일을<br />확인해주세요.</h1>
+        <p>이 링크에 사전 등록된 이메일 주소와 일치하는 경우에만 다음 화면이 열립니다.</p>
+        <form className="email-gate-form" onSubmit={verifyEmail} noValidate>
+          <label htmlFor="participant-email">이메일 주소</label>
+          <input
+            id="participant-email"
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            value={emailValue}
+            onChange={(event) => setEmailValue(event.target.value)}
+            placeholder="name@university.ac.kr"
+            required
+            aria-describedby={error ? "email-gate-error" : "email-gate-note"}
+          />
+          {error && <p className="email-gate-error" id="email-gate-error" role="alert">{error}</p>}
+          <button type="submit" className="button primary" disabled={checking || !emailValue.trim()}>
+            {checking ? "확인 중…" : "이메일 확인 후 계속"} <span>→</span>
+          </button>
+        </form>
+        <small id="email-gate-note">입력한 이메일은 일치 여부 확인에만 사용하며 저장하지 않습니다.</small>
+      </section>
+    </main>
+  );
+}
+
 function ExpertReviewPage({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
   return (
     <main className="review-only">
@@ -119,11 +177,13 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
 export function ExpertInvitation() {
   const [access, setAccess] = useState<AccessState>({ status: "checking" });
   const [copied, setCopied] = useState(false);
+  const [emailVerified, setEmailVerified] = useState(false);
 
   useEffect(() => {
     let active = true;
 
     async function verify() {
+      if (active) setEmailVerified(false);
       const route = tokenFromHash();
       if (!route) {
         if (active) setAccess({ status: "denied" });
@@ -173,6 +233,10 @@ export function ExpertInvitation() {
   }
 
   if (access.status === "denied") return <AccessGate />;
+
+  if (!emailVerified) {
+    return <EmailVerificationGate participantId={access.participantId} onVerified={() => setEmailVerified(true)} />;
+  }
 
   if (access.mode === "review") {
     return <ExpertReviewPage participantId={access.participantId} reviewToken={access.token} />;

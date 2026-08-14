@@ -274,6 +274,15 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .gate-card > p { color: var(--muted); line-height: 1.8; word-break: keep-all; }
 .gate-card .text-link { border-bottom: 1px solid var(--ink); display: inline-block; font-size: 13px; font-weight: 800; margin-top: 22px; padding-bottom: 4px; }
 .gate-card small { border-top: 1px solid var(--line); color: var(--muted); display: block; font-size: 10px; line-height: 1.6; margin-top: 38px; padding-top: 18px; }
+.email-gate-card { width: min(100%, 590px); }
+.email-gate-id { background: rgba(12, 24, 81, .07); color: var(--forest); display: inline-flex; font-size: 10px; font-weight: 850; letter-spacing: .09em; margin: 0 0 24px; padding: 9px 12px; }
+.email-gate-form { display: grid; gap: 10px; margin-top: 30px; }
+.email-gate-form label { color: var(--ink); font-size: 12px; font-weight: 800; }
+.email-gate-form input { background: var(--white); border: 1px solid var(--line); border-radius: 0; color: var(--ink); font: inherit; font-size: 16px; min-height: 56px; outline: 0; padding: 0 17px; width: 100%; }
+.email-gate-form input:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(22, 80, 255, .12); }
+.email-gate-form .button { border: 0; justify-content: space-between; margin-top: 4px; min-height: 56px; width: 100%; }
+.email-gate-form .button:disabled { cursor: not-allowed; opacity: .45; }
+.email-gate-error { color: #b42318 !important; font-size: 12px; font-weight: 700; line-height: 1.55 !important; margin: 2px 0 4px; }
 .ambient { border: 1px solid rgba(255,255,255,.12); border-radius: 50%; height: 520px; position: absolute; width: 520px; }
 .ambient-a { left: -220px; top: -180px; }
 .ambient-b { bottom: -280px; right: -180px; }

@@ -39,11 +39,13 @@ test("publishes separate hashed invitation and consent-completed review links", 
   const hashes = inviteSource.match(/[A-Za-z0-9_-]{43}(?=\")/g) ?? [];
 
   assert.equal(new Set(participantIds).size, 6);
-  assert.equal(participantIds.length, 12);
-  assert.equal(new Set(hashes).size, 14);
-  assert.equal((inviteSource.match(/TEST-01/g) ?? []).length, 2);
+  assert.equal(participantIds.length, 18);
+  assert.equal(new Set(hashes).size, 21);
+  assert.equal((inviteSource.match(/TEST-01/g) ?? []).length, 3);
   assert.match(inviteSource, /INVITE_HASHES/);
   assert.match(inviteSource, /REVIEW_HASHES/);
+  assert.match(inviteSource, /EMAIL_HASHES/);
+  assert.doesNotMatch(inviteSource, /@example\.com/);
   assert.doesNotMatch(inviteSource, /github\.io\/.+#\/invite\//);
   assert.match(gitignore, /^\/private\/$/m);
 });
@@ -77,6 +79,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /ReHear_\$\{participantId\}_review\.csv/);
   assert.match(form, /rehear-review-\$\{participantId\}/);
   assert.match(invitation, /access\.mode === "review"/);
+  assert.match(invitation, /type="email"/);
+  assert.match(invitation, /EMAIL_HASHES\[participantId\] === emailHash/);
+  assert.match(invitation, /입력한 이메일은 일치 여부 확인에만 사용하며 저장하지 않습니다/);
   assert.match(invitation, /Consent-completed review/);
   assert.match(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
   assert.match(invitation, /이 페이지는 개별 초대 링크를 통해서만 열립니다\.\s*<br \/>/);
