@@ -143,6 +143,9 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(invitation, /검토는 세 단계로|선택적 재확인|차분하게/);
   assert.match(invitation, /모든 일정과 방식은<br \/>연구책임자와 개별 협의합니다/);
   assert.doesNotMatch(invitation, /YOUR CHOICE MATTERS|참여 여부는 전적으로 자율적입니다|className="section autonomy"/);
+  assert.doesNotMatch(invitation, /각 규칙을 4점 척도로|프레임워크와 연동 규칙 검토/);
+  assert.match(invitation, /E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응을 4점 척도로 평가하고 의견을 작성합니다/);
+  assert.match(invitation, /모델과 영상 구간별 반응 검토/);
   assert.doesNotMatch(invitation, /Who we are inviting/);
   assert.match(invitation, /<em>전문가 검토<\/em>를/);
   assert.match(invitation, /<span>전문가 검토에 참여해주셔서 감사합니다\.<\/span>/);

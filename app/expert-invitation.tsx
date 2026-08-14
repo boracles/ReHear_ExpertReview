@@ -150,7 +150,7 @@ function ExpertReviewPage({ participantId, reviewToken }: { participantId: strin
           <p className="eyebrow">REHEAR · STRUCTURED EXPERT REVIEW</p>
           <h1 id="review-entry-title">AI 청중 에이전트<br />전문가 평가</h1>
           <p className="review-entry-copy">
-            <span>각 규칙을 4점 척도로 평가하고 서면 의견을 작성합니다.</span>
+            <span>E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응을 4점 척도로 평가하고 의견을 작성합니다.</span>
             <span className="withdrawal-line">참여를 중단하거나 동의를 철회하려면 언제든 연구책임자에게 알려주세요.</span>
           </p>
         </div>
@@ -376,8 +376,8 @@ export function ExpertInvitation() {
               <span className="step">01</span>
               <div>
                 <div className="timeline-meta"><b>독립 평가</b><em>약 30–45분</em></div>
-                <h3>프레임워크와 연동 규칙 검토</h3>
-                <p>수행정보–백채널 연동 규칙, 발표 맥락, 백채널 애니메이션 예시를 살펴본 후 각 규칙을 4점 척도로 평가하고 서면 의견을 작성합니다.</p>
+                <h3>모델과 영상 구간별 반응 검토</h3>
+                <p>E·V·C 청중 상태 모델과 제공 자료를 확인하고, 영상 샘플 A·B의 발표 구간별 AI 청중 반응을 4점 척도로 평가한 뒤 판단 근거와 수정안을 작성합니다.</p>
               </div>
             </li>
             <li>
@@ -454,7 +454,7 @@ export function ExpertInvitation() {
           </details>
           <details>
             <summary>평가는 어떤 방식으로 진행되나요?<i>+</i></summary>
-            <p>각 규칙을 4점 척도로 평가하고 서면 의견을 작성한 뒤, 연구자와 1:1 반구조화 면담을 진행합니다.</p>
+            <p>E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응을 4점 척도로 평가하고 의견을 작성한 뒤, 연구자와 1:1 반구조화 면담을 진행합니다.</p>
           </details>
           <details>
             <summary>참여를 시작한 뒤 중단할 수 있나요?<i>+</i></summary>
