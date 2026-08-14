@@ -7,7 +7,7 @@ import { ExpertReviewForm } from "./expert-review-form";
 type AccessState =
   | { status: "checking" }
   | { status: "denied" }
-  | { status: "granted"; participantId: string; mode: "invite" | "review" };
+  | { status: "granted"; participantId: string; mode: "invite" | "review"; token: string };
 
 const phoneDisplay = "010-8867-0903";
 const phoneHref = "01088670903";
@@ -69,7 +69,7 @@ function AccessGate() {
   );
 }
 
-function ExpertReviewPage({ participantId }: { participantId: string }) {
+function ExpertReviewPage({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
   return (
     <main className="review-only">
       <header className="site-header">
@@ -98,14 +98,14 @@ function ExpertReviewPage({ participantId }: { participantId: string }) {
         <aside>
           <b>평가 전 확인</b>
           <span>예상 소요시간 · 약 30–45분</span>
-          <span>입력 내용 · 현재 기기에만 임시 저장</span>
-          <span>완료 후 · JSON과 CSV 파일 전달</span>
+          <span>입력 내용 · 기기 및 보안 서버 자동 저장</span>
+          <span>완료 후 · 제출 버튼으로 최종 전달</span>
           <p className="contact-detail">연구책임자 윤보라 · {phoneDisplay}</p>
           <a href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
         </aside>
       </section>
 
-      <ExpertReviewForm participantId={participantId} />
+      <ExpertReviewForm participantId={participantId} reviewToken={reviewToken} />
 
       <footer>
         <div className="footer-brand"><RehearLogo inverse /><span>Expert Review</span></div>
@@ -135,7 +135,7 @@ export function ExpertInvitation() {
         const hashes = route.mode === "invite" ? INVITE_HASHES : REVIEW_HASHES;
         const participantId = hashes[hash];
         if (active) {
-          setAccess(participantId ? { status: "granted", participantId, mode: route.mode } : { status: "denied" });
+          setAccess(participantId ? { status: "granted", participantId, mode: route.mode, token: route.token } : { status: "denied" });
         }
       } catch {
         if (active) setAccess({ status: "denied" });
@@ -175,7 +175,7 @@ export function ExpertInvitation() {
   if (access.status === "denied") return <AccessGate />;
 
   if (access.mode === "review") {
-    return <ExpertReviewPage participantId={access.participantId} />;
+    return <ExpertReviewPage participantId={access.participantId} reviewToken={access.token} />;
   }
 
   const { participantId } = access;

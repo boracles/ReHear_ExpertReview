@@ -89,3 +89,20 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(invitation, /전문가 평가표 작성하기/);
   assert.doesNotMatch(invitation, /href="#/);
 });
+
+test("backs up review drafts to Firestore without exposing collection listing", async () => {
+  const [form, firebase, rules] = await Promise.all([
+    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/firebase.ts", import.meta.url), "utf8"),
+    readFile(new URL("../firestore.rules", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(firebase, /projectId: "rehear-83639"/);
+  assert.match(form, /expertReviewResponses/);
+  assert.match(form, /serverTimestamp/);
+  assert.match(form, /submissionStatus/);
+  assert.match(form, /검토 완료 제출/);
+  assert.match(rules, /allow get: if validReviewToken/);
+  assert.match(rules, /allow list: if false/);
+  assert.match(rules, /allow delete: if false/);
+});

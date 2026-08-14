@@ -1,0 +1,51 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function validReviewToken(reviewToken) {
+      return reviewToken.matches('^[A-Za-z0-9_-]{32,128}$');
+    }
+
+    function validParticipant(data) {
+      return data.participantId in [
+        'EXP-01', 'EXP-02', 'EXP-03', 'EXP-04', 'EXP-05', 'EXP-06', 'TEST-01'
+      ];
+    }
+
+    function validPayload(data) {
+      return data.keys().hasOnly([
+        'schemaVersion',
+        'participantId',
+        'updatedAt',
+        'expert',
+        'session',
+        'ruleEvaluations',
+        'overall',
+        'submissionStatus',
+        'submittedAt',
+        'serverUpdatedAt'
+      ])
+      && data.schemaVersion == '1.1'
+      && validParticipant(data)
+      && data.updatedAt is string
+      && data.expert is map
+      && data.session is map
+      && data.ruleEvaluations is list
+      && data.overall is map
+      && data.submissionStatus in ['draft', 'submitted'];
+    }
+
+    match /expertReviewResponses/{reviewToken} {
+      // Possession of the unguessable review link grants access to exactly one
+      // response. Collection listing and deletion are always blocked.
+      allow get: if validReviewToken(reviewToken);
+      allow list: if false;
+      allow create: if validReviewToken(reviewToken)
+        && validPayload(request.resource.data);
+      allow update: if validReviewToken(reviewToken)
+        && validPayload(request.resource.data)
+        && request.resource.data.participantId == resource.data.participantId;
+      allow delete: if false;
+    }
+  }
+}

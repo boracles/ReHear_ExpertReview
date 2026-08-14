@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { doc, getDoc, serverTimestamp, setDoc } from "firebase/firestore";
+import { firestore } from "./firebase";
 
 type Score = 1 | 2 | 3 | 4 | null;
 
@@ -31,9 +33,11 @@ type RuleEvaluation = {
 };
 
 type ReviewData = {
-  schemaVersion: "1.0";
+  schemaVersion: "1.1";
   participantId: string;
   updatedAt: string;
+  submissionStatus: "draft" | "submitted";
+  submittedAt: string | null;
   expert: {
     expertise: string[];
     otherExpertise: string;
@@ -96,13 +100,29 @@ function newRule(index: number): RuleEvaluation {
 
 function initialData(participantId: string): ReviewData {
   return {
-    schemaVersion: "1.0",
+    schemaVersion: "1.1",
     participantId,
     updatedAt: new Date().toISOString(),
+    submissionStatus: "draft",
+    submittedAt: null,
     expert: { expertise: [], otherExpertise: "", careerYears: "", affiliationType: "", conflict: "", conflictDetails: "" },
     session: { reviewDate: "", interviewMode: "", recording: "", frameworkVersion: "", ruleSetVersion: "" },
     ruleEvaluations: [newRule(0)],
     overall: Object.fromEntries(overallItems.map((_, index) => [`item${index + 1}`, { score: null, comment: "" }])),
+  };
+}
+
+function normalizeReviewData(value: unknown, participantId: string): ReviewData | null {
+  if (!value || typeof value !== "object") return null;
+  const parsed = value as Partial<ReviewData>;
+  if (parsed.participantId !== participantId) return null;
+  return {
+    ...initialData(participantId),
+    ...parsed,
+    schemaVersion: "1.1",
+    participantId,
+    submissionStatus: parsed.submissionStatus === "submitted" ? "submitted" : "draft",
+    submittedAt: typeof parsed.submittedAt === "string" ? parsed.submittedAt : null,
   };
 }
 
@@ -140,34 +160,74 @@ function csvEscape(value: unknown) {
   return `"${text.replace(/"/g, '""')}"`;
 }
 
-export function ExpertReviewForm({ participantId }: { participantId: string }) {
+export function ExpertReviewForm({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
   const storageKey = `rehear-review-${participantId}`;
   const [data, setData] = useState<ReviewData>(() => initialData(participantId));
   const [restored, setRestored] = useState(false);
   const [savedAt, setSavedAt] = useState("");
+  const [syncStatus, setSyncStatus] = useState<"loading" | "ready" | "saving" | "saved" | "error">("loading");
 
   useEffect(() => {
-    const stored = window.localStorage.getItem(storageKey);
-    if (stored) {
+    let active = true;
+
+    async function restoreDraft() {
+      let restoredData = initialData(participantId);
+      const stored = window.localStorage.getItem(storageKey);
       try {
-        const parsed = JSON.parse(stored) as ReviewData;
-        if (parsed.participantId === participantId) setData(parsed);
+        if (stored) {
+          const localData = normalizeReviewData(JSON.parse(stored), participantId);
+          if (localData) restoredData = localData;
+        }
       } catch {
         window.localStorage.removeItem(storageKey);
       }
+
+      try {
+        const snapshot = await getDoc(doc(firestore, "expertReviewResponses", reviewToken));
+        const serverData = snapshot.exists() ? normalizeReviewData(snapshot.data(), participantId) : null;
+        if (serverData && new Date(serverData.updatedAt).getTime() >= new Date(restoredData.updatedAt).getTime()) {
+          restoredData = serverData;
+        }
+        if (active) setSyncStatus(snapshot.exists() ? "saved" : "ready");
+      } catch {
+        if (active) setSyncStatus("error");
+      }
+
+      if (active) {
+        setData(restoredData);
+        setRestored(true);
+      }
     }
-    setRestored(true);
-  }, [participantId, storageKey]);
+
+    restoreDraft();
+    return () => { active = false; };
+  }, [participantId, reviewToken, storageKey]);
 
   useEffect(() => {
     if (!restored) return;
     const timer = window.setTimeout(() => {
-      const next = { ...data, updatedAt: new Date().toISOString() };
+      const next: ReviewData = { ...data, updatedAt: new Date().toISOString() };
       window.localStorage.setItem(storageKey, JSON.stringify(next));
-      setSavedAt(new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }));
-    }, 500);
+      setSyncStatus("saving");
+      setDoc(
+        doc(firestore, "expertReviewResponses", reviewToken),
+        { ...next, serverUpdatedAt: serverTimestamp() },
+        { merge: true },
+      ).then(() => {
+        setSavedAt(new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }));
+        setSyncStatus("saved");
+      }).catch(() => {
+        setSyncStatus("error");
+      });
+    }, 1000);
     return () => window.clearTimeout(timer);
-  }, [data, restored, storageKey]);
+  }, [data, restored, reviewToken, storageKey]);
+
+  const syncLabel = syncStatus === "loading" ? "저장된 초안 확인 중"
+    : syncStatus === "saving" ? "보안 서버에 저장 중"
+    : syncStatus === "saved" ? `${savedAt || "현재"} 서버 저장 완료`
+    : syncStatus === "error" ? "기기 저장됨 · 서버 연결 재시도 예정"
+    : "자동 저장 준비 완료";
 
   const completion = useMemo(() => {
     const ruleScores = data.ruleEvaluations.flatMap((rule) => Object.values(rule.scores));
@@ -201,6 +261,8 @@ export function ExpertReviewForm({ participantId }: { participantId: string }) {
     const flattened: Record<string, unknown> = {
       participant_id: participantId,
       updated_at: new Date().toISOString(),
+      submission_status: data.submissionStatus,
+      submitted_at: data.submittedAt,
       expertise: data.expert.expertise.join("; "),
       other_expertise: data.expert.otherExpertise,
       career_years: data.expert.careerYears,
@@ -224,19 +286,46 @@ export function ExpertReviewForm({ participantId }: { participantId: string }) {
     downloadText(`ReHear_${participantId}_review.csv`, csv, "text/csv;charset=utf-8");
   }
 
+  async function submitReview() {
+    if (!window.confirm("작성한 평가를 최종 제출할까요? 제출 후에도 같은 링크에서 내용을 수정하고 다시 제출할 수 있습니다.")) return;
+    const submittedAt = new Date().toISOString();
+    const finalized: ReviewData = {
+      ...data,
+      updatedAt: submittedAt,
+      submissionStatus: "submitted",
+      submittedAt,
+    };
+    setData(finalized);
+    window.localStorage.setItem(storageKey, JSON.stringify(finalized));
+    setSyncStatus("saving");
+    try {
+      await setDoc(
+        doc(firestore, "expertReviewResponses", reviewToken),
+        { ...finalized, serverUpdatedAt: serverTimestamp() },
+        { merge: true },
+      );
+      setSavedAt(new Date().toLocaleTimeString("ko-KR", { hour: "2-digit", minute: "2-digit" }));
+      setSyncStatus("saved");
+      window.alert("평가가 안전하게 제출되었습니다.");
+    } catch {
+      setSyncStatus("error");
+      window.alert("기기에는 저장되었지만 서버 제출에 실패했습니다. 인터넷 연결을 확인한 뒤 다시 눌러주세요.");
+    }
+  }
+
   return (
     <section className="review-workspace" id="review-workspace" aria-labelledby="review-title">
       <div className="review-topline">
         <div>
           <p className="eyebrow">STRUCTURED EXPERT REVIEW</p>
           <h2 id="review-title">전문가 검토 평가표</h2>
-          <p>입력 내용은 이 기기에만 임시 저장됩니다. 작성을 마치면 JSON과 CSV 파일을 모두 내려받아 연구자에게 전달해주세요.</p>
+          <p>입력 내용은 현재 기기에 임시 저장되고 보안 서버에도 자동으로 백업됩니다. 작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
         </div>
         <div className="progress-card">
           <span>평가 점수 입력률</span>
           <strong>{completion}%</strong>
           <div><i style={{ width: `${completion}%` }} /></div>
-          <small>{savedAt ? `${savedAt} 기기 저장` : "초안 저장 준비 중"}</small>
+          <small>{syncLabel}</small>
         </div>
       </div>
 
@@ -341,11 +430,12 @@ export function ExpertReviewForm({ participantId }: { participantId: string }) {
       <div className="export-panel">
         <div>
           <p className="eyebrow light">SAVE & HAND OFF</p>
-          <h3>작성한 평가를 파일로 저장해주세요.</h3>
-          <p>두 파일 모두 참여자 ID <strong>{participantId}</strong>가 포함됩니다. JSON은 전체 원본 보관용, CSV는 연구자의 취합·분석용입니다.</p>
+          <h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3>
+          <p>참여자 ID <strong>{participantId}</strong>로 서버에 저장됩니다. 필요할 경우 같은 내용을 JSON과 CSV 파일로도 내려받을 수 있습니다.</p>
         </div>
         <div className="export-actions">
-          <button type="button" className="button primary" onClick={exportJson}>JSON 내려받기 <span>↓</span></button>
+          <button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button>
+          <button type="button" className="button ghost" onClick={exportJson}>JSON 내려받기 <span>↓</span></button>
           <button type="button" className="button ghost" onClick={exportCsv}>CSV 내려받기 <span>↓</span></button>
         </div>
       </div>
