@@ -40,7 +40,6 @@ type ReviewData = {
   submittedAt: string | null;
   expert: {
     expertise: string[];
-    otherExpertise: string;
     careerYears: string;
     affiliationType: string;
     conflict: string;
@@ -105,7 +104,7 @@ function initialData(participantId: string): ReviewData {
     updatedAt: new Date().toISOString(),
     submissionStatus: "draft",
     submittedAt: null,
-    expert: { expertise: [], otherExpertise: "", careerYears: "", affiliationType: "", conflict: "", conflictDetails: "" },
+    expert: { expertise: [], careerYears: "", affiliationType: "", conflict: "", conflictDetails: "" },
     session: { reviewDate: "", interviewMode: "", recording: "", frameworkVersion: "", ruleSetVersion: "" },
     ruleEvaluations: [newRule(0)],
     overall: Object.fromEntries(overallItems.map((_, index) => [`item${index + 1}`, { score: null, comment: "" }])),
@@ -264,7 +263,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       submission_status: data.submissionStatus,
       submitted_at: data.submittedAt,
       expertise: data.expert.expertise.join("; "),
-      other_expertise: data.expert.otherExpertise,
       career_years: data.expert.careerYears,
       affiliation_type: data.expert.affiliationType,
       conflict: data.expert.conflict,
@@ -349,7 +347,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
               ))}
             </div>
           </div>
-          <label className="field"><span>기타 전문영역</span><input value={data.expert.otherExpertise} onChange={(e) => updateExpert("otherExpertise", e.target.value)} /></label>
           <label className="field"><span>관련 경력</span><input inputMode="decimal" value={data.expert.careerYears} onChange={(e) => updateExpert("careerYears", e.target.value)} placeholder="예: 10년" /></label>
           <label className="field"><span>소속 유형</span><select value={data.expert.affiliationType} onChange={(e) => updateExpert("affiliationType", e.target.value)}><option value="">선택</option><option>대학</option><option>연구기관</option><option>산업체</option><option>기타</option></select></label>
           <label className="field"><span>이해상충 여부</span><select value={data.expert.conflict} onChange={(e) => updateExpert("conflict", e.target.value)}><option value="">선택</option><option>없음</option><option>있음</option></select></label>

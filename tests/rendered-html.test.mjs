@@ -76,6 +76,8 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /프레임워크 전체 평가/);
   assert.match(form, /검토자 정보/);
   assert.match(form, /평가 정보/);
+  assert.doesNotMatch(form, /기타 전문영역/);
+  assert.doesNotMatch(form, /other_expertise/);
   assert.doesNotMatch(form, /전문가 기본 정보/);
   assert.doesNotMatch(form, />검토 기록</);
   assert.doesNotMatch(form, />면담 방식</);
