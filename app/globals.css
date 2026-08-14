@@ -786,9 +786,14 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .fixed-criteria .criterion { grid-template-columns: minmax(0, 1fr) auto minmax(188px, auto); }
 .criterion-copy { align-items: flex-start; display: flex; gap: 14px; }
 .criterion-index { align-items: center; background: #eef2ff; border-radius: 7px; color: var(--blue); display: inline-flex; flex: 0 0 auto; font-size: 10px; font-weight: 850; height: 30px; justify-content: center; width: 30px; }
-.criterion-flags { display: grid; gap: 9px; justify-items: start; }
-.criterion-flags label, .unable-check { align-items: center; color: #5f6983; display: flex; font-size: 10px; gap: 6px; line-height: 1.45; }
-.criterion-flags input, .unable-check input { accent-color: var(--blue); }
+.criterion-flags { display: grid; gap: 8px; justify-items: start; }
+.criterion-flags label, .unable-check { align-items: center; border: 1px solid #d9dcf8; border-radius: 8px; color: #555aa6; display: flex; font-size: 10px; gap: 7px; line-height: 1.45; min-height: 34px; padding: 7px 10px; transition: background .16s ease, border-color .16s ease, color .16s ease; }
+.criterion-flags input, .unable-check input { accent-color: #6159d6; }
+.unable-check { background: #f6f5ff; }
+.unable-check.is-selected { background: #e7e5ff; border-color: #756ee8; color: #4039af; font-weight: 800; }
+.critical-check { background: #fff6f5; border-color: #f1d0cc !important; color: #a54239 !important; }
+.critical-check input { accent-color: #c63f35 !important; }
+.critical-check.is-selected { background: #c63f35; border-color: #c63f35 !important; color: #fff !important; font-weight: 800; }
 .score-picker[aria-disabled="true"] { opacity: .42; }
 .score-picker button:disabled { cursor: not-allowed; }
 .model-summary { background: #eef2ff; border: 1px solid #dfe5fb; border-radius: 14px; display: grid; gap: 20px; grid-template-columns: 1fr 1fr; margin-top: 24px; padding: 24px; }
