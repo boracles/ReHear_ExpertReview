@@ -150,17 +150,14 @@ function ExpertReviewPage({ participantId, reviewToken, verifiedEmail }: { parti
           <p className="eyebrow">REHEAR · STRUCTURED EXPERT REVIEW</p>
           <h1 id="review-entry-title">AI 청중 에이전트<br />전문가 평가</h1>
           <p className="review-entry-copy">
-            <span>E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응을 4점 척도로 평가하고 의견을 작성합니다.</span>
+            <span>E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응에 관한 각 평가 문항을 4점 척도로 평가하고 의견을 작성합니다.</span>
             <span className="withdrawal-line">참여를 중단하거나 동의를 철회하려면 언제든 연구책임자에게 알려주세요.</span>
           </p>
         </div>
-        <aside>
-          <b>평가 소요시간</b>
-          <span>약 30–45분</span>
-          <span>작성 중 · 자동 임시 저장</span>
-          <span>완료 후 · 제출 버튼으로 최종 전달</span>
-          <p className="contact-detail"><strong>연구책임자 윤보라</strong> · <strong>{phoneDisplay}</strong></p>
-          <a href={`mailto:${email}`}>이메일로 문의하기 · {email}</a>
+        <aside aria-label="평가 진행 안내">
+          <div className="review-guide-item"><small>예상 소요시간</small><strong>약 30–45분</strong></div>
+          <div className="review-guide-item"><small>임시 저장</small><strong>작성 내용 자동 저장</strong></div>
+          <div className="review-guide-item"><small>최종 제출</small><strong>제출 버튼으로 전달</strong></div>
         </aside>
       </section>
 

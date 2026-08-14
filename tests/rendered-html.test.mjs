@@ -117,9 +117,12 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /동의를 철회하려면 언제든 연구책임자에게/);
   assert.match(invitation, /review-entry-copy/);
   assert.match(invitation, /전문가 평가 시작하기/);
-  assert.match(invitation, /작성 중 · 자동 임시 저장/);
-  assert.match(invitation, /<b>평가 소요시간<\/b>/);
-  assert.match(invitation, /<span>약 30–45분<\/span>/);
+  assert.match(invitation, /작성 내용 자동 저장/);
+  assert.doesNotMatch(invitation, /<b>평가 소요시간<\/b>/);
+  assert.match(invitation, /<small>예상 소요시간<\/small><strong>약 30–45분<\/strong>/);
+  assert.match(invitation, /<small>임시 저장<\/small><strong>작성 내용 자동 저장<\/strong>/);
+  assert.match(invitation, /<small>최종 제출<\/small><strong>제출 버튼으로 전달<\/strong>/);
+  assert.doesNotMatch(invitation, /<p className="contact-detail"><strong>연구책임자 윤보라/);
   assert.doesNotMatch(invitation, /평가 전 확인|예상 소요시간 ·/);
   assert.doesNotMatch(invitation, /기기 및 보안 서버 자동 저장/);
   assert.doesNotMatch(invitation, /기기와 보안 서버에 자동 저장/);
@@ -132,7 +135,6 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /SEOUL NATIONAL UNIVERSITY HCID LAB \+ TEAM AUDI/);
   assert.match(invitation, /mailto:\$\{email\}/);
   assert.match(invitation, /boracles@snu\.ac\.kr/);
-  assert.match(invitation, /<strong>\{phoneDisplay\}<\/strong>/);
   assert.doesNotMatch(invitation, /tel:\$\{phoneHref\}/);
   assert.match(invitation, /이메일로 문의하기/);
   assert.match(invitation, /Why your perspective matters/);
@@ -144,7 +146,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /모든 일정과 방식은<br \/>연구책임자와 개별 협의합니다/);
   assert.doesNotMatch(invitation, /YOUR CHOICE MATTERS|참여 여부는 전적으로 자율적입니다|className="section autonomy"/);
   assert.doesNotMatch(invitation, /각 규칙을 4점 척도로|프레임워크와 연동 규칙 검토/);
-  assert.match(invitation, /E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응을 4점 척도로 평가하고 의견을 작성합니다/);
+  assert.match(invitation, /E·V·C 청중 상태 모델과 영상 구간별 AI 청중 반응에 관한 각 평가 문항을 4점 척도로 평가하고 의견을 작성합니다/);
   assert.match(invitation, /모델과 영상 구간별 반응 검토/);
   assert.doesNotMatch(invitation, /Who we are inviting/);
   assert.match(invitation, /<em>전문가 검토<\/em>를/);
