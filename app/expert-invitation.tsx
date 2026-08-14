@@ -15,8 +15,7 @@ const phoneHref = "01088670903";
 function RehearLogo({ inverse = false }: { inverse?: boolean }) {
   return (
     <span className={`logo-lockup${inverse ? " inverse" : ""}`} aria-label="Re:hear">
-      <span className="logo-symbol" aria-hidden="true" />
-      <span className="logo-type">Re:hear</span>
+      <img className="logo-image" src="./rehear-logo-white.svg" alt="" aria-hidden="true" />
     </span>
   );
 }

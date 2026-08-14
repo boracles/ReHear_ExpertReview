@@ -382,54 +382,12 @@ body {
   align-items: center;
   display: inline-flex;
   flex: 0 0 auto;
-  gap: 9px;
   line-height: 1;
 }
 
-.logo-symbol {
-  background: linear-gradient(145deg, #070d78 0%, #113dff 58%, #64d9ff 84%, #caff4a 100%);
-  border-radius: 9px 9px 4px 9px;
-  display: inline-block;
-  height: 29px;
-  overflow: hidden;
-  position: relative;
-  width: 34px;
-}
-
-.logo-symbol::before {
-  background: #fff;
-  border-radius: 99px 0 0 99px;
-  content: "";
-  height: 8px;
-  position: absolute;
-  right: -1px;
-  top: 10px;
-  width: 18px;
-}
-
-.logo-symbol::after {
-  background: #fff;
-  border-radius: 5px 5px 0 0;
-  bottom: -8px;
-  content: "";
-  height: 19px;
-  left: 10px;
-  position: absolute;
-  transform: rotate(31deg);
-  width: 9px;
-}
-
-.logo-type {
-  color: #153ac7;
-  font-size: 24px;
-  font-weight: 500;
-  letter-spacing: -.07em;
-}
-
-.logo-lockup.inverse .logo-symbol { background: #fff; }
-.logo-lockup.inverse .logo-symbol::before,
-.logo-lockup.inverse .logo-symbol::after { background: var(--deep); }
-.logo-lockup.inverse .logo-type { color: #fff; }
+.logo-image { display: block; height: auto; width: 150px; }
+.logo-lockup:not(.inverse) .logo-image { filter: brightness(0) saturate(100%) invert(23%) sepia(99%) saturate(6033%) hue-rotate(229deg) brightness(99%) contrast(104%); }
+.logo-lockup.inverse .logo-image { filter: none; }
 
 .site-header {
   background: rgba(255, 255, 255, .9);
@@ -499,8 +457,7 @@ body {
   z-index: 3;
 }
 
-.hero-brand-stamp .logo-symbol { height: 38px; width: 44px; }
-.hero-brand-stamp .logo-type { font-size: 34px; }
+.hero-brand-stamp .logo-image { width: 184px; }
 .hero-brand-stamp > span:last-child { color: rgba(255,255,255,.5); font-size: 9px; font-weight: 750; letter-spacing: .17em; line-height: 1.6; text-align: right; }
 
 .hero-facts {
@@ -610,8 +567,7 @@ body {
 footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .footer-brand { align-items: center; display: flex; gap: 12px; }
 .footer-brand > span:last-child { color: #94a8ff; }
-.footer-brand .logo-symbol { height: 23px; width: 27px; }
-.footer-brand .logo-type { font-size: 20px; }
+.footer-brand .logo-image { width: 130px; }
 
 .review-workspace {
   background: #f0f2f8;
@@ -715,8 +671,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 
 @media (max-width: 620px) {
   .site-header { height: 66px; }
-  .logo-symbol { height: 25px; width: 29px; }
-  .logo-type { font-size: 21px; }
+  .logo-image { width: 126px; }
   .hero { border-radius: 0 0 24px 24px; min-height: 750px; padding-top: 82px; }
   .hero h1 { font-size: clamp(39px, 11.5vw, 54px); }
   .hero-facts { bottom: 22px; border-radius: 12px; }
