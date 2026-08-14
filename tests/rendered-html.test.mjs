@@ -96,6 +96,8 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(invitation, /설명 및 동의 절차 완료 후 제공되는 페이지/);
   assert.doesNotMatch(invitation, /Consent-completed review/);
   assert.match(invitation, /동의를 철회하려면 언제든 연구책임자에게/);
+  assert.match(invitation, /review-entry-copy/);
+  assert.match(form, /임시 저장됩니다\.<br \/>/);
   assert.match(invitation, /전문가 평가 시작하기/);
   assert.match(invitation, /작성 중 · 자동 임시 저장/);
   assert.doesNotMatch(invitation, /기기 및 보안 서버 자동 저장/);

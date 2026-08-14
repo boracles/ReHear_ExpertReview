@@ -317,7 +317,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         <div>
           <p className="eyebrow">STRUCTURED EXPERT REVIEW</p>
           <h2 id="review-title">전문가 검토 평가표</h2>
-          <p>작성 내용은 자동으로 임시 저장됩니다. 작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
+          <p>작성 내용은 자동으로 임시 저장됩니다.<br />작성을 마치면 아래의 최종 제출 버튼을 눌러주세요.</p>
         </div>
         <div className="progress-card">
           <span>평가 점수 입력률</span>

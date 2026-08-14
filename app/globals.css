@@ -196,6 +196,8 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .consent-status { background: rgba(185,255,44,.13); border: 1px solid rgba(185,255,44,.35); border-radius: 7px; color: var(--lime); display: inline-block; font-size: 11px; font-weight: 800; padding: 9px 11px; }
 .review-entry h1 { font-size: clamp(44px, 6vw, 78px); letter-spacing: -.06em; line-height: 1.08; margin: 24px 0; }
 .review-entry > div > p:last-child { color: rgba(255,255,255,.68); line-height: 1.8; max-width: 670px; word-break: keep-all; }
+.review-entry-copy span { display: block; }
+.review-entry-copy .withdrawal-line { white-space: nowrap; }
 .review-entry aside { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.14); border-radius: 16px; display: grid; gap: 14px; padding: 26px; }
 .review-entry aside b { color: var(--lime); font-size: 13px; letter-spacing: .04em; }
 .review-entry aside span { border-top: 1px solid rgba(255,255,255,.12); color: rgba(255,255,255,.72); font-size: 12px; line-height: 1.6; padding-top: 13px; }
@@ -233,7 +235,8 @@ footer { align-items: center; background: var(--ink); color: rgba(255,255,255,.5
 .choice-chip input:checked + span { background: var(--deep); border-color: var(--deep); color: var(--white); }
 .choice-chip input:focus-visible + span { outline: 3px solid var(--lime); outline-offset: 3px; }
 .rule-section { padding-top: 44px; }
-.legend-like { align-items: center; display: flex; gap: 14px; margin-bottom: 30px; }
+.legend-like { align-items: flex-start; display: flex; gap: 14px; margin-bottom: 30px; }
+.legend-like > span { margin-top: 1px; }
 .legend-like > div { display: grid; gap: 4px; }
 .legend-like b { font-size: 22px; }
 .legend-like small { color: var(--muted); }
@@ -753,6 +756,7 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   footer { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .footer-brand { grid-column: 1 / -1; }
   .review-entry { align-items: start; }
+  .review-entry-copy .withdrawal-line { white-space: normal; }
   .review-entry aside { max-width: 620px; }
   .review-topline, .export-panel { grid-template-columns: 1fr; }
   .review-topline { padding: 36px 28px; }
