@@ -26,6 +26,7 @@ test("includes mobile and tablet responsive layouts", async () => {
   assert.match(css, /@media \(max-width: 380px\)/);
   assert.match(css, /min-height: 100svh/);
   assert.match(css, /font-size: 16px/);
+  assert.match(css, /\.hero-facts \{[\s\S]*?margin-top: 34px;[\s\S]*?position: relative;/);
 });
 
 test("publishes separate hashed invitation and consent-completed review links", async () => {
