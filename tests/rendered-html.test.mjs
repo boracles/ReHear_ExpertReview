@@ -80,6 +80,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /후속 면담 일정/);
   assert.match(form, /기타 전문영역/);
   assert.match(form, /otherExpertise/);
+  assert.match(form, /placeholder="예: 10년"/);
   assert.doesNotMatch(form, /관련 분야 최종 학위/);
   assert.doesNotMatch(form, /other_expertise/);
   assert.match(form, />면담 방식</);
