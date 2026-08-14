@@ -4,6 +4,7 @@ import test from "node:test";
 
 const root = new URL("../", import.meta.url);
 const activeForm = new URL("../app/expert-review-form-v2.tsx", import.meta.url);
+const consentGate = new URL("../app/expert-consent-gate.tsx", import.meta.url);
 
 test("exports the Korean expert invitation shell", async () => {
   const html = await readFile(new URL("../dist/client/index.html", import.meta.url), "utf8");
@@ -275,4 +276,24 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.match(css, /\.framework-video-list \{ display: grid; gap: 24px; grid-template-columns: 1fr/);
   assert.match(css, /\.framework-player video, \.framework-player \.video-empty \{ aspect-ratio: 16 \/ 9/);
   assert.match(css, /\.theory-references/);
+});
+
+test("requires informed consent before the expert review form", async () => {
+  const [form, consent, css] = await Promise.all([
+    readFile(activeForm, "utf8"),
+    readFile(consentGate, "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+  assert.match(form, /if \(!data\.session\.consent\.completedAt\) return <ExpertConsentGate/);
+  assert.match(form, /consent: emptyConsentRecord\(todayInKorea\(\)\)/);
+  assert.match(consent, /연구 설명을 확인하고/);
+  assert.equal((consent.match(/key: "(?:informationRead|risksBenefitsPayment|voluntaryParticipation|dataProcessing|authorizedReview|withdrawalRight|copyAvailable)"/g) ?? []).length, 7);
+  assert.match(consent, /후속 면담 녹음/);
+  assert.match(consent, /익명화된 의견·발췌문 인용/);
+  assert.match(consent, /중도 철회 시 기존 자료 활용/);
+  assert.match(consent, /연구참여자용 설명문 전체 내용 확인하기/);
+  assert.equal((consent.match(/<article><span>(?:0[1-9]|10|11)<\/span>/g) ?? []).length, 11);
+  assert.match(consent, /disabled=\{!canContinue\}/);
+  assert.match(css, /\.consent-gate/);
+  assert.match(css, /\.consent-required-list/);
 });
