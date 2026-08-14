@@ -120,6 +120,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /SEOUL NATIONAL UNIVERSITY · HCID LAB/);
   assert.match(invitation, /mailto:\$\{email\}/);
   assert.match(invitation, /boracles@snu\.ac\.kr/);
+  assert.match(invitation, /<strong>\{phoneDisplay\}<\/strong>/);
   assert.doesNotMatch(invitation, /tel:\$\{phoneHref\}/);
   assert.match(invitation, /이메일로 문의하기/);
   assert.match(invitation, /Why your perspective matters/);
