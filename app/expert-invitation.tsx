@@ -324,7 +324,7 @@ export function ExpertInvitation() {
             <p className="lead-paragraph">
               본 연구는 VR 발표 훈련에서 발표 수행정보에 따라 AI 청중 에이전트가
               보이는 <strong>평가적 백채널의 디자인 프레임워크와 연동 규칙</strong>을
-              개발하는 연구입니다.
+              설계하고 검증하는 연구입니다.
             </p>
             <p>
               사용자 실험에 앞서 관련 분야 전문가의 평가를 통해 규칙의 내용 적절성,

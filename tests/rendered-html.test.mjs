@@ -102,6 +102,8 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(form, /CSV 내려받기/);
   assert.match(form, /rehear-review-\$\{participantId\}/);
   assert.match(invitation, /access\.mode === "review"/);
+  assert.match(invitation, /설계하고 검증하는 연구입니다/);
+  assert.doesNotMatch(invitation, /개발하는 연구입니다/);
   assert.match(invitation, /\.\/expert-review-form-v2/);
   assert.match(invitation, /type="email"/);
   assert.match(invitation, /EMAIL_HASHES\[participantId\] === emailHash/);
