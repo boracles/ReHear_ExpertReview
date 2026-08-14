@@ -2,6 +2,7 @@
 
 import { type FormEvent, useEffect, useMemo, useState } from "react";
 import { EMAIL_HASHES, INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
+import { getExpertProfile } from "./expert-profiles";
 import { ExpertReviewForm } from "./expert-review-form";
 
 type AccessState =
@@ -242,6 +243,7 @@ export function ExpertInvitation() {
   }
 
   const { participantId } = access;
+  const expertProfile = getExpertProfile(participantId);
 
   function scrollToSection(id: string) {
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -313,7 +315,7 @@ export function ExpertInvitation() {
 
       <nav className="section-nav" aria-label="페이지 바로가기">
         <button type="button" onClick={() => scrollToSection("overview")}>연구 소개</button>
-        <button type="button" onClick={() => scrollToSection("who")}>검토 대상</button>
+        <button type="button" onClick={() => scrollToSection("focus")}>의뢰 배경</button>
         <button type="button" onClick={() => scrollToSection("process")}>참여 절차</button>
         <button type="button" onClick={() => scrollToSection("contact")}>참여 의사 전달</button>
       </nav>
@@ -341,28 +343,29 @@ export function ExpertInvitation() {
         </div>
       </section>
 
-      <section className="section eligibility" id="who">
-        <div className="section-kicker"><span>02</span> Who we are inviting</div>
-        <div className="eligibility-head">
-          <h2>이런 전문성을 가진 분의<br />의견을 기다립니다.</h2>
-          <p>아래 분야 중 하나 이상에서 연구·교육·실무 경험을 보유한 전문가</p>
+      <section className="section personalization" id="focus">
+        <div className="section-kicker"><span>02</span> Why your perspective matters</div>
+        <div className="personalization-head">
+          <div>
+            <p className="verified-expert">이메일 확인 완료 · {expertProfile.displayName}</p>
+            <h2>{expertProfile.headline}</h2>
+          </div>
+          <div className="invited-track" aria-label={`초대 전문 분야 ${expertProfile.label}`}>
+            <span>{expertProfile.track === "GENERAL" ? "–" : expertProfile.track}</span>
+            <div><small>INVITED FOR</small><strong>{expertProfile.label}</strong></div>
+          </div>
         </div>
-        <div className="expertise-grid">
-          <article>
-            <div className="number">A</div>
-            <h3>발표 · 커뮤니케이션</h3>
-            <p>발표 수행, 비언어적 커뮤니케이션, 발표 교육 및 평가</p>
-          </article>
-          <article>
-            <div className="number">B</div>
-            <h3>HCI · Human–AI Interaction</h3>
-            <p>인간–컴퓨터 상호작용, AI 에이전트 경험 및 인터랙션 설계</p>
-          </article>
-          <article>
-            <div className="number">C</div>
-            <h3>XR · 가상 에이전트</h3>
-            <p>XR 인터랙션, VR 훈련 환경, 가상 인간 및 행동 애니메이션</p>
-          </article>
+        <div className="invitation-reason">
+          <span>의뢰드리는 이유</span>
+          <p>{expertProfile.reason}</p>
+        </div>
+        <div className="focus-list" aria-label="중점 검토 요청 항목">
+          <p>특히 다음 내용을 중심으로 살펴봐주세요.</p>
+          <ol>
+            {expertProfile.focusItems.map((item, index) => (
+              <li key={item}><span>{String(index + 1).padStart(2, "0")}</span><p>{item}</p></li>
+            ))}
+          </ol>
         </div>
       </section>
 

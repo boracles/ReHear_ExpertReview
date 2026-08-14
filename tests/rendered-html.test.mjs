@@ -65,9 +65,10 @@ test("includes the Pages deployment assets", async () => {
 });
 
 test("includes the complete expert review workflow without breaking invite hashes", async () => {
-  const [form, invitation] = await Promise.all([
+  const [form, invitation, profiles] = await Promise.all([
     readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/expert-invitation.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/expert-profiles.ts", import.meta.url), "utf8"),
   ]);
 
   assert.match(form, /내용 적절성/);
@@ -91,6 +92,12 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /boracles@snu\.ac\.kr/);
   assert.doesNotMatch(invitation, /tel:\$\{phoneHref\}/);
   assert.match(invitation, /이메일로 문의하기/);
+  assert.match(invitation, /Why your perspective matters/);
+  assert.match(invitation, /특히 다음 내용을 중심으로 살펴봐주세요/);
+  assert.doesNotMatch(invitation, /Who we are inviting/);
+  assert.match(profiles, /발표와 커뮤니케이션 관점의 검토/);
+  assert.match(profiles, /Human–AI Interaction 관점의 검토/);
+  assert.match(profiles, /XR과 가상 에이전트 관점의 검토/);
   assert.doesNotMatch(invitation, /전문가 평가표 작성하기/);
   assert.doesNotMatch(invitation, /href="#/);
 });

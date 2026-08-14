@@ -562,6 +562,25 @@ body {
 .expertise-grid .number { background: var(--blue-soft); border-radius: 8px; color: var(--blue); }
 .expertise-grid h3 { margin-top: 78px; }
 
+.personalization { background: #f4f6fc; }
+.personalization-head { align-items: end; display: grid; gap: 48px; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .7fr); }
+.verified-expert { color: var(--blue); font-size: 13px; font-weight: 800; letter-spacing: -.01em; margin: 0 0 18px; }
+.invited-track { align-items: center; background: #fff; border: 1px solid #dfe5f5; border-radius: 16px; box-shadow: 0 10px 30px rgba(24,43,101,.06); display: flex; gap: 18px; padding: 20px; }
+.invited-track > span { align-items: center; background: var(--blue); border-radius: 11px; color: #fff; display: flex; flex: 0 0 auto; font-size: 17px; font-weight: 850; height: 52px; justify-content: center; width: 52px; }
+.invited-track div { display: grid; gap: 5px; }
+.invited-track small { color: #7a849f; font-size: 9px; font-weight: 850; letter-spacing: .13em; }
+.invited-track strong { font-size: 16px; letter-spacing: -.02em; }
+.invitation-reason { background: #07125e; border-radius: 18px; color: #fff; display: grid; gap: 40px; grid-template-columns: 160px minmax(0, 1fr); margin-top: 56px; padding: 32px 36px; }
+.invitation-reason > span { color: var(--lime); font-size: 12px; font-weight: 850; letter-spacing: .06em; }
+.invitation-reason p { font-size: clamp(17px, 1.6vw, 21px); line-height: 1.75; margin: 0; word-break: keep-all; }
+.focus-list { display: grid; gap: 40px; grid-template-columns: minmax(220px, .55fr) minmax(0, 1.45fr); margin-top: 30px; }
+.focus-list > p { color: #69748f; font-size: 15px; line-height: 1.7; margin: 0; max-width: 240px; word-break: keep-all; }
+.focus-list ol { background: #fff; border: 1px solid #e0e5f1; border-radius: 18px; list-style: none; margin: 0; padding: 6px 26px; }
+.focus-list li { align-items: start; border-bottom: 1px solid #e7eaf3; display: grid; gap: 20px; grid-template-columns: 34px minmax(0, 1fr); padding: 22px 0; }
+.focus-list li:last-child { border-bottom: 0; }
+.focus-list li span { color: var(--blue); font-size: 11px; font-weight: 850; padding-top: 3px; }
+.focus-list li p { font-size: 15px; line-height: 1.65; margin: 0; word-break: keep-all; }
+
 .process {
   background: linear-gradient(135deg, #030637, #07125e);
   border-color: rgba(255,255,255,.08);
@@ -711,6 +730,10 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   .intro-layout, .process-layout, .contact-panel, .faq, .review-entry { grid-template-columns: 1fr; }
   .process-title { position: static; }
   .eligibility-head { align-items: flex-start; flex-direction: column; }
+  .personalization-head { align-items: start; grid-template-columns: 1fr; }
+  .invited-track { max-width: 520px; width: 100%; }
+  .focus-list { grid-template-columns: 1fr; }
+  .focus-list > p { max-width: none; }
   .expertise-grid, .detail-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .expertise-grid article:last-child, .detail-grid article:last-child { grid-column: 1 / -1; }
   .study-title-card { align-items: start; grid-template-columns: 1fr; }
@@ -758,6 +781,15 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
   .expertise-grid article:last-child, .detail-grid article:last-child { grid-column: auto; }
   .expertise-grid article { min-height: 220px; }
   .expertise-grid h3 { margin-top: 54px; }
+  .personalization-head { gap: 28px; }
+  .verified-expert { margin-bottom: 14px; }
+  .invited-track { padding: 16px; }
+  .invited-track > span { height: 46px; width: 46px; }
+  .invitation-reason { gap: 14px; grid-template-columns: 1fr; margin-top: 38px; padding: 26px 22px; }
+  .invitation-reason p { font-size: 16px; }
+  .focus-list { gap: 18px; margin-top: 24px; }
+  .focus-list ol { border-radius: 14px; padding: 4px 18px; }
+  .focus-list li { gap: 12px; grid-template-columns: 28px minmax(0, 1fr); padding: 18px 0; }
   .study-title-card { border-radius: 12px; }
   .expertise-grid article { border-radius: 14px; }
   .timeline li { gap: 14px; grid-template-columns: 34px minmax(0, 1fr); }
