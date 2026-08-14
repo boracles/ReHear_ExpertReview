@@ -79,7 +79,7 @@ export function ExpertConsentGate({ participantId, consentDate, onComplete }: { 
       </header>
 
       <section className="consent-summary" aria-labelledby="consent-summary-title">
-        <div className="consent-section-heading"><span>01</span><div><b id="consent-summary-title">참여 전 핵심 정보</b><small>설명문 전체 내용과 함께 아래 사항을 확인해주세요.</small></div></div>
+        <div className="consent-section-heading"><span>01</span><div><b id="consent-summary-title">전문가 검토 개요</b><small>연구참여자용 설명문과 함께 검토 목적, 소요시간 및 참여 관련 사항을 확인해주세요.</small></div></div>
         <div className="consent-summary-grid"><article><small>PURPOSE</small><b>연구 목적</b><p>E·V·C 청중 상태 모델과 AI 청중의 비언어적 백채널 표현 구조를 점검하고 프레임워크 V2를 보완합니다.</p></article><article><small>TIME</small><b>예상 소요시간</b><p>독립 평가 30–45분, 후속 면담 20–30분으로 최초 참여에는 총 50–75분이 소요됩니다.</p></article><article><small>RISK</small><b>예상 가능한 불편</b><p>자료·영상 검토에 따른 피로, 비판적 의견 제시 부담, 소수 전문가 집단으로 인한 개인 추정 가능성이 있습니다.</p></article><article><small>HONORARIUM</small><b>전문가 자문료</b><p>독립 평가 완료 시 150,000원, 후속 면담까지 완료 시 총 300,000원을 지급합니다.</p></article></div>
         <div className="consent-rights"><b>자발적 참여와 중도 철회</b><p>참여 여부는 자율적으로 결정할 수 있으며 언제든 불이익 없이 중단할 수 있습니다. 수집된 식별 가능한 자료의 폐기를 요청할 수 있습니다.</p></div>
         <details className="consent-full-information"><summary>연구참여자용 설명문 전체 내용 확인하기</summary><div>
