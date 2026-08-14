@@ -164,6 +164,7 @@ function ScorePicker({ value, onChange, label }: { value: Score; onChange: (scor
           key={score}
           type="button"
           role="radio"
+          data-score={score}
           aria-checked={value === score}
           className={value === score ? "selected" : ""}
           onClick={() => onChange(score as Score)}
@@ -399,7 +400,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
         <div className="legend-like"><span>03</span><div><b>규칙별 평가</b><small>검토할 규칙마다 카드 한 장을 작성합니다.</small></div></div>
         <div className="review-scale-note">
           <b>4점 척도 안내</b>
-          <span>1 전혀 적절하지 않음</span><span>2 보완이 많이 필요함</span><span>3 대체로 적절함</span><span>4 매우 적절함</span>
+          <span data-score="1">1 전혀 적절하지 않음</span><span data-score="2">2 보완이 많이 필요함</span><span data-score="3">3 대체로 적절함</span><span data-score="4">4 매우 적절함</span>
           <em>‘오해 위험’만 1 매우 낮음–4 매우 높음</em>
         </div>
         {data.ruleEvaluations.map((rule, ruleIndex) => (

@@ -154,3 +154,17 @@ test("prefills review metadata and removes the unused rule-set version", async (
   assert.doesNotMatch(form, /ruleSetVersion/);
   assert.doesNotMatch(form, /rule_set_version/);
 });
+
+test("aligns section badges and color-codes the four-point scale", async () => {
+  const [form, css] = await Promise.all([
+    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.match(form, /data-score=\{score\}/);
+  assert.equal((form.match(/data-score="[1-4]"/g) ?? []).length, 4);
+  assert.match(css, /\.legend-like b \{ display: block; line-height: 28px; \}/);
+  assert.match(css, /\.legend-like > span \{ margin-top: 0; \}/);
+  assert.equal((css.match(/\.review-scale-note span\[data-score="[1-4]"\]/g) ?? []).length, 4);
+  assert.equal((css.match(/\.score-picker button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
+});

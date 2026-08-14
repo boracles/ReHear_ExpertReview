@@ -673,6 +673,10 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .review-scale-note b { background: var(--blue); border-radius: 7px; color: #fff; padding: 7px 10px; }
 .review-scale-note span { background: #f3f5fb; border-radius: 6px; color: #5e6883; padding: 7px 9px; }
 .review-scale-note em { color: #7b6500; }
+.review-scale-note span[data-score="1"] { background: #fff0ef; color: #b42318; }
+.review-scale-note span[data-score="2"] { background: #fff6e5; color: #a15c00; }
+.review-scale-note span[data-score="3"] { background: #eef2ff; color: #1646ff; }
+.review-scale-note span[data-score="4"] { background: #edf9ef; color: #18753a; }
 
 .form-section {
   border: 1px solid #e0e5f1;
@@ -684,6 +688,9 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .compact-section .form-grid { margin-top: 26px; }
 .rule-section .review-scale-note { margin: 0 0 26px; max-width: none; }
 .form-section legend span, .legend-like > span { background: var(--blue); border: 0; border-radius: 8px; color: #fff; }
+.legend-like { align-items: flex-start; }
+.legend-like > span { margin-top: 0; }
+.legend-like b { display: block; line-height: 28px; }
 .field > span, .field-label { color: #59647f; }
 .field input, .field select, .field textarea {
   background: #f7f8fc;
@@ -705,6 +712,14 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .score-picker button { background: #f5f7fc; border-color: #dce2ee; border-radius: 8px; color: #65708b; }
 .score-picker button:hover { border-color: #93a8ff; color: var(--blue); }
 .score-picker button.selected { background: var(--blue); border-color: var(--blue); color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
+.score-picker button[data-score="1"] { background: #fff7f6; border-color: #f3c6c2; color: #b42318; }
+.score-picker button[data-score="2"] { background: #fff9ec; border-color: #f0d49b; color: #a15c00; }
+.score-picker button[data-score="3"] { background: #f4f6ff; border-color: #c7d2ff; color: #1646ff; }
+.score-picker button[data-score="4"] { background: #f1faf2; border-color: #b9dfc2; color: #18753a; }
+.score-picker button[data-score="1"].selected { background: #d92d20; border-color: #d92d20; color: #fff; box-shadow: 0 5px 12px rgba(217,45,32,.2); }
+.score-picker button[data-score="2"].selected { background: #d47a00; border-color: #d47a00; color: #fff; box-shadow: 0 5px 12px rgba(212,122,0,.2); }
+.score-picker button[data-score="3"].selected { background: #1646ff; border-color: #1646ff; color: #fff; box-shadow: 0 5px 12px rgba(22,70,255,.22); }
+.score-picker button[data-score="4"].selected { background: #218739; border-color: #218739; color: #fff; box-shadow: 0 5px 12px rgba(33,135,57,.2); }
 .rule-decision { background: #eef2ff; border: 1px solid #dfe5fb; border-radius: 12px; }
 .add-rule { background: #fff; border-color: #9bb0ff; border-radius: 10px; color: var(--blue); }
 .add-rule:hover { background: var(--blue-soft); }
