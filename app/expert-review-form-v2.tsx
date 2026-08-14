@@ -28,7 +28,15 @@ type ReviewData = {
     expertise: string[]; otherExpertise: string; highestDegree: string; otherDegree: string;
     careerYears: string; affiliationType: string; otherAffiliation: string; conflict: string; conflictDetails: string;
   };
-  session: { reviewDate: string; interviewMode: string; recording: string; frameworkVersion: string; animationSetVersion: string };
+  session: {
+    reviewDate: string;
+    frameworkVersion: string;
+    animationSetVersion: string;
+    interviewMode: string;
+    preferredLocation: string;
+    interviewAvailability: string;
+    recording: string;
+  };
   ruleEvaluations: unknown[];
   overall: SurveyState;
 };
@@ -116,7 +124,10 @@ function initialData(participantId: string): ReviewData {
   return {
     schemaVersion: "1.1", participantId, updatedAt: new Date().toISOString(), submissionStatus: "draft", submittedAt: null,
     expert: { expertise: [], otherExpertise: "", highestDegree: "", otherDegree: "", careerYears: "", affiliationType: "", otherAffiliation: "", conflict: "없음", conflictDetails: "" },
-    session: { reviewDate: todayInKorea(), interviewMode: "", recording: "", frameworkVersion: DEFAULT_FRAMEWORK_VERSION, animationSetVersion: "" },
+    session: {
+      reviewDate: todayInKorea(), frameworkVersion: DEFAULT_FRAMEWORK_VERSION, animationSetVersion: "",
+      interviewMode: "", preferredLocation: "", interviewAvailability: "", recording: "",
+    },
     ruleEvaluations: [], overall: initialSurveyState(),
   };
 }
@@ -125,14 +136,19 @@ function normalizeReviewData(value: unknown, participantId: string): ReviewData 
   const parsed = value as Partial<ReviewData>;
   if (parsed.participantId !== participantId) return null;
   const defaults = initialData(participantId);
+  const interviewMode = parsed.session?.interviewMode === "비공개 온라인 화상회의" ? "비공개 온라인 화상회의(Zoom)" : (parsed.session?.interviewMode ?? "");
+  const recording = parsed.session?.recording === "녹음함(별도 동의 확인)" ? "녹음에 동의함(별도 동의 확인)" : (parsed.session?.recording ?? "");
   return {
     ...defaults, ...parsed, schemaVersion: "1.1", participantId,
     expert: { ...defaults.expert, ...parsed.expert },
     session: {
       reviewDate: parsed.session?.reviewDate || defaults.session.reviewDate,
-      interviewMode: parsed.session?.interviewMode ?? "", recording: parsed.session?.recording ?? "",
       frameworkVersion: parsed.session?.frameworkVersion || DEFAULT_FRAMEWORK_VERSION,
       animationSetVersion: parsed.session?.animationSetVersion ?? "",
+      interviewMode,
+      preferredLocation: parsed.session?.preferredLocation ?? "",
+      interviewAvailability: parsed.session?.interviewAvailability ?? "",
+      recording,
     },
     ruleEvaluations: Array.isArray(parsed.ruleEvaluations) ? parsed.ruleEvaluations : [],
     overall: normalizeSurveyState(parsed.overall),
@@ -226,11 +242,31 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       {data.expert.conflict === "있음" && <label className="field full"><span>이해관계 내용</span><textarea rows={3} value={data.expert.conflictDetails} onChange={(event) => updateExpert("conflictDetails", event.target.value)} /></label>}
     </div></section>
 
-    <section className="form-section compact-section" aria-labelledby="review-info-title"><div className="legend-like"><span>R</span><div><b id="review-info-title">연구자 기록란</b><small>검토일, 후속 면담 방식과 검토 자료 버전을 기록합니다.</small></div></div><div className="form-grid two">
-      <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(event) => updateSession("reviewDate", event.target.value)} /></label><label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} readOnly aria-readonly="true" /></label><label className="field"><span>애니메이션 세트 버전</span><input value={data.session.animationSetVersion} onChange={(event) => updateSession("animationSetVersion", event.target.value)} placeholder="예: V1" /></label>
-      <div className="field"><span className="field-label">면담 방식</span><div className="choice-row">{["대면", "비공개 온라인 화상회의"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="interview-mode" checked={data.session.interviewMode === value} onChange={() => updateSession("interviewMode", value)} /><span>{value}</span></label>)}</div></div>
-      <div className="field full"><span className="field-label">면담 녹음 여부</span><div className="choice-row">{["녹음함(별도 동의 확인)", "녹음하지 않음"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="recording" checked={data.session.recording === value} onChange={() => updateSession("recording", value)} /><span>{value}</span></label>)}</div></div>
-    </div></section>
+    <section className="form-section compact-section" aria-labelledby="review-material-info-title">
+      <div className="legend-like"><span>R1</span><div><b id="review-material-info-title">검토 자료 정보</b><small>검토일과 제공된 자료의 버전을 확인합니다.</small></div></div>
+      <div className="form-grid three review-metadata-grid">
+        <label className="field"><span>검토일</span><input type="date" value={data.session.reviewDate} onChange={(event) => updateSession("reviewDate", event.target.value)} /></label>
+        <label className="field"><span>프레임워크 버전</span><input value={data.session.frameworkVersion} readOnly aria-readonly="true" /></label>
+        <label className="field"><span>애니메이션 세트 버전</span><input value={data.session.animationSetVersion} onChange={(event) => updateSession("animationSetVersion", event.target.value)} placeholder="예: V1" /></label>
+      </div>
+    </section>
+
+    <section className="form-section compact-section interview-schedule-section" aria-labelledby="interview-schedule-title">
+      <div className="legend-like"><span>R2</span><div><b id="interview-schedule-title">후속 면담 일정</b><small>희망하는 면담 방식과 가능한 일정을 작성해주세요.</small></div></div>
+      <div className="form-grid two">
+        <div className="field full"><span className="field-label">면담 방식</span><div className="choice-row">{["대면", "비공개 온라인 화상회의(Zoom)"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="interview-mode" checked={data.session.interviewMode === value} onChange={() => updateSession("interviewMode", value)} /><span>{value}</span></label>)}</div></div>
+        {data.session.interviewMode === "대면" && <>
+          <label className="field"><span>희망 장소</span><input value={data.session.preferredLocation} onChange={(event) => updateSession("preferredLocation", event.target.value)} placeholder="예: 서울대학교 관악캠퍼스 또는 협의 가능한 장소" /></label>
+          <label className="field"><span>가능한 날짜 및 시간 후보군</span><textarea rows={4} value={data.session.interviewAvailability} onChange={(event) => updateSession("interviewAvailability", event.target.value)} placeholder={"예: 2026년 9월 3일 14:00–17:00\n2026년 9월 5일 10:00–12:00"} /></label>
+        </>}
+        {data.session.interviewMode === "비공개 온라인 화상회의(Zoom)" && <label className="field full"><span>가능한 날짜 및 시간 후보군</span><textarea rows={4} value={data.session.interviewAvailability} onChange={(event) => updateSession("interviewAvailability", event.target.value)} placeholder={"예: 2026년 9월 3일 14:00–17:00\n2026년 9월 5일 10:00–12:00"} /></label>}
+        <div className="field full recording-field">
+          <span className="field-label">면담 녹음 여부</span>
+          <p className="recording-notice">녹음에 동의한 경우 면담 내용을 전사하여 프레임워크 개발에 필요한 내용을 기록한 뒤 녹음 자료를 폐기합니다. 녹음에 동의하지 않아도 면담에 참여할 수 있습니다.</p>
+          <div className="choice-row">{["녹음에 동의함(별도 동의 확인)", "녹음하지 않음"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="recording" checked={data.session.recording === value} onChange={() => updateSession("recording", value)} /><span>{value}</span></label>)}</div>
+        </div>
+      </div>
+    </section>
 
     <section className="form-section reference-section" aria-labelledby="materials-title"><div className="legend-like"><span>03</span><div><b id="materials-title">제공 자료 및 검토 순서</b><small>독립 검토 전 제공되는 자료와 이후 진행 순서입니다.</small></div></div><div className="materials-layout"><article className="reference-card materials-card"><p className="reference-label">PROVIDED MATERIALS</p><h3>검토 전 제공되는 자료</h3><ul className="materials-list"><li>프레임워크 V1 개요</li><li>E·V·C 청중 상태 모델 설명 및 도식</li><li>발표 수행정보·평가 차원 코드북</li><li>발표 단계 구분과 시간 정보</li><li>단계별 평가 관점의 정의와 이론적 근거</li><li>VR 발표 영상 샘플 2개 및 구현 제약 설명</li></ul></article><div className="review-steps"><article><span>01</span><div><small>INDEPENDENT REVIEW</small><h3>1단계 독립 검토</h3><p>다른 전문가의 점수나 연구자의 선호를 알지 못한 상태에서 E·V·C 청중 상태 모델과 백채널 표현 구조를 평가하고, 두 개의 VR 발표 영상에서 발표 흐름에 따른 AI 청중의 반응을 검토합니다.</p></div></article><article><span>02</span><div><small>FOLLOW-UP INTERVIEW</small><h3>2단계 후속 면담</h3><p>점수의 근거와 발표 단계별 평가 관점 및 적용 근거, 발표 수행정보–청중 상태 산출 관계 및 청중 상태–백채널 표현 관계를 확인합니다. 또한 의미 해석의 자연스러움, 발표 흐름에 따른 반응 변화, 누락·중복 구성요소와 구현상 위험을 사례 중심으로 검토합니다.</p></div></article></div></div></section>
 

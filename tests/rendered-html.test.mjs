@@ -76,7 +76,8 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(form, /의미 범위 이탈 위험/);
   assert.match(form, /프레임워크 전체 평가/);
   assert.match(form, /전문가 기본 정보/);
-  assert.match(form, /연구자 기록란/);
+  assert.match(form, /검토 자료 정보/);
+  assert.match(form, /후속 면담 일정/);
   assert.match(form, /기타 전문영역/);
   assert.match(form, /otherExpertise/);
   assert.match(form, /관련 분야 최종 학위/);
@@ -84,6 +85,11 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(form, /other_expertise/);
   assert.match(form, />면담 방식</);
   assert.match(form, />면담 녹음 여부</);
+  assert.match(form, /희망 장소/);
+  assert.match(form, /가능한 날짜 및 시간 후보군/);
+  assert.match(form, /preferredLocation/);
+  assert.match(form, /interviewAvailability/);
+  assert.match(form, /프레임워크 개발에 필요한 내용을 기록한 뒤 녹음 자료를 폐기합니다/);
   assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 평가") < form.indexOf("review-scale-note"));
   assert.doesNotMatch(form, /후속 반구조화 면담 메모/);
   assert.doesNotMatch(form, /interviewQuestions/);

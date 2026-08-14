@@ -687,6 +687,8 @@ footer { background: var(--deep); padding: 38px clamp(24px, 5vw, 74px); }
 .compact-section { padding-bottom: clamp(30px, 3vw, 40px); padding-top: clamp(30px, 3vw, 40px); }
 .compact-section .legend-like { margin-bottom: 0; }
 .compact-section .form-grid { margin-top: 26px; }
+.interview-schedule-section .recording-field { border-top: 1px solid #e4e8f2; margin-top: 4px; padding-top: 24px; }
+.recording-notice { background: #f1f4ff; border-left: 3px solid var(--blue); color: #53607c; font-size: 12px; line-height: 1.75; margin: 0 0 4px; padding: 13px 15px; }
 .rule-section .review-scale-note { margin: 0 0 26px; max-width: none; }
 .form-section legend span, .legend-like > span { background: var(--blue); border: 0; border-radius: 8px; color: #fff; }
 .legend-like { align-items: flex-start; }
