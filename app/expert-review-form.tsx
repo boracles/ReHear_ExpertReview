@@ -176,21 +176,6 @@ function ScorePicker({ value, onChange, label, reverse = false }: { value: Score
   );
 }
 
-function downloadText(filename: string, content: string, type: string) {
-  const blob = new Blob([content], { type });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
-
-function csvEscape(value: unknown) {
-  const text = typeof value === "string" ? value : JSON.stringify(value);
-  return `"${text.replace(/"/g, '""')}"`;
-}
-
 export function ExpertReviewForm({ participantId, reviewToken }: { participantId: string; reviewToken: string }) {
   const storageKey = `rehear-review-${participantId}`;
   const [data, setData] = useState<ReviewData>(() => initialData(participantId));
@@ -281,38 +266,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
       ...current,
       ruleEvaluations: current.ruleEvaluations.map((rule, ruleIndex) => ruleIndex === index ? { ...rule, ...patch } : rule),
     }));
-  }
-
-  function exportJson() {
-    const finalized = { ...data, updatedAt: new Date().toISOString() };
-    downloadText(`ReHear_${participantId}_review.json`, JSON.stringify(finalized, null, 2), "application/json;charset=utf-8");
-  }
-
-  function exportCsv() {
-    const flattened: Record<string, unknown> = {
-      participant_id: participantId,
-      updated_at: new Date().toISOString(),
-      submission_status: data.submissionStatus,
-      submitted_at: data.submittedAt,
-      expertise: data.expert.expertise.join("; "),
-      career_years: data.expert.careerYears,
-      affiliation_type: data.expert.affiliationType,
-      conflict: data.expert.conflict,
-      conflict_details: data.expert.conflictDetails,
-      review_date: data.session.reviewDate,
-      interview_mode: data.session.interviewMode,
-      recording: data.session.recording,
-      framework_version: data.session.frameworkVersion,
-      rule_evaluations_json: data.ruleEvaluations,
-    };
-    overallItems.forEach((_, index) => {
-      const item = data.overall[`item${index + 1}`];
-      flattened[`overall_${index + 1}_score`] = item.score;
-      flattened[`overall_${index + 1}_comment`] = item.comment;
-    });
-    const headers = Object.keys(flattened);
-    const csv = `\uFEFF${headers.map(csvEscape).join(",")}\r\n${headers.map((key) => csvEscape(flattened[key])).join(",")}\r\n`;
-    downloadText(`ReHear_${participantId}_review.csv`, csv, "text/csv;charset=utf-8");
   }
 
   async function submitReview() {
@@ -459,14 +412,12 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
 
       <div className="export-panel">
         <div>
-          <p className="eyebrow light">SAVE & HAND OFF</p>
+          <p className="eyebrow light">FINAL SUBMISSION</p>
           <h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3>
-          <p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 필요할 경우 같은 내용을 JSON과 CSV 파일로도 내려받을 수 있습니다.</p>
+          <p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 제출 후에도 같은 링크에서 내용을 수정해 다시 제출할 수 있습니다.</p>
         </div>
         <div className="export-actions">
           <button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button>
-          <button type="button" className="button ghost" onClick={exportJson}>JSON 내려받기 <span>↓</span></button>
-          <button type="button" className="button ghost" onClick={exportCsv}>CSV 내려받기 <span>↓</span></button>
         </div>
       </div>
     </section>
