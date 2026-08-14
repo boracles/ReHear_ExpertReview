@@ -62,6 +62,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.match(invitation, /access\.mode === "review"/);
   assert.match(invitation, /Consent-completed review/);
   assert.match(invitation, /참여 의사 확인 → 연구 설명 및 동의 → 별도 평가 링크 전달/);
+  assert.match(invitation, /이 페이지는 개별 초대 링크를 통해서만 열립니다\.\s*<br \/>/);
   assert.doesNotMatch(invitation, /전문가 평가표 작성하기/);
   assert.doesNotMatch(invitation, /href="#/);
 });

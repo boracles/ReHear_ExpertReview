@@ -50,8 +50,9 @@ function AccessGate() {
         <p className="eyebrow">REHEAR · EXPERT REVIEW</p>
         <h1 id="gate-title">전문가 검토 초대 링크를 확인해주세요.</h1>
         <p>
-          이 페이지는 개별 초대 링크를 통해서만 열립니다. 전달받은 링크를 다시
-          열거나, 연구책임자에게 새 링크를 요청해주세요.
+          이 페이지는 개별 초대 링크를 통해서만 열립니다.
+          <br />
+          전달받은 링크를 다시 열거나, 연구책임자에게 새 링크를 요청해주세요.
         </p>
         <a className="text-link" href={`tel:${phoneHref}`}>
           연구책임자에게 문의 · {phoneDisplay}
