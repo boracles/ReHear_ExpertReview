@@ -38,5 +38,5 @@ export const EMAIL_HASHES: Readonly<Record<string, string>> = {
   "EXP-04": "MB3nw5hnH_fF4SM-8yT-pjayFiiMOVmJxsagC9B0rt8",
   "EXP-05": "dy0PHvOubGIeXI7PD-krtff1dzaIDvr9szEMbPPB4cw",
   "EXP-06": "XHJ5ItLBoD58ec3BdX21wOWG3PrMi__ov87axiwt_q8",
-  "TEST-01": "lz3-Rj7IV4X1-Vr1ujkG7tstkxwk5pgkqJ6mXbpOgTs",
+  "TEST-01": "Zh2MQrO2psrvcCcW-cMsDxWeA5A586FWtjI1O2IOOoc",
 };
