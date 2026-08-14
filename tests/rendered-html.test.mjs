@@ -3,6 +3,7 @@ import { readFile } from "node:fs/promises";
 import test from "node:test";
 
 const root = new URL("../", import.meta.url);
+const activeForm = new URL("../app/expert-review-form-v2.tsx", import.meta.url);
 
 test("exports the Korean expert invitation shell", async () => {
   const html = await readFile(new URL("../dist/client/index.html", import.meta.url), "utf8");
@@ -66,13 +67,13 @@ test("includes the Pages deployment assets", async () => {
 
 test("includes the complete expert review workflow without breaking invite hashes", async () => {
   const [form, invitation, profiles] = await Promise.all([
-    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(activeForm, "utf8"),
     readFile(new URL("../app/expert-invitation.tsx", import.meta.url), "utf8"),
     readFile(new URL("../app/expert-profiles.ts", import.meta.url), "utf8"),
   ]);
 
-  assert.match(form, /내용 적절성/);
-  assert.match(form, /오해 위험/);
+  assert.match(form, /모델 구성 적절성/);
+  assert.match(form, /의미 범위 이탈 위험/);
   assert.match(form, /프레임워크 전체 평가/);
   assert.match(form, /전문가 기본 정보/);
   assert.match(form, /연구자 기록란/);
@@ -83,7 +84,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(form, /other_expertise/);
   assert.match(form, />면담 방식</);
   assert.match(form, />면담 녹음 여부</);
-  assert.ok(form.indexOf("규칙별 평가") < form.indexOf("review-scale-note"));
+  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 평가") < form.indexOf("review-scale-note"));
   assert.doesNotMatch(form, /후속 반구조화 면담 메모/);
   assert.doesNotMatch(form, /interviewQuestions/);
   assert.doesNotMatch(form, /function exportJson/);
@@ -92,6 +93,7 @@ test("includes the complete expert review workflow without breaking invite hashe
   assert.doesNotMatch(form, /CSV 내려받기/);
   assert.match(form, /rehear-review-\$\{participantId\}/);
   assert.match(invitation, /access\.mode === "review"/);
+  assert.match(invitation, /\.\/expert-review-form-v2/);
   assert.match(invitation, /type="email"/);
   assert.match(invitation, /EMAIL_HASHES\[participantId\] === emailHash/);
   assert.match(invitation, /입력한 이메일은 일치 여부 확인에만 사용하며 저장하지 않습니다/);
@@ -130,7 +132,7 @@ test("includes the complete expert review workflow without breaking invite hashe
 
 test("backs up review drafts to Firestore without exposing collection listing", async () => {
   const [form, firebase, rules] = await Promise.all([
-    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(activeForm, "utf8"),
     readFile(new URL("../app/firebase.ts", import.meta.url), "utf8"),
     readFile(new URL("../firestore.rules", import.meta.url), "utf8"),
   ]);
@@ -146,7 +148,7 @@ test("backs up review drafts to Firestore without exposing collection listing", 
 });
 
 test("prefills review metadata and removes the unused rule-set version", async () => {
-  const form = await readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8");
+  const form = await readFile(activeForm, "utf8");
 
   assert.match(form, /const DEFAULT_FRAMEWORK_VERSION = "V1"/);
   assert.match(form, /function todayInKorea\(\)/);
@@ -160,7 +162,7 @@ test("prefills review metadata and removes the unused rule-set version", async (
 });
 
 test("reflects the EVC review purpose and official expert information fields", async () => {
-  const form = await readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8");
+  const form = await readFile(activeForm, "utf8");
 
   assert.match(form, /E·V·C 청중 상태 모델 및/);
   assert.match(form, /발표 수행정보를 바탕으로 AI 청중의 E·V·C 상태를 산출/);
@@ -173,24 +175,23 @@ test("reflects the EVC review purpose and official expert information fields", a
 
 test("aligns section badges and color-codes the four-point scale", async () => {
   const [form, css] = await Promise.all([
-    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(activeForm, "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
   assert.match(form, /data-score=\{score\}/);
-  assert.match(form, /data-scale=\{reverse \? "reverse" : "standard"\}/);
-  assert.match(form, /reverse=\{criterion\.key === "misreadRisk"\}/);
+  assert.doesNotMatch(form, /data-scale=|reverse=/);
+  assert.match(form, /의미 범위 이탈 위험: 1 매우 높음 · 2 높은 편 · 3 낮은 편 · 4 매우 낮음/);
   assert.equal((form.match(/data-score="[1-4]"/g) ?? []).length, 4);
   assert.match(css, /\.legend-like b \{ display: block; line-height: 28px; \}/);
   assert.match(css, /\.legend-like > span \{ margin-top: 0; \}/);
   assert.equal((css.match(/\.review-scale-note span\[data-score="[1-4]"\]/g) ?? []).length, 4);
   assert.equal((css.match(/\.score-picker button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
-  assert.equal((css.match(/\.score-picker\[data-scale="reverse"\] button\[data-score="[1-4]"\]\.selected/g) ?? []).length, 4);
 });
 
 test("includes the official materials workflow and complete EVC model overview", async () => {
   const [form, css] = await Promise.all([
-    readFile(new URL("../app/expert-review-form.tsx", import.meta.url), "utf8"),
+    readFile(activeForm, "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
   ]);
 
@@ -208,8 +209,35 @@ test("includes the official materials workflow and complete EVC model overview",
   assert.match(form, /현재의 발표 수행정보, 이전 청중 상태/);
   assert.match(form, /표정·자세·시선·고개 움직임/);
   assert.ok(form.indexOf("제공 자료 및 검토 순서") < form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요"));
-  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요") < form.indexOf("규칙별 평가"));
+  assert.ok(form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 개요") < form.indexOf("E·V·C 청중 상태 모델 및 백채널 표현 구조 평가"));
   assert.match(css, /\.materials-layout/);
   assert.match(css, /\.evc-grid/);
   assert.match(css, /\.model-facts/);
+});
+
+test("matches the final fixed questionnaire and embeds video-adjacent stage checks", async () => {
+  const [form, css] = await Promise.all([
+    readFile(activeForm, "utf8"),
+    readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
+  ]);
+
+  assert.equal((form.match(/key: "(?:modelStructure|dimensionClarity|modelCoverage|stageStructure|inputConnection|agentCharacteristics|stateUpdate|backchannelExpression|meaningInterpretation|meaningScopeRisk)"/g) ?? []).length, 10);
+  assert.equal((form.match(/key: "(?:overallConsistency|reactionTiming|reactionIntensity|agentDistribution|trainingFit|exceptionHandling|implementationTraceability)"/g) ?? []).length, 7);
+  assert.equal((form.match(/key: "(?:introduction|motivation|theory|purpose|method|results|implications|closing)"/g) ?? []).length, 8);
+  assert.match(form, /판단 어려움\/전문영역 외/);
+  assert.match(form, /VR 발표 영상 샘플별 AI 청중 반응 검토/);
+  assert.match(form, /<video controls playsInline preload="metadata"/);
+  assert.match(form, /sample-\$\{video\.toLowerCase\(\)\}\.mp4/);
+  assert.match(form, /video-player-sticky/);
+  assert.match(form, /새로움/);
+  assert.match(form, /규범·자기 일치성/);
+  assert.match(form, /Scherer \(2001\)/);
+  assert.match(form, /Scherer \(2009\)/);
+  assert.doesNotMatch(form, /후속 반구조화 면담 질문/);
+  assert.doesNotMatch(form, /interviewQuestions/);
+  assert.match(form, /ruleEvaluations: Array\.isArray\(parsed\.ruleEvaluations\)/);
+  assert.match(form, /legacyResponses/);
+  assert.match(css, /\.video-review-layout/);
+  assert.match(css, /\.video-player-sticky \{ position: sticky/);
+  assert.match(css, /\.video-rating-row/);
 });

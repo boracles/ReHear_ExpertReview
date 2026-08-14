@@ -3,7 +3,7 @@
 import { type FormEvent, useEffect, useState } from "react";
 import { EMAIL_HASHES, INVITE_HASHES, REVIEW_HASHES } from "./invitation-data";
 import { getExpertProfile } from "./expert-profiles";
-import { ExpertReviewForm } from "./expert-review-form";
+import { ExpertReviewForm } from "./expert-review-form-v2";
 
 type AccessState =
   | { status: "checking" }
