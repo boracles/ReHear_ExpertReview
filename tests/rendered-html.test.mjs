@@ -80,7 +80,7 @@ test("includes the complete expert review workflow without breaking invite hashe
 
   assert.match(form, /모델 구성 적절성/);
   assert.match(form, /오해 위험/);
-  assert.match(form, /프레임워크 전체 평가/);
+  assert.match(form, /VR 발표 영상 구간별 평가/);
   assert.match(form, /전문가 기본 정보/);
   assert.match(form, /검토 자료 정보/);
   assert.match(form, /후속 면담 일정/);
@@ -224,7 +224,7 @@ test("aligns section badges and color-codes the four-point scale", async () => {
   assert.match(form, /<span>04<\/span><div><b id="materials-title"/);
   assert.match(form, /<span>05<\/span><div><b id="model-title"/);
   assert.match(form, /<span>06<\/span><div><b id="model-evaluation-title"/);
-  assert.match(form, /<span>07<\/span><div><b id="framework-evaluation-title">영상 샘플 및 프레임워크 전체 평가<\/b>/);
+  assert.match(form, /<span>07<\/span><div><b id="framework-evaluation-title">VR 발표 영상 구간별 평가<\/b>/);
   assert.doesNotMatch(form, /<legend><span>07<\/span>/);
   assert.doesNotMatch(form, /<span>R1<\/span>|<span>R2<\/span>/);
   assert.match(form, /className=\{`unable-check \$\{answer\.unable \? "is-selected" : ""\}`\}/);
@@ -281,7 +281,7 @@ test("includes the official materials workflow and complete EVC model overview",
   assert.match(css, /\.model-facts/);
 });
 
-test("matches the revised questionnaire and embeds video-adjacent overall ratings", async () => {
+test("matches the revised questionnaire and shows dynamic segment ratings below each video", async () => {
   const [form, css] = await Promise.all([
     readFile(activeForm, "utf8"),
     readFile(new URL("../app/globals.css", import.meta.url), "utf8"),
@@ -291,7 +291,7 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.equal((form.match(/key: "(?:overallCoherence|timingAppropriateness|intensityFrequency|agentDistribution|trainingFit|exceptionHandling|implementationTraceability)"/g) ?? []).length, 7);
   assert.equal((form.match(/key: "(?:introduction|motivation|theory|purpose|method|results|implications|closing)"/g) ?? []).length, 8);
   assert.match(form, /판단 어려움\/전문영역 외/);
-  assert.match(form, /영상 1과 영상 2를 순서대로 시청·평가한 뒤/);
+  assert.match(form, /영상 1의 구간별 문항을 완료한 뒤 영상 2를 같은 방식으로 평가해주세요/);
   assert.match(form, /<video key=\{video\} controls playsInline preload="metadata"/);
   assert.match(form, /sample-\$\{video\.toLowerCase\(\)\}\.mp4/);
   assert.match(form, /framework-video-list/);
@@ -299,16 +299,22 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.match(form, /video-review-stepper/);
   assert.match(form, /영상 1 시청·평가/);
   assert.match(form, /영상 2 시청·평가/);
-  assert.match(form, /프레임워크 전체 평가/);
   assert.match(form, /video-inline-evaluation/);
   assert.match(form, /video-stage-list/);
+  assert.match(form, /video-stage-selector/);
+  assert.match(form, /activeVideoStage/);
+  assert.match(form, /현재 평가 구간/);
+  assert.match(form, /완료한 구간에는 체크가 표시됩니다/);
+  assert.match(form, /다음 구간/);
   assert.match(form, /updateVideoStage/);
   assert.match(form, /부분적으로 적절함/);
   assert.match(form, /발표 단계 구성 적절성/);
   assert.match(form, /의미 범위 이탈 위험/);
   assert.match(form, /영상 2로 이동/);
-  assert.match(form, /framework-question-section/);
-  assert.doesNotMatch(form, /activeVideo|video-tabs/);
+  assert.match(form, /평가 작성 마치기/);
+  assert.doesNotMatch(form, /framework-question-section/);
+  assert.doesNotMatch(form, /framework-overall-review/);
+  assert.doesNotMatch(form, /video-tabs/);
   assert.match(form, /새로움/);
   assert.match(form, /규범·자기 일치성/);
   assert.match(form, /단계별 평가 관점/);
@@ -328,6 +334,9 @@ test("matches the revised questionnaire and embeds video-adjacent overall rating
   assert.match(css, /\.video-review-stepper \{ display: grid/);
   assert.match(css, /\.video-inline-evaluation \{ background: #fff/);
   assert.match(css, /\.video-stage-list \{ display: grid/);
+  assert.match(css, /\.video-stage-selector \{ display: grid/);
+  assert.match(css, /\.active-stage-evaluation/);
+  assert.match(css, /\.stage-navigation/);
   assert.match(css, /\.stage-evaluation/);
   assert.match(css, /\.theory-references/);
 });

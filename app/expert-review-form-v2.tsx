@@ -193,6 +193,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   const [savedAt, setSavedAt] = useState("");
   const [syncStatus, setSyncStatus] = useState<"loading" | "ready" | "saving" | "saved" | "error">("loading");
   const [videoAvailable, setVideoAvailable] = useState<Record<VideoKey, boolean | null>>({ A: null, B: null });
+  const [activeVideoStage, setActiveVideoStage] = useState<Record<VideoKey, string>>({ A: videoStages[0].key, B: videoStages[0].key });
 
   useEffect(() => {
     let active = true;
@@ -229,8 +230,7 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   const completion = useMemo(() => {
     const model = Object.values(data.overall.model).filter((answer) => answer.score || answer.unable).length;
     const videos = (["A", "B"] as VideoKey[]).reduce((total, video) => total + videoStages.filter((stage) => data.overall.videos[video][stage.key].rating).length, 0);
-    const framework = Object.values(data.overall.framework).filter((answer) => answer.score || answer.unable).length;
-    return Math.round(((model + videos + framework) / (modelCriteria.length + (videoStages.length * 2) + frameworkItems.length)) * 100);
+    return Math.round(((model + videos) / (modelCriteria.length + (videoStages.length * 2))) * 100);
   }, [data.overall]);
 
   const videoComplete = (video: VideoKey) => videoStages.every((stage) => Boolean(data.overall.videos[video][stage.key].rating));
@@ -241,7 +241,6 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
   function updateSession<K extends keyof ReviewData["session"]>(key: K, value: ReviewData["session"][K]) { setData((current) => ({ ...current, session: { ...current.session, [key]: value } })); }
   function updateModel(key: string, patch: Partial<ScoredAnswer>) { setData((current) => ({ ...current, overall: { ...current.overall, model: { ...current.overall.model, [key]: { ...current.overall.model[key], ...patch } } } })); }
   function updateVideoStage(video: VideoKey, stage: string, patch: Partial<VideoStageAnswer>) { setData((current) => ({ ...current, overall: { ...current.overall, videos: { ...current.overall.videos, [video]: { ...current.overall.videos[video], [stage]: { ...current.overall.videos[video][stage], ...patch } } } } })); }
-  function updateFramework(key: string, patch: Partial<ScoredAnswer>) { setData((current) => ({ ...current, overall: { ...current.overall, framework: { ...current.overall.framework, [key]: { ...current.overall.framework[key], ...patch } } } })); }
 
   async function submitReview() {
     if (!window.confirm("작성한 평가를 최종 제출할까요? 제출 후에도 같은 링크에서 내용을 수정하고 다시 제출할 수 있습니다.")) return;
@@ -315,44 +314,47 @@ export function ExpertReviewForm({ participantId, reviewToken }: { participantId
     <section className="form-section evaluation-section" aria-labelledby="model-evaluation-title"><div className="legend-like"><span>06</span><div><b id="model-evaluation-title">E·V·C 청중 상태 모델 평가</b><small>각 문항을 4점 척도로 평가하고 필요한 경우 근거와 수정안을 작성해주세요.</small></div></div><div className="review-scale-note"><b>4점 척도</b><span data-score="1">1 전혀 적절하지 않음</span><span data-score="2">2 보완이 많이 필요함</span><span data-score="3">3 대체로 적절함</span><span data-score="4">4 매우 적절함</span><em>오해 위험: 1 매우 높음 · 2 높은 편 · 3 낮은 편 · 4 매우 낮음</em></div><ul className="evaluation-guidance"><li>판단하기 어렵거나 자신의 전문영역 밖인 경우 점수 대신 ‘판단 어려움/전문영역 외’를 선택해주세요.</li><li>중대 문제는 사용자 실험 전에 반드시 수정해야 한다고 판단되는 의미·맥락·구현 또는 윤리상의 문제를 의미합니다.</li><li>판단 근거·수정안은 보완이 필요하거나 중대 문제가 있다고 판단한 항목을 중심으로 작성해주세요.</li></ul><div className="criteria-list fixed-criteria">{modelCriteria.map((criterion, index) => { const answer = data.overall.model[criterion.key]; return <article className="criterion" key={criterion.key}><div className="criterion-copy"><span className="criterion-index">{String(index + 1).padStart(2, "0")}</span><div><b>{criterion.label}</b><p>{criterion.statement}</p></div></div><ScorePicker label={`${criterion.label} 점수`} value={answer.score} disabled={answer.unable} onChange={(score) => updateModel(criterion.key, { score, unable: false })} /><div className="criterion-flags"><label className={`unable-check ${answer.unable ? "is-selected" : ""}`}><input type="checkbox" checked={answer.unable} onChange={(event) => updateModel(criterion.key, { unable: event.target.checked, score: event.target.checked ? null : answer.score })} /> 판단 어려움/전문영역 외</label><label className={`critical-check ${answer.critical ? "is-selected" : ""}`}><input type="checkbox" checked={answer.critical} onChange={(event) => updateModel(criterion.key, { critical: event.target.checked })} /> 중대 문제</label></div><label className="field criterion-note"><span>판단 근거·수정안</span><textarea rows={2} value={answer.comment} onChange={(event) => updateModel(criterion.key, { comment: event.target.value })} /></label></article>; })}</div><div className="model-summary"><div className="field"><span className="field-label">종합 권고</span><div className="choice-row">{["현행 유지", "일부 수정", "구조 수정", "추가 검토"].map((value) => <label key={value} className="choice-chip"><input type="radio" name="model-recommendation" checked={data.overall.modelRecommendation === value} onChange={() => setData((current) => ({ ...current, overall: { ...current.overall, modelRecommendation: value } }))} /><span>{value}</span></label>)}</div></div><div className="field"><span>판단 확신 · 1 낮음–4 높음</span><ScorePicker label="판단 확신" value={data.overall.confidence} onChange={(confidence) => setData((current) => ({ ...current, overall: { ...current.overall, confidence } }))} /></div><label className="field full"><span>핵심 수정안</span><textarea rows={3} value={data.overall.coreRevision} onChange={(event) => setData((current) => ({ ...current, overall: { ...current.overall, coreRevision: event.target.value } }))} /></label><label className="field full"><span>누락·중복 구성요소</span><textarea rows={3} value={data.overall.missingDuplicate} onChange={(event) => setData((current) => ({ ...current, overall: { ...current.overall, missingDuplicate: event.target.value } }))} /></label></div></section>
 
     <section className="form-section framework-evaluation" aria-labelledby="framework-evaluation-title">
-      <div className="legend-like"><span>07</span><div><b id="framework-evaluation-title">영상 샘플 및 프레임워크 전체 평가</b><small>영상 1과 영상 2를 순서대로 시청·평가한 뒤 프레임워크 전체 평가를 작성해주세요.</small></div></div>
+      <div className="legend-like"><span>07</span><div><b id="framework-evaluation-title">VR 발표 영상 구간별 평가</b><small>영상 1의 구간별 문항을 완료한 뒤 영상 2를 같은 방식으로 평가해주세요.</small></div></div>
       <nav className="video-review-stepper" aria-label="영상 평가 순서">
         <button type="button" className={!videoAComplete ? "active" : "done"} onClick={() => document.getElementById("video-review-a")?.scrollIntoView({ behavior: "smooth", block: "start" })}><span>01</span><div><b>영상 1 시청·평가</b><small>{videoAComplete ? "평가 완료" : "먼저 진행"}</small></div></button>
         <button type="button" className={videoAComplete && !videoBComplete ? "active" : videoBComplete ? "done" : "waiting"} onClick={() => document.getElementById("video-review-b")?.scrollIntoView({ behavior: "smooth", block: "start" })}><span>02</span><div><b>영상 2 시청·평가</b><small>{videoBComplete ? "평가 완료" : videoAComplete ? "다음 단계" : "영상 1 평가 후 진행"}</small></div></button>
-        <button type="button" className={videoAComplete && videoBComplete ? "active" : "waiting"} onClick={() => document.getElementById("framework-overall-review")?.scrollIntoView({ behavior: "smooth", block: "start" })}><span>03</span><div><b>프레임워크 전체 평가</b><small>{videoAComplete && videoBComplete ? "작성 가능" : "두 영상 평가 후 진행"}</small></div></button>
       </nav>
       <div className="framework-review-layout">
         <section className="framework-video-section" aria-labelledby="video-samples-title">
-          <div className="framework-video-heading"><p className="reference-label">VIDEO REVIEW · STEP 01–02</p><h3 id="video-samples-title">VR 발표 영상 샘플별 AI 청중 반응 검토</h3><p>각 영상은 약 3분이며, 영상 하단에는 현재 발표 단계만 표시되고 E·V·C 상태값은 제시되지 않습니다. 발표 내용과 전달 방식에 맞게 AI 청중의 반응이 자연스럽게 나타나고 변화하는지 단계별로 평가해주세요.</p></div>
+          <div className="framework-video-heading"><p className="reference-label">VIDEO REVIEW · SAMPLE 01–02</p><h3 id="video-samples-title">VR 발표 영상별 AI 청중 반응 검토</h3><p>영상에 표시되는 발표 단계와 같은 구간을 아래에서 선택하면 해당 구간의 문항이 바로 나타납니다. 영상 1의 모든 구간을 평가한 뒤 영상 2를 같은 방식으로 진행해주세요.</p></div>
           <details className="appraisal-guide"><summary>단계별 평가 관점의 정의와 적용 범위 확인하기</summary><p>아래 평가 관점은 Scherer의 구성요소 과정 모델에서 제시된 자극 평가 점검을 발표 맥락에 맞게 조작적으로 적용한 연구자 제안입니다. 특정 발표 단계와 일대일로 확정된 관계가 아니며, 여러 평가 관점은 발표 전반에서 반복적·누적적으로 작동할 수 있습니다.</p><div>{appraisalPerspectives.map((perspective) => <article key={perspective.label}><b>{perspective.label}</b><small>{perspective.english}</small><p>{perspective.description}</p></article>)}</div></details>
           <div className="framework-video-list">{(["A", "B"] as VideoKey[]).map((video, videoIndex) => {
             const isComplete = videoComplete(video);
             const completedStages = videoStages.filter((stage) => data.overall.videos[video][stage.key].rating).length;
-            const nextTarget = video === "A" ? "video-review-b" : "framework-overall-review";
+            const activeStageIndex = Math.max(0, videoStages.findIndex((stage) => stage.key === activeVideoStage[video]));
+            const stage = videoStages[activeStageIndex];
+            const answer = data.overall.videos[video][stage.key];
             return <article className={`framework-video-card ${isComplete ? "is-complete" : ""}`} id={`video-review-${video.toLowerCase()}`} key={video}>
-              <header><span>{String(videoIndex + 1).padStart(2, "0")}</span><div><small>VIDEO SAMPLE {video}</small><h4>영상 {videoIndex + 1} 시청·단계별 평가</h4></div><em>{isComplete ? "8단계 평가 완료" : `${completedStages}/8단계 입력`}</em></header>
+              <header><span>{String(videoIndex + 1).padStart(2, "0")}</span><div><small>VIDEO SAMPLE {video}</small><h4>영상 {videoIndex + 1} 시청 및 구간별 평가</h4></div><em>{isComplete ? "8개 구간 평가 완료" : `${completedStages}/8개 구간 입력`}</em></header>
               <div className="framework-player">{videoAvailable[video] !== false ? <video key={video} controls playsInline preload="metadata" aria-label={`영상 샘플 ${videoIndex + 1}`} onCanPlay={() => setVideoAvailable((current) => ({ ...current, [video]: true }))} onError={() => setVideoAvailable((current) => ({ ...current, [video]: false }))}><source src={`./videos/sample-${video.toLowerCase()}.mp4`} type="video/mp4" />이 브라우저에서는 영상을 재생할 수 없습니다.</video> : <div className="video-empty"><span className="video-play-symbol" aria-hidden="true">▶</span><strong>영상 샘플 {videoIndex + 1} 연결 대기</strong><p>영상 파일이 연결되면 재생·일시정지·구간 탐색·전체화면 기능을 사용할 수 있습니다.</p></div>}</div>
               <div className="video-player-note"><span>현재 발표 단계 표시</span><span>AI 청중 집단 반응</span><span>E·V·C 상태값 비공개</span></div>
               <section className="video-inline-evaluation" aria-label={`영상 ${videoIndex + 1} 단계별 평가`}>
-                <div className="video-evaluation-heading"><div><small>WATCH &amp; RATE</small><h5>영상 {videoIndex + 1} 단계별 평가</h5></div><span>{completedStages}/{videoStages.length} 단계</span></div>
-                <div className="video-stage-list">{videoStages.map((stage, stageIndex) => { const answer = data.overall.videos[video][stage.key]; return <article className="stage-evaluation" key={stage.key}>
-                  <div className="stage-head"><span>{String(stageIndex + 1).padStart(2, "0")}</span><div><small>{stage.status}</small><h4>{stage.label}</h4></div><label className="field stage-time"><span>시간 구간</span><input value={answer.timeRange} onChange={(event) => updateVideoStage(video, stage.key, { timeRange: event.target.value })} placeholder="예: 00:00–00:35" /></label></div>
+                <div className="video-evaluation-heading"><div><small>SELECT A SEGMENT &amp; RATE</small><h5>영상 {videoIndex + 1} 구간별 평가</h5></div><span>{completedStages}/{videoStages.length} 구간</span></div>
+                <p className="stage-selector-help">영상에 표시되는 현재 발표 단계와 같은 구간을 선택해주세요. 완료한 구간에는 체크가 표시됩니다.</p>
+                <div className="video-stage-selector" role="tablist" aria-label={`영상 ${videoIndex + 1} 평가 구간`}>
+                  {videoStages.map((item, stageIndex) => { const completed = Boolean(data.overall.videos[video][item.key].rating); const active = item.key === stage.key; return <button type="button" role="tab" aria-selected={active} className={`${active ? "active" : ""} ${completed ? "done" : ""}`} key={item.key} onClick={() => setActiveVideoStage((current) => ({ ...current, [video]: item.key }))}><span>{completed ? "✓" : String(stageIndex + 1).padStart(2, "0")}</span><b>{item.label}</b><small>{item.status}</small></button>; })}
+                </div>
+                <div className="video-stage-list" aria-live="polite"><article className="stage-evaluation active-stage-evaluation" key={`${video}-${stage.key}`}>
+                  <div className="stage-head"><span>{String(activeStageIndex + 1).padStart(2, "0")}</span><div><small>현재 평가 구간 · {stage.status}</small><h4>{stage.label}</h4></div></div>
                   <p className="stage-rationale"><b>{stage.perspectives}</b><span>{stage.rationale}</span></p>
                   <div className="field"><span className="field-label">AI 청중 집단 반응의 자연성·적절성</span><div className="video-rating-row">{["적절함", "부분적으로 적절함", "부적절함", "판단 어려움", "해당 없음"].map((rating) => <label className="choice-chip" key={rating}><input type="radio" name={`video-${video}-${stage.key}`} checked={answer.rating === rating} onChange={() => updateVideoStage(video, stage.key, { rating })} /><span>{rating}</span></label>)}</div></div>
-                  <label className="field"><span>보완 의견</span><textarea rows={2} value={answer.comment} onChange={(event) => updateVideoStage(video, stage.key, { comment: event.target.value })} /></label>
-                </article>; })}</div>
-                <button type="button" className="video-next-button" onClick={() => document.getElementById(nextTarget)?.scrollIntoView({ behavior: "smooth", block: "start" })}>{video === "A" ? "영상 2로 이동" : "프레임워크 전체 평가로 이동"}<span>→</span></button>
+                  <label className="field"><span>판단 근거·보완 의견</span><textarea rows={3} value={answer.comment} onChange={(event) => updateVideoStage(video, stage.key, { comment: event.target.value })} /></label>
+                  <div className="stage-navigation">
+                    <button type="button" disabled={activeStageIndex === 0} onClick={() => setActiveVideoStage((current) => ({ ...current, [video]: videoStages[activeStageIndex - 1].key }))}>← 이전 구간</button>
+                    {activeStageIndex < videoStages.length - 1 ? <button type="button" className="primary" onClick={() => setActiveVideoStage((current) => ({ ...current, [video]: videoStages[activeStageIndex + 1].key }))}>다음 구간 <span>→</span></button> : <button type="button" className="primary" onClick={() => document.getElementById(video === "A" ? "video-review-b" : "review-submit")?.scrollIntoView({ behavior: "smooth", block: "start" })}>{video === "A" ? "영상 2로 이동" : "평가 작성 마치기"}<span>→</span></button>}
+                  </div>
+                </article></div>
               </section>
             </article>;
           })}</div>
         </section>
-        <section className="framework-question-section" id="framework-overall-review" aria-labelledby="framework-questions-title">
-          <div className="framework-question-heading"><p className="reference-label">STEP 03 · OVERALL EVALUATION</p><h3 id="framework-questions-title">프레임워크 전체 평가</h3><p>영상 1과 영상 2를 모두 확인하고 각각 평가한 뒤, 두 영상에서 확인한 내용을 종합하여 응답해주세요.</p></div>
-          {!videoAComplete || !videoBComplete ? <p className="overall-prerequisite">위 단계에서 영상 1과 영상 2의 필수 평가 문항을 모두 입력하면 두 영상이 ‘평가 완료’로 표시됩니다.</p> : <p className="overall-ready">영상 1·2 평가 완료 · 전체 평가를 작성해주세요.</p>}
-          <div className="overall-list">{frameworkItems.map((item, index) => { const answer = data.overall.framework[item.key]; return <article className="overall-item" key={item.key}><span className="overall-number">{String(index + 1).padStart(2, "0")}</span><div className="overall-copy"><b>{item.label}</b><p>{item.statement}</p></div><ScorePicker label={`${item.label} 점수`} value={answer.score} disabled={answer.unable} onChange={(score) => updateFramework(item.key, { score, unable: false })} /><label className={`unable-check ${answer.unable ? "is-selected" : ""}`}><input type="checkbox" checked={answer.unable} onChange={(event) => updateFramework(item.key, { unable: event.target.checked, score: event.target.checked ? null : answer.score })} /> 판단 어려움/전문영역 외</label><label className="field full"><span>의견</span><textarea rows={2} value={answer.comment} onChange={(event) => updateFramework(item.key, { comment: event.target.value })} /></label></article>; })}</div>
-        </section>
       </div>
     </section>
-    <div className="export-panel"><div><p className="eyebrow light">FINAL SUBMISSION</p><h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3><p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 제출 후에도 같은 링크에서 내용을 수정해 다시 제출할 수 있습니다.</p></div><div className="export-actions"><button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button></div></div>
+    <div className="export-panel" id="review-submit"><div><p className="eyebrow light">FINAL SUBMISSION</p><h3>{data.submissionStatus === "submitted" ? "평가가 제출되었습니다." : "작성한 평가를 최종 제출해주세요."}</h3><p>참여자 ID <strong>{participantId}</strong>로 저장됩니다. 제출 후에도 같은 링크에서 내용을 수정해 다시 제출할 수 있습니다.</p></div><div className="export-actions"><button type="button" className="button primary" onClick={submitReview}>{data.submissionStatus === "submitted" ? "수정 내용 다시 제출" : "검토 완료 제출"} <span>→</span></button></div></div>
   </section>;
 }
