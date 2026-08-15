@@ -177,7 +177,8 @@ test("backs up review drafts to Firestore without exposing collection listing", 
   assert.match(form, /submissionStatus/);
   assert.match(form, /검토 완료 제출/);
   assert.match(rules, /allow get: if validReviewToken/);
-  assert.match(rules, /allow list: if false/);
+  assert.match(rules, /function isResearcher\(\)/);
+  assert.match(rules, /allow list: if isResearcher\(\)/);
   assert.match(rules, /allow delete: if false/);
 });
 

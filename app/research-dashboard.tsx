@@ -41,6 +41,8 @@ export function ResearchDashboard() {
   const [codingDocs, setCodingDocs] = useState<CodingDoc[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [authError, setAuthError] = useState("");
+  const [signingIn, setSigningIn] = useState(false);
   const [codingForm, setCodingForm] = useState<Record<string, string>>({ participantId: "", questionNo: "1", conditionReference: "", transcriptExcerpt: "", relatedSystemLogId: "", relatedAgentResponseId: "", mappingRuleId: "", intendedMeaning: "", participantInterpretation: "", expertUserAlignment: "unclear", interpretationMatch: "unclear", initialCode: initialInterviewCodes[0], focusedCode: "", theme: "", rqLink: "", codingMemo: "" });
 
   useEffect(() => onAuthStateChanged(firebaseAuth, (next) => setUser(next)), []);
@@ -62,6 +64,29 @@ export function ResearchDashboard() {
   }
 
   useEffect(() => { if (user?.email === RESEARCHER_EMAIL) loadData(); }, [user]);
+
+  async function handleSignIn() {
+    setAuthError("");
+    setSigningIn(true);
+    try {
+      await signInWithPopup(firebaseAuth, googleAuthProvider);
+    } catch (reason) {
+      const code = typeof reason === "object" && reason && "code" in reason ? String(reason.code) : "";
+      if (code.includes("configuration-not-found") || code.includes("operation-not-allowed")) {
+        setAuthError("Firebase Authentication에서 Google 로그인이 아직 활성화되지 않았습니다.");
+      } else if (code.includes("unauthorized-domain")) {
+        setAuthError("Firebase Authentication의 승인된 도메인에 boracles.art를 추가해주세요.");
+      } else if (code.includes("popup-blocked")) {
+        setAuthError("로그인 창이 차단되었습니다. 브라우저의 팝업을 허용한 뒤 다시 시도해주세요.");
+      } else if (code.includes("popup-closed-by-user") || code.includes("cancelled-popup-request")) {
+        setAuthError("로그인 창이 닫혔습니다. 다시 시도해주세요.");
+      } else {
+        setAuthError("Google 로그인에 실패했습니다. Firebase Authentication 설정과 네트워크 상태를 확인해주세요.");
+      }
+    } finally {
+      setSigningIn(false);
+    }
+  }
 
   const summaries = useMemo<SummaryRow[]>(() => constructDefinitions.map((definition) => {
     const row: SummaryRow = { key: definition.key, label: definition.label, role: definition.role, contingent: [], noncontingent: [], differences: [] };
@@ -102,7 +127,7 @@ export function ResearchDashboard() {
   }
 
   if (user === undefined) return <main className="dashboard-gate">연구자 인증 상태를 확인하고 있습니다.</main>;
-  if (!user || user.email !== RESEARCHER_EMAIL) return <main className="dashboard-gate"><section><DashboardLogo /><p className="eyebrow">PRIVATE RESEARCH WORKSPACE</p><h1>연구자 분석 대시보드</h1><p>전문가 검토와 사용자 실험 데이터를 한곳에서 정리하고 분석합니다.</p>{user && <p className="auth-error">{user.email} 계정에는 접근 권한이 없습니다.</p>}<button onClick={() => signInWithPopup(firebaseAuth, googleAuthProvider)}>서울대학교 Google 계정으로 로그인</button><small>허용 계정 · {RESEARCHER_EMAIL}</small></section></main>;
+  if (!user || user.email !== RESEARCHER_EMAIL) return <main className="dashboard-gate"><section><DashboardLogo /><p className="eyebrow">PRIVATE RESEARCH WORKSPACE</p><h1>연구자 분석 대시보드</h1><p>전문가 검토와 사용자 실험 데이터를 한곳에서 정리하고 분석합니다.</p>{user && <p className="auth-error">{user.email} 계정에는 접근 권한이 없습니다.</p>}{authError && <p className="auth-error" role="alert">{authError}</p>}<button onClick={handleSignIn} disabled={signingIn}>{signingIn ? "로그인 확인 중" : "서울대학교 Google 계정으로 로그인"}</button><small>허용 계정 · {RESEARCHER_EMAIL}</small></section></main>;
 
   const nav: Array<[Tab, string]> = [["overview", "연구 현황"], ["quant", "정량 분석"], ["qual", "면담·질적 코딩"], ["evidence", "통합 증거"], ["export", "내보내기"]];
   return <main className="research-dashboard">
